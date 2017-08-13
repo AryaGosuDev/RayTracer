@@ -1,0 +1,11 @@
+// Begin Analytics
+$(document).ready( function() {
+	$('#Text54Link6').bind('click', function() { pageTracker._trackPageview('/outgoing/www.amazon.com/gp/product/0122861663/ref=as_li_ss_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0122861663&linkCode=as2&tag=geometry_algorithms-20'); } );
+	$('#Text54Link7').bind('click', function() { pageTracker._trackPageview('/outgoing/www.amazon.com/gp/product/0123361559/ref=as_li_ss_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0123361559&linkCode=as2&tag=geometry_algorithms-20'); } );
+	$('#Text54Link8').bind('click', function() { pageTracker._trackPageview('/outgoing/www.amazon.com/gp/product/1568814240/ref=as_li_ss_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=1568814240&linkCode=as2&tag=geometry_algorithms-20'); } );
+	$('#Text54Link9').bind('click', function() { pageTracker._trackPageview('/outgoing/www.Graphics.Cornell.edu/pubs/1997/MT97.html'); } );
+	$('#Text54Link10').bind('click', function() { pageTracker._trackPageview('/outgoing/www.tandfonline.com/toc/ujgt21/current'); } );
+	$('#Text54Link11').bind('click', function() { pageTracker._trackPageview('/outgoing/www.amazon.com/gp/product/0521649765/ref=as_li_ss_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=0521649765&linkCode=as2&tag=geometry_algorithms-20'); } );
+});
+// End Analytics
+

@@ -1,0 +1,113 @@
+BODY
+{
+	font-family : Arial,  Helvetica,  Geneva,  Sans-serif,  sans-serif;
+	background-color : rgb(255,255,255);
+	background-image : url( "./background.gif" )
+}
+
+A:active
+{
+	color : rgb(255,0,0)
+}
+
+A:link
+{
+	color : rgb(0,51,204)
+}
+
+A:visited
+{
+	color : rgb(153,0,153)
+}
+
+.TextNavBar
+{
+	font-size : xx-small
+}
+
+.nof_GlasgowAquaOrangeBanners2-Default
+{
+	font-family : Verdana;
+	font-size: 24px;
+	font-weight : 700;
+	font-style : normal;
+	color : #330066
+}
+
+.nof_GlasgowAquaOrangeNavbar4-Regular
+{
+	font-family : Trebuchet MS ;
+	font-size: 11px;
+	font-weight : 400;
+	font-style : normal;
+	color : #330066
+}
+
+.nof_GlasgowAquaOrangeNavbar5-Rollover
+{
+	font-family : Trebuchet MS ;
+	font-size: 11px;
+	font-weight : 700;
+	font-style : normal;
+	color : #330066
+}
+
+.nof_GlasgowAquaOrangeNavbar6-Highlighted
+{
+	font-family : Trebuchet MS ;
+	font-size: 11px;
+	font-weight : 700;
+	font-style : normal;
+	color : #330066
+}
+
+.nof_GlasgowAquaOrangeNavbar7-HighlightedRollover
+{
+	font-family : Trebuchet MS ;
+	font-size: 11px;
+	font-weight : 700;
+	font-style : normal;
+	color : #330066
+}
+
+.nof_GlasgowAquaOrangeNavbar9-Regular
+{
+	font-family : Trebuchet MS ;
+	font-size: 11px;
+	font-weight : 400;
+	font-style : normal;
+	color : #330066
+}
+
+.nof_GlasgowAquaOrangeNavbar10-Rollover
+{
+	font-family : Trebuchet MS ;
+	font-size: 11px;
+	font-weight : 700;
+	font-style : normal;
+	color : #330066
+}
+
+.nof_GlasgowAquaOrangeNavbar11-Highlighted
+{
+	font-family : Trebuchet MS ;
+	font-size: 11px;
+	font-weight : 700;
+	font-style : normal;
+	color : #330066
+}
+
+.nof_GlasgowAquaOrangeNavbar12-HighlightedRollover
+{
+	font-family : Trebuchet MS ;
+	font-size: 11px;
+	font-weight : 700;
+	font-style : normal;
+	color : #330066
+}
+
+A:hover
+{
+	color : rgb(255,0,0)
+}
+

@@ -1,0 +1,503 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0047)http://geomalgorithms.com/a06-_intersect-2.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>Intersections of Rays, Planes and Triangles (3D)</title>
+
+<meta http-equiv="Expires" content="No">
+<meta name="Generator" content="NetObjects Fusion 11 for Windows">
+<meta name="Keywords" content="2d triangle,
+3d area,
+3d polygon,
+3d triangle,
+line intersecting plane,
+area of 3d triangle,
+area of triangle in 3d,
+c++ point,
+closest point of approach,
+computer graphics books,
+convex hull,
+convex hull algorithm,
+distance between lines,
+distance from origin to plane,
+distance from plane,
+distance from plane to point,
+distance from point,
+distance from point to line,
+distance from point to line 3d,
+distance from point to plane,
+distance of point from line,
+distance to line,
+distance to plane,
+geometric algorithms,
+geometry algorithms,
+intersecting planes,
+intersecting triangles,
+intersection between line and plane,
+intersection lines,
+intersection of 2 planes,
+intersection of 3 planes,
+intersection of line and plane,
+intersection of lines,
+intersection of plane and line,
+intersection of planes,
+line intersecting plane,
+line plane intersection,
+line triangle intersection,
+linear algebra summary,
+lines and planes,
+moller trumbore,
+plane distance,
+plane intersection,
+plane line intersection,
+plane plane intersection,
+point c++,
+point in polygon,
+point in polygon algorithm,
+point inside polygon,
+point inside polyhedron,
+point plane distance,
+ray intersection,
+ray plane intersection,
+ray plane intersection c++,
+ray tracing triangle intersection,
+ray triangle intersection,
+triangle 3d,
+triangle intersection,
+triangle plane,
+triangle ray intersection,
+triangle triangle intersection,
+two planes intersect,
+winding number,
+winding number algorithm,
+2D,
+3D,
+algorithm,
+algorithmic,
+area,
+area of polygon,
+area of quadrilateral,
+area of triangle,
+bounding ball,
+bounding box,
+bounding container,
+bounding cuboid,
+bounding ellipse,
+bounding rectangle,
+C++ code,
+clockwise,
+combinatorial,
+computation,
+computational,
+computational geometry,
+computer aided design,
+computer games,
+computer graphics,
+computer science,
+convex hull,
+counterclockwise,
+cross product,
+crossing number,
+cuboid,
+distance,
+dot product,
+exterior product,
+geometric,
+geometric model,
+geometry,
+geometry software,
+graphics software,
+inner product,
+intersection,
+line,
+linear algebra,
+math,
+mathematical,
+mathematics,
+minimal cuboid,
+minimal ellipse,
+minimal rectangle,
+orientation,
+outer product,
+perp operator,
+perp product,
+perpendicular,
+plane,
+point,
+point in polygon,
+point inclusion,
+polygon,
+polyhedron,
+polyline,
+polytope,
+ray,
+rectangle,
+segment,
+software,
+tangent,
+tetrahedron,
+textbook,
+triangle,
+vector,
+vector geometry,
+vector product,
+volume,
+volume of tetrahedron">
+<meta name="Language" content="English">
+<meta name="Rating" content="SAFE FOR KIDS">
+<meta name="Public" content="All">
+<meta name="Robots" content="ALL">
+<meta name="Author" content="Dan Sunday">
+<meta name="contact_addr" content="Maryland, USA">
+<meta name="Date" content="2012">
+<meta name="Copyright" content="2001 softSurfer, 2012 Dan Sunday">
+<meta name="Distribution" content="GLOBAL">
+<meta name="Description" content="Computational geometry algorithms for software programming including C++ code, basic lmath, a book store, and related web site links.">
+<script type="text/javascript">
+<!--
+function F_loadRollover(){} function F_roll(){}
+//-->
+</script>
+<script type="text/javascript" src="./Intersections of Rays, Planes and Triangles (3D)_files/rollover.js.download">
+</script>
+<script type="text/javascript" src="./Intersections of Rays, Planes and Triangles (3D)_files/jquery.js.download">
+</script>
+<link rel="stylesheet" type="text/css" href="./Intersections of Rays, Planes and Triangles (3D)_files/fusion.css">
+<link rel="stylesheet" type="text/css" href="./Intersections of Rays, Planes and Triangles (3D)_files/style.css">
+<link rel="stylesheet" type="text/css" href="./Intersections of Rays, Planes and Triangles (3D)_files/site.css">
+<style type="text/css" title="NOF_STYLE_SHEET">
+<!--
+
+div#NavigationBar1_1LYR { 
+position:absolute; visibility:hidden; top:0; left:0; z-index:1001;
+}
+div#NavigationBar1_2LYR { 
+position:absolute; visibility:hidden; top:0; left:0; z-index:1002;
+}
+div#NavigationBar1_3LYR { 
+position:absolute; visibility:hidden; top:0; left:0; z-index:1003;
+}
+div#NavigationBar1_4LYR { 
+position:absolute; visibility:hidden; top:0; left:0; z-index:1004;
+}
+div#NavigationBar1_5LYR { 
+position:absolute; visibility:hidden; top:0; left:0; z-index:1005;
+}
+div#NavigationBar1_6LYR { 
+position:absolute; visibility:hidden; top:0; left:0; z-index:1006;
+}
+-->
+</style>
+
+<script type="text/javascript" src="./Intersections of Rays, Planes and Triangles (3D)_files/a06-_intersect-2_nof.js.download">
+</script>
+<link rel="stylesheet" type="text/css" href="chrome-extension://immhpnclomdloikkpcefncmfgjbkojmh/emoji.css"></head><script>function inject(){function a(){function a(a){parent.postMessage({type:"blockedWindow",args:JSON.stringify(a)},l)}function b(a){var b=a[1];return null!=b&&["_blank","_parent","_self","_top"].indexOf(b)<0?b:null}function e(a,b){var c;for(c in a)try{void 0===b[c]&&(b[c]=a[c])}catch(d){}return b}var g=arguments,h=!0,j=null,k=null;if(null!=window.event&&(k=window.event.currentTarget),null==k){for(var m=g.callee;null!=m.arguments&&null!=m.arguments.callee.caller;)m=m.arguments.callee.caller;null!=m.arguments&&m.arguments.length>0&&null!=m.arguments[0].currentTarget&&(k=m.arguments[0].currentTarget)}null!=k&&(k instanceof Window||k===document||null!=k.URL&&null!=k.body||null!=k.nodeName&&("body"==k.nodeName.toLowerCase()||"#document"==k.nodeName.toLowerCase()))?(window.pbreason="Blocked a new window opened with URL: "+g[0]+" because it was triggered by the "+k.nodeName+" element",h=!1):h=!0;document.webkitFullscreenElement||document.mozFullscreenElement||document.fullscreenElement;if(((new Date).getTime()-d<1e3||isNaN(d)&&c())&&(window.pbreason="Blocked a new window opened with URL: "+g[0]+" because a full screen was just initiated while opening this url.",document.exitFullscreen?document.exitFullscreen():document.mozCancelFullScreen?document.mozCancelFullScreen():document.webkitCancelFullScreen&&document.webkitCancelFullScreen(),h=!1),1==h){j=f.apply(this,g);var n=b(g);if(null!=n&&(i[n]=j),j!==window){var o=(new Date).getTime(),p=j.blur;j.blur=function(){(new Date).getTime()-o<1e3?(window.pbreason="Blocked a new window opened with URL: "+g[0]+" because a it was blured",j.close(),a(g)):p()}}}else{var q={href:g[0]};q.replace=function(a){q.href=a},j={close:function(){return!0},test:function(){return!0},blur:function(){return!0},focus:function(){return!0},showModelessDialog:function(){return!0},showModalDialog:function(){return!0},prompt:function(){return!0},confirm:function(){return!0},alert:function(){return!0},moveTo:function(){return!0},moveBy:function(){return!0},resizeTo:function(){return!0},resizeBy:function(){return!0},scrollBy:function(){return!0},scrollTo:function(){return!0},getSelection:function(){return!0},onunload:function(){return!0},print:function(){return!0},open:function(){return this},opener:window,closed:!1,innerHeight:480,innerWidth:640,name:g[1],location:q,document:{location:q}},e(window,j),j.window=j;var n=b(g);if(null!=n)try{i[n].close()}catch(r){}setTimeout(function(){var b;b=j.location instanceof Object?j.document.location instanceof Object?null!=q.href?q.href:g[0]:j.document.location:j.location,g[0]=b,a(g)},100)}return j}function b(a){d=a?(new Date).getTime():0/0}function c(){return document.fullScreenElement&&null!==document.fullScreenElement||null!=document.mozFullscreenElement||null!=document.webkitFullscreenElement}var d,e="originalOpenFunction",f=window.open,g=document.createElement,h=document.createEvent,i={},j=0,k=null,l=window.location!=window.parent.location?document.referrer:document.location;window[e]=window.open,window.open=function(){try{return a.apply(this,arguments)}catch(b){return null}},document.createElement=function(){var a=g.apply(document,arguments);if("a"==arguments[0]||"A"==arguments[0]){j=(new Date).getTime();var b=a.dispatchEvent;a.dispatchEvent=function(c){return null!=c.type&&"click"==(""+c.type).toLocaleLowerCase()?(window.pbreason="blocked due to an explicit dispatchEvent event with type 'click' on an 'a' tag",parent.postMessage({type:"blockedWindow",args:JSON.stringify({0:a.href})},l),!0):b(c)},k=a}return a},document.createEvent=function(){try{return arguments[0].toLowerCase().indexOf("mouse")>=0&&(new Date).getTime()-j<=50?(window.pbreason="Blocked because 'a' element was recently created and "+arguments[0]+" event was created shortly after",arguments[0]=k.href,parent.postMessage({type:"blockedWindow",args:JSON.stringify({0:k.href})},l),null):h.apply(document,arguments)}catch(a){}},document.addEventListener("fullscreenchange",function(){b(document.fullscreen)},!1),document.addEventListener("mozfullscreenchange",function(){b(document.mozFullScreen)},!1),document.addEventListener("webkitfullscreenchange",function(){b(document.webkitIsFullScreen)},!1)} inject()</script>
+<body style="font-family: &#39;Times New Roman&#39;, Times, Serif; font-size: 14px; color: rgb(0,0,0); margin: 0px;">
+  <table cellpadding="0" cellspacing="0" border="0" width="1276">
+    <tbody><tr valign="top" align="left">
+      <td>
+        <table border="0" cellspacing="0" cellpadding="0" width="118">
+          <tbody><tr valign="top" align="left">
+            <td width="14" height="75"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="14" height="1" border="0" alt=""></td>
+            <td width="97"><img id="Picture5" height="75" width="97" src="./Intersections of Rays, Planes and Triangles (3D)_files/Logo_iSurf_org.gif" border="0" alt="Logo_iSurf_org" title="Logo_iSurf_org"></td>
+            <td width="7"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="7" height="1" border="0" alt=""></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="3" height="28"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td height="132" colspan="3" width="118" id="Text1897" class="TextObject" style="background-color: rgb(255,255,0);">
+              <p style="text-align: center; margin-bottom: 0px;"><a href="http://geomalgorithms.com/subscribe.html"><b><span style="color: rgb(128,0,0);">Subscribe<br>to eAlerts</span><br></b><span style="font-size: 12pt;">for Geom Site<br>Updates<br><b><br>CLICK HERE</b></span></a><b><span style="font-size: 12pt;"></span></b></p>
+            </td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="3" height="21"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td height="92" colspan="3" width="118" id="Text1900" class="TextObject">
+              <p style="margin-bottom: 0px;"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-1703170776573172";
+/* Narrow Margin Links */
+google_ad_slot = "7348008313";
+google_ad_width = 120;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>&nbsp;</p>
+            </td>
+          </tr>
+        </tbody></table>
+      </td>
+      <td>
+        <table border="0" cellspacing="0" cellpadding="0" width="843">
+          <tbody><tr valign="top" align="left">
+            <td colspan="7" height="45"></td>
+            <td colspan="6" width="560"><img id="Banner2" height="45" width="560" src="./Intersections of Rays, Planes and Triangles (3D)_files/Intersections-of-Rays-and-TriaNnBanner.gif" border="0" alt="Intersections of Rays and Triangles (3D)" title="Intersections of Rays and Triangles (3D)"></td>
+            <td colspan="4"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td width="11" height="5"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="11" height="1" border="0" alt=""></td>
+            <td width="4"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="4" height="1" border="0" alt=""></td>
+            <td width="3"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="3" height="1" border="0" alt=""></td>
+            <td width="19"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="19" height="1" border="0" alt=""></td>
+            <td width="1"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="1" height="1" border="0" alt=""></td>
+            <td width="2"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="2" height="1" border="0" alt=""></td>
+            <td width="83"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="83" height="1" border="0" alt=""></td>
+            <td width="96"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="96" height="1" border="0" alt=""></td>
+            <td width="85"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="85" height="1" border="0" alt=""></td>
+            <td width="198"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="198" height="1" border="0" alt=""></td>
+            <td width="26"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="26" height="1" border="0" alt=""></td>
+            <td width="76"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="76" height="1" border="0" alt=""></td>
+            <td width="79"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="79" height="1" border="0" alt=""></td>
+            <td width="93"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="93" height="1" border="0" alt=""></td>
+            <td width="3"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="3" height="1" border="0" alt=""></td>
+            <td width="19"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="19" height="1" border="0" alt=""></td>
+            <td width="45"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="45" height="1" border="0" alt=""></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="9"></td>
+            <td width="198" id="Text1885" class="TextObject" style="text-align: center;">
+              <p style="margin-bottom: 0px;">by Dan Sunday</p>
+            </td>
+            <td colspan="7"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="17" height="3"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td height="26"></td>
+            <td colspan="15" width="787">
+              <table id="NavigationBar1" border="0" cellspacing="1" cellpadding="0" width="787" style="font-size: 72px; text-align: center;">
+                <tbody><tr valign="top" align="left">
+                  <td width="130"><a href="http://geomalgorithms.com/index.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton1&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton1&#39;,1)" onmouseout="F_roll(&#39;NavigationButton1&#39;,0)" style="display: block;"><img id="NavigationButton1" name="NavigationButton1" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Home_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;Home_NRp2_1.gif&#39;,0)" border="0" alt="Home" title="Home"></a></td>
+                  <td width="130"><a href="http://geomalgorithms.com/faq.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton2&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton2&#39;,1)" onmouseout="F_roll(&#39;NavigationButton2&#39;,0)" style="display: block;"><img id="NavigationButton2" name="NavigationButton2" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/FAQ_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;FAQ_NRp2_1.gif&#39;,new Array(&#39;NavigationBar1_1&#39;, &#39;vertical&#39;, &#39;slideBottom&#39;, 0, 24))" border="0" alt="FAQ" title="FAQ"></a></td>
+                  <td width="130"><a href="http://geomalgorithms.com/math.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton3&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton3&#39;,1)" onmouseout="F_roll(&#39;NavigationButton3&#39;,0)" style="display: block;"><img id="NavigationButton3" name="NavigationButton3" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Math_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;Math_NRp2_1.gif&#39;,new Array(&#39;NavigationBar1_2&#39;, &#39;vertical&#39;, &#39;slideBottom&#39;, 0, 24))" border="0" alt="Math" title="Math"></a></td>
+                  <td width="130"><a href="http://geomalgorithms.com/algorithms.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton4&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton4&#39;,1)" onmouseout="F_roll(&#39;NavigationButton4&#39;,0)"><img id="NavigationButton4" name="NavigationButton4" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Algorithms_Hp3.gif" onmouseover="F_loadRollover(this,&#39;Algorithms_HRp4.gif&#39;,new Array(&#39;NavigationBar1_3&#39;, &#39;vertical&#39;, &#39;slideBottom&#39;, 0, 24))" border="0" alt="Algorithms" title="Algorithms"></a></td>
+                  <td width="130"><a href="http://geomalgorithms.com/code.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton5&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton5&#39;,1)" onmouseout="F_roll(&#39;NavigationButton5&#39;,0)"><img id="NavigationButton5" name="NavigationButton5" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Code_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;Code_NRp2_1.gif&#39;,new Array(&#39;NavigationBar1_4&#39;, &#39;vertical&#39;, &#39;slideBottom&#39;, 0, 24))" border="0" alt="Code" title="Code"></a></td>
+                  <td width="130" height="24"><a href="http://geomalgorithms.com/book_store.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton6&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton6&#39;,1)" onmouseout="F_roll(&#39;NavigationButton6&#39;,0)" style="display: block;"><img id="NavigationButton6" name="NavigationButton6" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Book-Store_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;Book-Store_NRp2_1.gif&#39;,new Array(&#39;NavigationBar1_5&#39;, &#39;vertical&#39;, &#39;slideBottom&#39;, 0, 24))" border="0" alt="Book Store" title="Book Store"></a></td>
+                </tr>
+              </tbody></table>
+            </td>
+            <td></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="17" height="5"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="4" height="96"></td>
+            <td colspan="10" width="739" id="Text1889" class="TextObject">
+              <p style="margin-bottom: 0px;"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-1703170776573172";
+/* Top Margin Leaderboard */
+google_ad_slot = "2033933112";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>&nbsp;</p>
+            </td>
+            <td colspan="3"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="17" height="3"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="4" height="23"></td>
+            <td colspan="10" width="739" id="Text1895" class="TextObject">
+              <p style="margin-bottom: 0px;"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-1703170776573172";
+/* Top Margin Thin Banner */
+google_ad_slot = "9901950316";
+google_ad_width = 728;
+google_ad_height = 15;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>&nbsp;</p>
+            </td>
+            <td colspan="3"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="17" height="26"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="2"></td>
+            <td colspan="15" width="828" id="Text54" class="TextObject">
+              <p>The intersection of the most basic geometric primitives was presented in the Algorithm 5 about <u><a href="http://geomalgorithms.com/a05-_intersect-1.html">Intersections of Lines and Planes</a></u>. We will now extend those algorithms to include 3D triangles which are common elements of 3D surface and polyhedron models. We only consider transversal intersections where the two intersecting objects do not lie in the same plane. Ray and triangle intersection computation is perhaps the most frequent nontrivial operation in computer graphics rendering using ray tracing. Because of its importance, there are several published algorithms for this problem (see: [Badouel, 1990], [Moller &amp; Trumbore, 1997], [O'Rourke, 1998], [Moller &amp; Haines, 1999]). We present an improvement of these algorithms for ray (or segment) and triangle intersection. We also give algorithms for triangle-plane and triangle-triangle intersection.</p>
+              <h2><span style="font-size: 14pt;"><a name="Segment-Plane"></a><span style="font-size: 20pt;"><br>Intersection of a Ray/Segment with a Plane</span></span></h2>
+              <p>Assume we have a ray <b>R</b> (or segment <b><span style="font-size: 16pt;">S</span></b>) from <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">0</span></sub> to <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">1</span></sub>, and a plane <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P </span></b> through <i><span style="font-size: 16pt;">V</span></i><sub><span style="font-size: 12pt;">0</span></sub> with normal <b>n</b>. The intersection of the parametric line <b>L</b>: <img id="Picture1118" height="26" width="165" src="./Intersections of Rays, Planes and Triangles (3D)_files/P-r--P0-r-P1-P0-.gif" vspace="0" hspace="0" align="top" border="0" alt="P(r)=P0+r(P1-P0)" title="P(r)=P0+r(P1-P0)"> and the plane <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b> occurs at the point <i><span style="font-size: 16pt;">P</span></i>(<i>r</i><sub><span style="font-size: 10pt;">I</span></sub>) with parameter value:</p>
+              <p style="text-align: center;"><img id="Picture1114" height="52" width="122" src="./Intersections of Rays, Planes and Triangles (3D)_files/Eqn_line-plane2.gif" vspace="0" hspace="0" align="top" border="0" alt="Eqn_line-plane2" title="Eqn_line-plane2"></p>
+              <p><br>When the denominator <img id="Picture1096" height="26" width="128" src="./Intersections of Rays, Planes and Triangles (3D)_files/n_dot_-P1-P0--0.gif" vspace="0" hspace="0" align="top" border="0" alt="n_dot_(P1-P0)=0" title="n_dot_(P1-P0)=0">, the line <b>L</b> is parallel to the plane <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b> , and thus either does not intersect it or else lies completely in the plane (whenever either <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">0</span></sub> or <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">1</span></sub> is in <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b> ). Otherwise, when the denominator is nonzero and <i>r</i><sub><span style="font-size: 10pt;">I</span></sub> is a real number, then the ray <b>R</b> intersects the plane <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b> only when <img id="Picture1115" height="26" width="44" src="./Intersections of Rays, Planes and Triangles (3D)_files/rI.ge.0.gif" vspace="0" hspace="0" align="top" border="0" alt="rI.ge.0" title="rI.ge.0">. A segment <b><span style="font-size: 16pt;">S</span></b> intersects <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b> only if <img id="Picture1116" height="26" width="68" src="./Intersections of Rays, Planes and Triangles (3D)_files/rI.ge-0.le-1.gif" vspace="0" hspace="0" align="top" border="0" alt="rI.ge-0.le-1" title="rI.ge-0.le-1">. In all algorithms, the additional test <img id="Picture1117" height="26" width="41" src="./Intersections of Rays, Planes and Triangles (3D)_files/rI.le.1.gif" vspace="0" hspace="0" align="top" border="0" alt="rI.le.1" title="rI.le.1"> is the only difference for a segment instead of a ray.</p>
+              <h3><span style="font-size: 14pt;"><a name="Segment-Triangle"></a><span style="font-size: 16pt;">Intersection of a Ray/Segment with a Triangle</span></span></h3>
+              <p>Consider a ray <b>R</b> (or a segment <b>S</b>) from <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">0</span></sub> to <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">1</span></sub>, and a triangle <b>T</b> with vertices <i><span style="font-size: 16pt;">V</span></i><sub><span style="font-size: 12pt;">0</span></sub>, <i><span style="font-size: 16pt;">V</span></i><sub><span style="font-size: 12pt;">1</span></sub> and <i><span style="font-size: 16pt;">V</span></i><sub><span style="font-size: 12pt;">2</span></sub>. The triangle <b>T</b> lies in the plane <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b>&nbsp; through <i><span style="font-size: 16pt;">V</span></i><sub><span style="font-size: 12pt;">0</span></sub> with normal vector <img id="Picture1097" height="26" width="176" src="./Intersections of Rays, Planes and Triangles (3D)_files/n--V1-V0--cross--V2-V0-.gif" vspace="0" hspace="0" align="top" border="0" alt="n=(V1-V0)-cross-(V2-V0)" title="n=(V1-V0)-cross-(V2-V0)">. To get the intersection of <b>R</b> (or <b>S</b>) with <b>T</b>, one first determines the intersection of <b>R</b> (or <b>S</b>) and <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P </span></b>. If it does not intersect, then it also does not intersect <b>T</b> and we are done. However, if they intersect in the point <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 10pt;">I</span> </sub>= <i><span style="font-size: 16pt;">P</span></i>(<i>r</i><sub><span style="font-size: 10pt;">I</span></sub>), we need to determine if this point is inside the triangle <b>T</b> for there to be a valid intersection.</p>
+              <p style="text-align: left;">There are a number of ways to test for the inclusion of a point inside a 3D planar triangle. The algorithms given by [Badouel, 1990] and [O'Rourke, 1998] project the point and triangle onto a 2D coordinate plane where inclusion is tested. To implement these algorithms, one must choose a projection coordinate plane which avoids a degenerate projection. This is done by excluding the coordinate which has the largest component in the plane normal vector <b>n</b> [Synder &amp; Barr, 1987]. The intent is to reduce the 3D problem to a simpler 2D problem which has an efficient solution. However, there is a small overhead involved in selecting and applying the projection function. The algorithm of [Moller-Trumbore, 1997] (MT) does not project into 2D, and finds a solution using direct 3D computations. Testing with some complex models shows that the MT algorithm is faster than the one by Badouel.</p>
+              <p style="text-align: left;">We present here an alternate method that also uses direct 3D computations to determine inclusion, avoiding the projection onto a 2D coordinate plane. As a result, the code is cleaner and more compact. Like [Moller-Trumbore, 1997], we use the parametric equation of <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P </span></b> relative to <b>T</b>, but derive a different method of solution which computes the<b><i> parametric coordinates</i></b> of the intersection point in the plane. The parametric plane equation (see: <u><a href="http://geomalgorithms.com/a04-_planes.html#Parametric-Equation">Planes</a></u> in Algorithm 4) is given by:</p>
+              <p style="text-align: center;"><img id="Picture325" height="30" width="391" src="./Intersections of Rays, Planes and Triangles (3D)_files/Eqn_plane-param.gif" vspace="0" hspace="0" align="bottom" border="0"></p>
+              <p style="text-align: left;">where <i>s</i> and <i>t</i> are real numbers, and <img id="Picture1099" height="26" width="81" src="./Intersections of Rays, Planes and Triangles (3D)_files/u-V1-V0.gif" vspace="0" hspace="0" align="top" border="0" alt="u=V1-V0" title="u=V1-V0"> and <img id="Picture1100" height="26" width="84" src="./Intersections of Rays, Planes and Triangles (3D)_files/v-V2-V0.gif" vspace="0" hspace="0" align="top" border="0" alt="v=V2-V0" title="v=V2-V0"> are edge vectors of <b>T</b>. Then, <img id="Picture1098" height="25" width="85" src="./Intersections of Rays, Planes and Triangles (3D)_files/P-V-s-t-.gif" vspace="0" hspace="0" align="top" border="0" alt="P=V(s,t)" title="P=V(s,t)"> is in the triangle <b>T</b> when <img id="Picture1110" height="21" width="40" src="./Intersections of Rays, Planes and Triangles (3D)_files/s.ge-0.gif" vspace="0" hspace="0" align="top" border="0" alt="s.ge-0" title="s.ge-0">, <img id="Picture1111" height="21" width="38" src="./Intersections of Rays, Planes and Triangles (3D)_files/t.ge-0.gif" vspace="0" hspace="0" align="top" border="0" alt="t.ge-0" title="t.ge-0">, and <img id="Picture1112" height="21" width="60" src="./Intersections of Rays, Planes and Triangles (3D)_files/s-t.le-1.gif" vspace="0" hspace="0" align="top" border="0" alt="s+t.le-1" title="s+t.le-1">. So, given <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 10pt;">I</span></sub>, one just has to find the (<i>s</i><sub><span style="font-size: 10pt;">I</span></sub>, <i>t</i><sub><span style="font-size: 10pt;">I</span></sub>) coordinate for it, and then check these inequalities to verify inclusion in <b>T</b>. Further, <img id="Picture1101" height="25" width="85" src="./Intersections of Rays, Planes and Triangles (3D)_files/P-V-s-t-.gif" vspace="0" hspace="0" align="top" border="0" alt="P=V(s,t)" title="P=V(s,t)"> is on an edge of <b>T</b> if one of the conditions <i>s </i>= 0, <i>t </i>= 0, or <i>s </i>+ <i>t </i>= 1 is true (each condition corresponds to one edge). And, the three vertices are given by: <img id="Picture1102" height="26" width="92" src="./Intersections of Rays, Planes and Triangles (3D)_files/V0-V-0-0-.gif" vspace="0" hspace="0" align="top" border="0" alt="V0=V(0,0)" title="V0=V(0,0)">, <img id="Picture1103" height="26" width="86" src="./Intersections of Rays, Planes and Triangles (3D)_files/V1-V-1-0-.gif" vspace="0" hspace="0" align="top" border="0" alt="V1=V(1,0)" title="V1=V(1,0)">, and <img id="Picture1104" height="26" width="89" src="./Intersections of Rays, Planes and Triangles (3D)_files/V2-V-0-1-.gif" vspace="0" hspace="0" align="top" border="0" alt="V2=V(0,1)" title="V2=V(0,1)">.</p>
+              <p style="text-align: center;"><img id="Picture1119" height="250" width="363" src="./Intersections of Rays, Planes and Triangles (3D)_files/Pic_line-triangle.gif" vspace="0" hspace="0" align="top" border="0" alt="Pic_line-triangle" title="Pic_line-triangle"></p>
+              <p style="text-align: left;">To solve for <i>s</i><sub><span style="font-size: 10pt;">I</span></sub> and <i>t</i><sub><span style="font-size: 10pt;">I</span></sub>, we apply the method described in Algorithm 4 for <a href="http://geomalgorithms.com/a04-_planes.html#Barycentric-Coordinate-Compute">Barycentric Coordinate Computation</a> using the "<b><i>generalized perp operator</i></b> on <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b> " that we defined there. Then, with <img id="Picture1106" height="26" width="86" src="./Intersections of Rays, Planes and Triangles (3D)_files/w-PI-V0.gif" vspace="0" hspace="0" align="top" border="0" alt="w=PI-V0" title="w=PI-V0">, which is a vector in <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b>&nbsp; (that is, <img id="Picture1108" height="24" width="73" src="./Intersections of Rays, Planes and Triangles (3D)_files/n_dot_w-0.gif" vspace="0" hspace="0" align="top" border="0" alt="n_dot_w=0" title="n_dot_w=0">), we solve the equation: <img id="Picture1109" height="21" width="93" src="./Intersections of Rays, Planes and Triangles (3D)_files/w-su-tv.gif" vspace="0" hspace="0" align="top" border="0" alt="w=su+tv" title="w=su+tv"> for <i>s</i> and <i>t</i>. The final result is: </p>
+              <p style="text-align: center;"><img id="Picture403" height="49" width="236" src="./Intersections of Rays, Planes and Triangles (3D)_files/Eqn_param-Ps_inter.gif" vspace="0" hspace="0" align="top" border="0" alt="Eqn_param-Ps_inter" title="Eqn_param-Ps_inter"></p>
+              <p style="text-align: center;"><img id="Picture404" height="49" width="233" src="./Intersections of Rays, Planes and Triangles (3D)_files/Eqn_param-Pt_inter.gif" vspace="0" hspace="0" align="top" border="0" alt="Eqn_param-Pt_inter" title="Eqn_param-Pt_inter"></p>
+              <p style="text-align: left;">which has only 5 distinct dot products. We have arranged terms so that the two denominators are the same and only need to be calculated once.</p>
+              <p style="text-align: left;">This solution yields a straightforward ray/segment-triangle intersection algorithm (see our implementation: <a href="http://geomalgorithms.com/a06-_intersect-2.html#intersect3D_RayTriangle()">intersect3D_RayTriangle()</a> ). Based on a count of the operations done up to the first rejection test, this algorithm is a bit less efficient than the MT algorithm, although we have not done any runtime performance comparisons. However, the MT algorithm uses two cross products whereas our algorithm uses only one, and the one we use computes the normal vector of the triangle's plane, which is needed to compute the line parameter <i>r</i><sub><span style="font-size: 10pt;">I</span></sub>. But, when the normal vectors have been precomputed and stored for all triangles in a scene (which is often the case), our algorithm would not have to compute this cross product at all. But, in this case, the MT algorithm would still compute two cross products, and be less efficient than our algorithm. So, the preferred algorithm depends on the application.</p>
+              <h2><span style="font-size: 14pt;"><a name="Triangle-Plane"></a><span style="font-size: 20pt;">Intersection of a Triangle with a Plane</span></span></h2>
+              <p>Consider a triangle <b>T</b> with vertices <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">0</span></sub>, <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">1</span></sub> and <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">2</span></sub> lying in a plane <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">1</span></sub> with normal <b>n</b><sub><span style="font-size: 12pt;">1</span></sub>. Let <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span> </sub>be a second plane through the point <i><span style="font-size: 16pt;">V</span></i><sub><span style="font-size: 12pt;">0</span></sub> with the normal vector <b>n</b><sub><span style="font-size: 12pt;">2</span></sub>. Unless they are parallel, the two planes <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">1</span></sub> and <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub> intersect in a line <b>L</b>, and when <b>T</b> intersects <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub> it will be a segment contained in <b>L</b>. When <b>T</b> does not intersect <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub> all three of its vertices must strictgly lie on the same side of the <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub> plane. On the other hand, when <b>T</b> does intersect <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub>, one point of <b>T</b> must be on one side of (or on) <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub> and the other two be on the other side of (or on) <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub>. We gave a test for which side of a plane a point is on (by using the signed distance from the point to the plane) in Algorithm 4 for <a href="http://geomalgorithms.com/a04-_planes.html#Distance-Point-to-Plane">Distance of a Point to a Plane</a>. In fact, to determine the sideness of a point <i><span style="font-size: 16pt;">P</span></i>, one only has to find the sign of <img id="Picture1113" height="26" width="125" src="./Intersections of Rays, Planes and Triangles (3D)_files/n_dot_-P-V0--0.gif" vspace="0" hspace="0" align="top" border="0" alt="n_dot_(P-V0)=0" title="n_dot_(P-V0)=0">.</p>
+              <p>Suppose that <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">0</span></sub> is on one side of <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub> and that <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">1</span></sub> and <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">2</span></sub> are on the other side. Then the two segments <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">0</span></sub><i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">1</span></sub> and <i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">0</span></sub><i><span style="font-size: 16pt;">P</span></i><sub><span style="font-size: 12pt;">2</span></sub> intersect <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub> in two points <i>I</i><sub><span style="font-size: 12pt;">1</span></sub> and <i>I</i><sub><span style="font-size: 12pt;">2</span></sub> which are on the intersection line of <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">1</span></sub> and <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub>. Then, the segment <i>I</i><sub><span style="font-size: 12pt;">1</span></sub><i>I</i><sub><span style="font-size: 12pt;">2</span></sub> is the intersection of triangle <b>T</b> and the plane <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub>.</p>
+              <p style="text-align: center;"><img id="Picture1120" height="300" width="367" src="./Intersections of Rays, Planes and Triangles (3D)_files/Pic_triangle-plane.gif" vspace="0" hspace="0" align="top" border="0" alt="Pic_triangle-plane" title="Pic_triangle-plane"></p>
+              <h3><span style="font-size: 14pt;"><a name="Triangle-Triangle"></a><span style="font-size: 16pt;">Intersection of a Triangle with a Triangle</span></span></h3>
+              <p>Consider two triangles <b>T</b><sub><span style="font-size: 12pt;">1</span></sub> and <b>T</b><sub><span style="font-size: 12pt;">2</span></sub>. They each lie in a plane, respectively <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">1</span></sub> and <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub>, and their intersection must be on the line of intersection <b>L</b> for the two planes. Let the intersection of <b>T</b><sub><span style="font-size: 12pt;">1</span></sub> and <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">2</span></sub> be the segment <b>S</b><sub><span style="font-size: 12pt;">1</span></sub> = <i><span style="font-size: 16pt;">I</span></i><sub><span style="font-size: 12pt;">11</span></sub><i><span style="font-size: 16pt;">I</span></i><sub><span style="font-size: 12pt;">12</span></sub>, and the intersection of <b>T</b><sub><span style="font-size: 12pt;">2</span></sub> and <b><span style="font-family: &#39;Times New Roman&#39;, Times, Serif;">P</span></b><sub><span style="font-size: 12pt;">1</span></sub> be <b>S</b><sub><span style="font-size: 12pt;">2</span></sub> = <i><span style="font-size: 16pt;">I</span></i><sub><span style="font-size: 12pt;">21</span></sub><i><span style="font-size: 16pt;">I</span></i><sub><span style="font-size: 12pt;">22</span></sub>. If either <b>S</b><sub><span style="font-size: 12pt;">1</span></sub> or <b>S</b><sub><span style="font-size: 12pt;">2</span></sub> doesn’t exist (that is, one triangle does not intersect the plane of the other), then <b>T</b><sub><span style="font-size: 12pt;">1</span></sub> and <b>T</b><sub><span style="font-size: 12pt;">2</span></sub> do not intersect. Otherwise their intersection is equal to the intersection of the two segments <b>S</b><sub><span style="font-size: 12pt;">1</span></sub> and <b>S</b><sub><span style="font-size: 12pt;">2</span></sub> on the line <b>L</b>. This can be easily computed by projecting them onto an appropriate coordinate axis, and determining their intersection on it.</p>
+              <p style="text-align: center;"><img id="Picture1121" height="280" width="343" src="./Intersections of Rays, Planes and Triangles (3D)_files/Pic_triangle-triangle.gif" vspace="0" hspace="0" align="top" border="0" alt="Pic_triangle-triangle" title="Pic_triangle-triangle"></p>
+              <h2><br><span style="font-size: 20pt;">Implementations</span></h2>
+              <p>Here are some sample "C++" implementations of these algorithms. </p>
+              <p style="font-family: &#39;Courier New&#39;, &#39;Lucida Console&#39;, Courier, Monaco, Monospace; font-size: 12pt;">// Copyright 2001 softSurfer, 2012 Dan Sunday<br>// This code may be freely used and modified for any purpose<br>// providing that this copyright notice is included with it.<br>// SoftSurfer makes no warranty for this code, and cannot be held<br>// liable for any real or imagined damage resulting from its use.<br>// Users of this code must verify correctness for their application.<br>&nbsp;</p>
+              <p style="font-family: &#39;Courier New&#39;, &#39;Lucida Console&#39;, Courier, Monaco, Monospace; font-size: 12pt;">// Assume that classes are already given for the objects:<br>//&nbsp;&nbsp;&nbsp; <b>Point</b> and <b>Vector</b> with<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; coordinates {float x, y, z;}<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; operators for:<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; == to test&nbsp; equality<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; != to test&nbsp; inequality<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (Vector)0 =&nbsp; (0,0,0)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (null vector)<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point&nbsp;&nbsp; = Point ± Vector<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vector =&nbsp; Point - Point<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vector =&nbsp; Scalar * Vector&nbsp;&nbsp;&nbsp; (scalar product)<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vector =&nbsp; Vector * Vector&nbsp;&nbsp;&nbsp; (cross product)<br>//&nbsp;&nbsp;&nbsp; <b>Line</b> and <b>Ray</b> and <b>Segment</b> with defining&nbsp; points {Point P0, P1;}<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (a Line is infinite, Rays and&nbsp; Segments start at P0)<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (a Ray extends beyond P1, but a&nbsp; Segment ends at P1)<br>//&nbsp;&nbsp;&nbsp; <b>Plane</b> with a point and a normal {Point V0; Vector&nbsp; n;}<br>//&nbsp;&nbsp;&nbsp; <b>Triangle</b> with defining vertices {Point V0, V1, V2;}<br>//&nbsp;&nbsp;&nbsp; <b>Polyline</b> and <b>Polygon</b> with n vertices {int n;&nbsp; Point *V;}<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (a Polygon has V[n]=V[0])<br>//===================================================================<br>&nbsp;</p>
+              <p style="font-family: &#39;Courier New&#39;, &#39;Lucida Console&#39;, Courier, Monaco, Monospace; font-size: 12pt;">#define SMALL_NUM&nbsp;&nbsp; 0.00000001 // anything that avoids division overflow<br>// dot product (3D) which allows vector operations in arguments<br>#define dot(u,v)&nbsp;&nbsp; ((u).x * (v).x + (u).y * (v).y + (u).z * (v).z)<br>&nbsp;</p>
+              <p style="font-family: &#39;Courier New&#39;, &#39;Lucida Console&#39;, Courier, Monaco, Monospace; font-size: 12pt;"><a name="intersect3D_RayTriangle()"></a><br>// <b>intersect3D_RayTriangle():</b> find the 3D intersection of a ray with a triangle<br>//&nbsp;&nbsp;&nbsp; Input:&nbsp; a ray R, and a triangle T<br>//&nbsp;&nbsp;&nbsp; Output: *I = intersection point (when it exists)<br>//&nbsp;&nbsp;&nbsp; Return: -1 = triangle is degenerate (a segment or point)<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 =&nbsp; disjoint (no intersect)<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 =&nbsp; intersect in unique point I1<br>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 =&nbsp; are in the same plane<br>int<br>intersect3D_RayTriangle( Ray R, Triangle T, Point* I )<br>{<br>&nbsp;&nbsp;&nbsp; Vector&nbsp;&nbsp;&nbsp; u, v, n;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // triangle vectors<br>&nbsp;&nbsp;&nbsp; Vector&nbsp;&nbsp;&nbsp; dir, w0, w;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // ray vectors<br>&nbsp;&nbsp;&nbsp; float&nbsp;&nbsp;&nbsp;&nbsp; r, a, b;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // params to calc ray-plane intersect<br><br>&nbsp;&nbsp;&nbsp; // get triangle edge vectors and plane normal<br>&nbsp;&nbsp;&nbsp; u = T.V1 - T.V0;<br>&nbsp;&nbsp;&nbsp; v = T.V2 - T.V0;<br>&nbsp;&nbsp;&nbsp; n = u * v;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // cross product<br>&nbsp;&nbsp;&nbsp; if (n == (Vector)0)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // triangle is degenerate<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return -1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // do not deal with this case<br><br>&nbsp;&nbsp;&nbsp; dir = R.P1 - R.P0;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // ray direction vector<br>&nbsp;&nbsp;&nbsp; w0 = R.P0 - T.V0;<br>&nbsp;&nbsp;&nbsp; a = -dot(n,w0);<br>&nbsp;&nbsp;&nbsp; b = dot(n,dir);<br>&nbsp;&nbsp;&nbsp; if (fabs(b) &lt; SMALL_NUM) {&nbsp;&nbsp;&nbsp;&nbsp; // ray is&nbsp; parallel to triangle plane<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (a == 0)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // ray lies in triangle plane<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 2;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else return 0;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // ray disjoint from plane<br>&nbsp;&nbsp;&nbsp; }<br><br>&nbsp;&nbsp;&nbsp; // get intersect point of ray with triangle plane<br>&nbsp;&nbsp;&nbsp; r = a / b;<br>&nbsp;&nbsp;&nbsp; if (r &lt; 0.0)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // ray goes away from triangle<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // =&gt; no intersect<br>&nbsp;&nbsp;&nbsp; // for a segment, also test if (r &gt; 1.0) =&gt; no intersect<br><br>&nbsp;&nbsp;&nbsp; *I = R.P0 + r * dir;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // intersect point of ray and plane<br><br>&nbsp;&nbsp;&nbsp; // is I inside T?<br>&nbsp;&nbsp;&nbsp; float&nbsp;&nbsp;&nbsp; uu, uv, vv, wu, wv, D;<br>&nbsp;&nbsp;&nbsp; uu = dot(u,u);<br>&nbsp;&nbsp;&nbsp; uv = dot(u,v);<br>&nbsp;&nbsp;&nbsp; vv = dot(v,v);<br>&nbsp;&nbsp;&nbsp; w = *I - T.V0;<br>&nbsp;&nbsp;&nbsp; wu = dot(w,u);<br>&nbsp;&nbsp;&nbsp; wv = dot(w,v);<br>&nbsp;&nbsp;&nbsp; D = uv * uv - uu * vv;<br><br>&nbsp;&nbsp;&nbsp; // get and test parametric coords<br>&nbsp;&nbsp;&nbsp; float s, t;<br>&nbsp;&nbsp;&nbsp; s = (uv * wv - vv * wu) / D;<br>&nbsp;&nbsp;&nbsp; if (s &lt; 0.0 || s &gt; 1.0)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // I is outside T<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;<br>&nbsp;&nbsp;&nbsp; t = (uv * wu - uu * wv) / D;<br>&nbsp;&nbsp;&nbsp; if (t &lt; 0.0 || (s + t) &gt; 1.0)&nbsp; // I is outside T<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;<br><br>&nbsp;&nbsp;&nbsp; return 1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // I is in T<br>}<br>&nbsp;</p>
+              <h2><span style="font-size: 20pt;"><br>References</span></h2>
+              <p style="text-align: left;">Didier Badouel, "An Efficient Ray-Polygon&nbsp; Intersection" in <a id="Text54Link6" href="http://www.amazon.com/gp/product/0122861663/ref=as_li_ss_tl?ie=UTF8&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0122861663&amp;linkCode=as2&amp;tag=geometry_algorithms-20">Graphics Gems</a> (1990)</p>
+              <p style="text-align: left;">Francis Hill, "The Pleasures of 'Perp Dot'&nbsp; Products" in <a id="Text54Link7" href="http://www.amazon.com/gp/product/0123361559/ref=as_li_ss_tl?ie=UTF8&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0123361559&amp;linkCode=as2&amp;tag=geometry_algorithms-20">Graphics Gems IV</a> (1994)</p>
+              <p style="text-align: left;">Tomas Moller &amp; Eric Haines, "Intersection Test Methods" in <a id="Text54Link8" href="http://www.amazon.com/gp/product/1568814240/ref=as_li_ss_tl?ie=UTF8&amp;camp=1789&amp;creative=390957&amp;creativeASIN=1568814240&amp;linkCode=as2&amp;tag=geometry_algorithms-20">Real-Time Rendering</a> (3rd Edition) (2008)</p>
+              <p style="text-align: left;">Tomas Moller &amp; Ben Trumbore, <a id="Text54Link9" href="http://www.graphics.cornell.edu/pubs/1997/MT97.html">"Fast Minimum Storage Ray-Triangle Intersection"</a> in <a id="Text54Link10" href="http://www.tandfonline.com/toc/ujgt21/current">J. Graphics Tools (<b>jgt</b>)</a> 2(1), 21-28 (1997)</p>
+              <p>Joseph O'Rourke, "Segment-Triangle&nbsp; Intersection" in <a id="Text54Link11" href="http://www.amazon.com/gp/product/0521649765/ref=as_li_ss_tl?ie=UTF8&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0521649765&amp;linkCode=as2&amp;tag=geometry_algorithms-20">Computational Geometry in C (2nd Edition)</a> (1998)</p>
+              <p style="margin-bottom: 0px;">J.P. Snyder and A.H. Barr, "Ray&nbsp; Tracing Complex Models Containing Surface Tessellations", ACM Comp Graphics 21,&nbsp; (1987)</p>
+            </td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="17" height="9"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="3" height="24"></td>
+            <td colspan="13" width="780">
+              <table id="NavigationBar3" border="0" cellspacing="0" cellpadding="0" width="780" style="text-align: center;">
+                <tbody><tr valign="top" align="left">
+                  <td width="130"><a href="http://geomalgorithms.com/index.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton7&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton7&#39;,1)" onmouseout="F_roll(&#39;NavigationButton7&#39;,0)"><img id="NavigationButton7" name="NavigationButton7" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Home_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;Home_NRp2_1.gif&#39;,0)" border="0" alt="Home" title="Home"></a></td>
+                  <td width="130"><a href="http://geomalgorithms.com/math.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton8&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton8&#39;,1)" onmouseout="F_roll(&#39;NavigationButton8&#39;,0)"><img id="NavigationButton8" name="NavigationButton8" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Math_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;Math_NRp2_1.gif&#39;,0)" border="0" alt="Math" title="Math"></a></td>
+                  <td width="130"><a href="http://geomalgorithms.com/algorithms.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton9&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton9&#39;,1)" onmouseout="F_roll(&#39;NavigationButton9&#39;,0)"><img id="NavigationButton9" name="NavigationButton9" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Algorithms_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;Algorithms_NRp2_1.gif&#39;,0)" border="0" alt="Algorithms" title="Algorithms"></a></td>
+                  <td width="130"><a href="http://geomalgorithms.com/code.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton10&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton10&#39;,1)" onmouseout="F_roll(&#39;NavigationButton10&#39;,0)"><img id="NavigationButton10" name="NavigationButton10" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Code_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;Code_NRp2_1.gif&#39;,0)" border="0" alt="Code" title="Code"></a></td>
+                  <td width="130"><a href="http://geomalgorithms.com/book_store.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton11&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton11&#39;,1)" onmouseout="F_roll(&#39;NavigationButton11&#39;,0)"><img id="NavigationButton11" name="NavigationButton11" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/Book-Store_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;Book-Store_NRp2_1.gif&#39;,0)" border="0" alt="Book Store" title="Book Store"></a></td>
+                  <td width="130" height="24"><a href="http://geomalgorithms.com/websites.html" class="nof-navButtonAnchor" onmouseover="F_loadRollover(&#39;NavigationButton12&#39;,&#39;&#39;,0);F_roll(&#39;NavigationButton12&#39;,1)" onmouseout="F_roll(&#39;NavigationButton12&#39;,0)"><img id="NavigationButton12" name="NavigationButton12" height="24" width="130" src="./Intersections of Rays, Planes and Triangles (3D)_files/WebSites_Np1_1.gif" onmouseover="F_loadRollover(this,&#39;WebSites_NRp2_1.gif&#39;,0)" border="0" alt="WebSites" title="WebSites"></a></td>
+                </tr>
+              </tbody></table>
+            </td>
+            <td></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="17" height="10"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="6" height="23"></td>
+            <td colspan="9" width="739" id="Text1894" class="TextObject">
+              <p style="margin-bottom: 0px;"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-1703170776573172";
+/* Top Margin Thin Banner */
+google_ad_slot = "9901950316";
+google_ad_width = 728;
+google_ad_height = 15;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>&nbsp;</p>
+            </td>
+            <td colspan="2"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="17" height="4"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="5" height="3"></td>
+            <td colspan="6" align="left" valign="top" width="490"><img id="SiteStyleLine3" height="3" width="490" src="./Intersections of Rays, Planes and Triangles (3D)_files/line.gif" border="0"></td>
+            <td colspan="6"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="17" height="7"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="8"></td>
+            <td colspan="4" width="385" id="Text297" class="TextObject">
+              <p style="text-align: center; margin-bottom: 0px;"><span style="font-size: 10pt;">© Copyright 2012 Dan Sunday, 2001 softSurfer</span></p>
+            </td>
+            <td colspan="5"></td>
+          </tr>
+        </tbody></table>
+      </td>
+      <td>
+        <table border="0" cellspacing="0" cellpadding="0" width="315">
+          <tbody><tr valign="top" align="left">
+            <td width="14" height="251"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="14" height="1" border="0" alt=""></td>
+            <td width="300" id="Text1898" class="TextObject">
+              <p style="margin-bottom: 0px;"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-1703170776573172";
+/* Medium Panel */
+google_ad_slot = "1357337117";
+google_ad_width = 300;
+google_ad_height = 250;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>&nbsp;</p>
+            </td>
+            <td width="1"><img src="./Intersections of Rays, Planes and Triangles (3D)_files/clearpixel.gif" width="1" height="1" border="0" alt=""></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td colspan="3" height="8"></td>
+          </tr>
+          <tr valign="top" align="left">
+            <td height="607"></td>
+            <td colspan="2" width="301" id="Text1890" class="TextObject">
+              <p style="margin-bottom: 0px;"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-1703170776573172";
+/* Large Margin Tower */
+google_ad_slot = "5927137515";
+google_ad_width = 300;
+google_ad_height = 600;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>&nbsp;</p>
+            </td>
+          </tr>
+        </tbody></table>
+      </td>
+    </tr>
+  </tbody></table>
+  <script type="text/javascript">
+  var C_MENU_BORDER = 0;
+  var C_MENU_SPACING = 1;
+  var C_MENU_BGCOLOR = "";
+  var C_MENU_AUTO_CLOSE = true;
+  new NOF_Menu(
+  new NOF_Main_Menu(new NOF_Menu_Item('NavigationBar1_1', 'vertical', 'slideBottom', 0, 24, 
+ new NOF_Menu_Button('./what_are_they-.html','./What-are-They-_Np1.gif','./What-are-They-_NRp2.gif'),new NOF_Menu_Button('./what_applications-.html','./What-Applications-_Np1.gif','./What-Applications-_NRp2.gif'),new NOF_Menu_Button('./what_problems_solved-.html','./What-Problems-Solved-_Np1.gif','./What-Problems-Solved-_NRp2.gif'),new NOF_Menu_Button('./what_is_good-.html','./What-is-Good-_Np1.gif','./What-is-Good-_NRp2.gif'),new NOF_Menu_Button('./what_is_significant-.html','./What-are-Examples-_Np1.gif','./What-are-Examples-_NRp2.gif')))
+  , new NOF_Main_Menu(new NOF_Menu_Item('NavigationBar1_2', 'vertical', 'slideBottom', 0, 24, 
+ new NOF_Menu_Button('./math.html','./Basic-Linear-Algeba_Np1.gif','./Basic-Linear-Algeba_NRp2.gif'),new NOF_Menu_Button('./math.html#Coordinate-Systems','./Coordinate-Systems_Np1.gif','./Coordinate-Systems_NRp2.gif'),new NOF_Menu_Button('./points_and_vectors.html','./Points-and-Vectors_Np1.gif','./Points-and-Vectors_NRp2.gif'),new NOF_Menu_Button('./vector_products.html','./Vector-Products_Np1.gif','./Vector-Products_NRp2.gif'),new NOF_Menu_Button('./summary_sheet.html','./Summary-Sheet_Np1.gif','./Summary-Sheet_NRp2.gif')))
+  , new NOF_Main_Menu(new NOF_Menu_Item('NavigationBar1_3', 'vertical', 'slideBottom', 0, 24, 
+ new NOF_Menu_Button('./algorithms.html','./Table-of-Contents_Np1.gif','./Table-of-Contents_NRp2.gif'),new NOF_Menu_Button('./a01-_area.html','./A01--Area_Np1.gif','./A01--Area_NRp2.gif'),new NOF_Menu_Button('./a02-_lines.html','./A02--Lines_Np1.gif','./A02--Lines_NRp2.gif'),new NOF_Menu_Button('./a03-_inclusion.html','./A03--Inclusion_Np1.gif','./A03--Inclusion_NRp2.gif'),new NOF_Menu_Button('./a04-_planes.html','./A04--Planes_Np1.gif','./A04--Planes_NRp2.gif'),new NOF_Menu_Button('./a05-_intersect-1.html','./A05--Intersect-1_Np1.gif','./A05--Intersect-1_NRp2.gif'),new NOF_Menu_Button('./a06-_intersect-2.html','./A06--Intersect-2_Np1.gif','./A06--Intersect-2_NRp2.gif'),new NOF_Menu_Button('./a07-_distance.html','./A07--Distance_Np1.gif','./A07--Distance_NRp2.gif'),new NOF_Menu_Button('./a08-_containers.html','./A08--Containers_Np1.gif','./A08--Containers_NRp2.gif'),new NOF_Menu_Button('./a09-_intersect-3.html','./A09--Intersect-3_Np1.gif','./A09--Intersect-3_NRp2.gif',
+ new NOF_Menu_Item('NavigationBar1_6', 'vertical', 'right', 130, 0, new NOF_Menu_Button('./a09-_avl_code.html','./A09--AVL-Code_Np1.gif','./A09--AVL-Code_NRp2.gif'))
+ ),new NOF_Menu_Button('./a10-_hull-1.html','./A10--Hull-1_Np1.gif','./A10--Hull-1_NRp2.gif'),new NOF_Menu_Button('./a11-_hull-2.html','./A11--Hull-2_Np1.gif','./A11--Hull-2_NRp2.gif'),new NOF_Menu_Button('./a12-_hull-3.html','./A12--Hull-3_Np1.gif','./A12--Hull-3_NRp2.gif'),new NOF_Menu_Button('./a13-_intersect-4.html','./A13--Intersect-4_Np1.gif','./A13--Intersect-4_NRp2.gif'),new NOF_Menu_Button('./a14-_extreme_pts.html','./A14--Extreme-Pts_Np1.gif','./A14--Extreme-Pts_NRp2.gif'),new NOF_Menu_Button('./a15-_tangents.html','./A15--Tangents_Np1.gif','./A15--Tangents_NRp2.gif'),new NOF_Menu_Button('./a16-_decimate-1.html','./A16--Decimate-1_Np1.gif','./A16--Decimate-1_NRp2.gif')))
+  , new NOF_Main_Menu(new NOF_Menu_Item('NavigationBar1_4', 'vertical', 'slideBottom', 0, 24, 
+ new NOF_Menu_Button('./code.html#Core-Classes','./Core-Classes_Np1.gif','./Core-Classes_NRp2.gif'),new NOF_Menu_Button('./code.html#Primitive-Functions','./Primitive-Functions_Np1.gif','./Primitive-Functions_NRp2.gif'),new NOF_Menu_Button('./code.html#Application-Routines','./Application-Routines_Np1.gif','./Application-Routines_NRp2.gif')))
+  , new NOF_Main_Menu(new NOF_Menu_Item('NavigationBar1_5', 'vertical', 'slideBottom', 0, 24, 
+ new NOF_Menu_Button('./journals.html','./Journals_Np1.gif','./Journals_NRp2.gif'),new NOF_Menu_Button('./websites.html','./WebSites_Np1_1.gif','./WebSites_NRp2_1.gif')))
+  );
+  </script><div id="NavigationBar1_1LYR" isautoclose="true" style="z-index: 5; top: 100px; left: 261px; visibility: hidden; clip: rect(auto auto 801px auto);" onmouseover="NOF_KeepOpen(&#39;NavigationBar1_1LYR&#39;, null)" onmouseout="NOF_KeepClose()"><table width="10" border="0" cellspacing="1" cellpadding="0" bgcolor=""><tbody><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/what_are_they-.html" onmouseover="F_roll(&#39;NavigationBar1_1s0&#39; ,1, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_1s0&#39; ,2, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/What-are-They-_Np1.gif" id="NavigationBar1_1s0" name="NavigationBar1_1s0" onload="F_loadRollover(this,&#39;./What-are-They-_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/what_applications-.html" onmouseover="F_roll(&#39;NavigationBar1_1s1&#39; ,1, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_1s1&#39; ,2, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/What-Applications-_Np1.gif" id="NavigationBar1_1s1" name="NavigationBar1_1s1" onload="F_loadRollover(this,&#39;./What-Applications-_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/what_problems_solved-.html" onmouseover="F_roll(&#39;NavigationBar1_1s2&#39; ,1, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_1s2&#39; ,2, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/What-Problems-Solved-_Np1.gif" id="NavigationBar1_1s2" name="NavigationBar1_1s2" onload="F_loadRollover(this,&#39;./What-Problems-Solved-_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/what_is_good-.html" onmouseover="F_roll(&#39;NavigationBar1_1s3&#39; ,1, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_1s3&#39; ,2, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/What-is-Good-_Np1.gif" id="NavigationBar1_1s3" name="NavigationBar1_1s3" onload="F_loadRollover(this,&#39;./What-is-Good-_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/what_is_significant-.html" onmouseover="F_roll(&#39;NavigationBar1_1s4&#39; ,1, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_1s4&#39; ,2, &#39;NavigationBar1_1&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/What-are-Examples-_Np1.gif" id="NavigationBar1_1s4" name="NavigationBar1_1s4" onload="F_loadRollover(this,&#39;./What-are-Examples-_NRp2.gif&#39;,0)"></a></td></tr></tbody></table></div>
+<div id="NavigationBar1_2LYR" isautoclose="true" style="z-index: 5; top: 100px; left: 392px; visibility: hidden; clip: rect(auto auto 801px auto);" onmouseover="NOF_KeepOpen(&#39;NavigationBar1_2LYR&#39;, null)" onmouseout="NOF_KeepClose()"><table width="10" border="0" cellspacing="1" cellpadding="0" bgcolor=""><tbody><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/math.html" onmouseover="F_roll(&#39;NavigationBar1_2s0&#39; ,1, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_2s0&#39; ,2, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Basic-Linear-Algeba_Np1.gif" id="NavigationBar1_2s0" name="NavigationBar1_2s0" onload="F_loadRollover(this,&#39;./Basic-Linear-Algeba_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/math.html#Coordinate-Systems" onmouseover="F_roll(&#39;NavigationBar1_2s1&#39; ,1, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_2s1&#39; ,2, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Coordinate-Systems_Np1.gif" id="NavigationBar1_2s1" name="NavigationBar1_2s1" onload="F_loadRollover(this,&#39;./Coordinate-Systems_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/points_and_vectors.html" onmouseover="F_roll(&#39;NavigationBar1_2s2&#39; ,1, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_2s2&#39; ,2, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Points-and-Vectors_Np1.gif" id="NavigationBar1_2s2" name="NavigationBar1_2s2" onload="F_loadRollover(this,&#39;./Points-and-Vectors_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/vector_products.html" onmouseover="F_roll(&#39;NavigationBar1_2s3&#39; ,1, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_2s3&#39; ,2, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Vector-Products_Np1.gif" id="NavigationBar1_2s3" name="NavigationBar1_2s3" onload="F_loadRollover(this,&#39;./Vector-Products_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/summary_sheet.html" onmouseover="F_roll(&#39;NavigationBar1_2s4&#39; ,1, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_2s4&#39; ,2, &#39;NavigationBar1_2&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Summary-Sheet_Np1.gif" id="NavigationBar1_2s4" name="NavigationBar1_2s4" onload="F_loadRollover(this,&#39;./Summary-Sheet_NRp2.gif&#39;,0)"></a></td></tr></tbody></table></div>
+<div id="NavigationBar1_3LYR" isautoclose="true" style="z-index:5; filter:blendTrans(duration=0.5)" onmouseover="NOF_KeepOpen(&#39;NavigationBar1_3LYR&#39;, null)" onmouseout="NOF_KeepClose()"><table width="10" border="0" cellspacing="1" cellpadding="0" bgcolor=""><tbody><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/algorithms.html" onmouseover="F_roll(&#39;NavigationBar1_3s0&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s0&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Table-of-Contents_Np1.gif" id="NavigationBar1_3s0" name="NavigationBar1_3s0" onload="F_loadRollover(this,&#39;./Table-of-Contents_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a01-_area.html" onmouseover="F_roll(&#39;NavigationBar1_3s1&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s1&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A01--Area_Np1.gif" id="NavigationBar1_3s1" name="NavigationBar1_3s1" onload="F_loadRollover(this,&#39;./A01--Area_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a02-_lines.html" onmouseover="F_roll(&#39;NavigationBar1_3s2&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s2&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A02--Lines_Np1.gif" id="NavigationBar1_3s2" name="NavigationBar1_3s2" onload="F_loadRollover(this,&#39;./A02--Lines_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a03-_inclusion.html" onmouseover="F_roll(&#39;NavigationBar1_3s3&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s3&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A03--Inclusion_Np1.gif" id="NavigationBar1_3s3" name="NavigationBar1_3s3" onload="F_loadRollover(this,&#39;./A03--Inclusion_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a04-_planes.html" onmouseover="F_roll(&#39;NavigationBar1_3s4&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s4&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A04--Planes_Np1.gif" id="NavigationBar1_3s4" name="NavigationBar1_3s4" onload="F_loadRollover(this,&#39;./A04--Planes_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a05-_intersect-1.html" onmouseover="F_roll(&#39;NavigationBar1_3s5&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s5&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A05--Intersect-1_Np1.gif" id="NavigationBar1_3s5" name="NavigationBar1_3s5" onload="F_loadRollover(this,&#39;./A05--Intersect-1_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a06-_intersect-2.html" onmouseover="F_roll(&#39;NavigationBar1_3s6&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s6&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A06--Intersect-2_Np1.gif" id="NavigationBar1_3s6" name="NavigationBar1_3s6" onload="F_loadRollover(this,&#39;./A06--Intersect-2_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a07-_distance.html" onmouseover="F_roll(&#39;NavigationBar1_3s7&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s7&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A07--Distance_Np1.gif" id="NavigationBar1_3s7" name="NavigationBar1_3s7" onload="F_loadRollover(this,&#39;./A07--Distance_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a08-_containers.html" onmouseover="F_roll(&#39;NavigationBar1_3s8&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s8&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A08--Containers_Np1.gif" id="NavigationBar1_3s8" name="NavigationBar1_3s8" onload="F_loadRollover(this,&#39;./A08--Containers_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a09-_intersect-3.html" onmouseover="F_roll(&#39;NavigationBar1_3s9&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s9&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A09--Intersect-3_Np1.gif" id="NavigationBar1_3s9" name="NavigationBar1_3s9" onload="F_loadRollover(this,&#39;./A09--Intersect-3_NRp2.gif&#39;, new Array(&#39;NavigationBar1_6&#39;,&#39;vertical&#39; , &#39;right&#39;, 130,0))"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a10-_hull-1.html" onmouseover="F_roll(&#39;NavigationBar1_3s10&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s10&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A10--Hull-1_Np1.gif" id="NavigationBar1_3s10" name="NavigationBar1_3s10" onload="F_loadRollover(this,&#39;./A10--Hull-1_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a11-_hull-2.html" onmouseover="F_roll(&#39;NavigationBar1_3s11&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s11&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A11--Hull-2_Np1.gif" id="NavigationBar1_3s11" name="NavigationBar1_3s11" onload="F_loadRollover(this,&#39;./A11--Hull-2_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a12-_hull-3.html" onmouseover="F_roll(&#39;NavigationBar1_3s12&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s12&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A12--Hull-3_Np1.gif" id="NavigationBar1_3s12" name="NavigationBar1_3s12" onload="F_loadRollover(this,&#39;./A12--Hull-3_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a13-_intersect-4.html" onmouseover="F_roll(&#39;NavigationBar1_3s13&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s13&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A13--Intersect-4_Np1.gif" id="NavigationBar1_3s13" name="NavigationBar1_3s13" onload="F_loadRollover(this,&#39;./A13--Intersect-4_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a14-_extreme_pts.html" onmouseover="F_roll(&#39;NavigationBar1_3s14&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s14&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A14--Extreme-Pts_Np1.gif" id="NavigationBar1_3s14" name="NavigationBar1_3s14" onload="F_loadRollover(this,&#39;./A14--Extreme-Pts_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a15-_tangents.html" onmouseover="F_roll(&#39;NavigationBar1_3s15&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s15&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A15--Tangents_Np1.gif" id="NavigationBar1_3s15" name="NavigationBar1_3s15" onload="F_loadRollover(this,&#39;./A15--Tangents_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a16-_decimate-1.html" onmouseover="F_roll(&#39;NavigationBar1_3s16&#39; ,1, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_3s16&#39; ,2, &#39;NavigationBar1_3&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A16--Decimate-1_Np1.gif" id="NavigationBar1_3s16" name="NavigationBar1_3s16" onload="F_loadRollover(this,&#39;./A16--Decimate-1_NRp2.gif&#39;,0)"></a></td></tr></tbody></table></div>
+<div id="NavigationBar1_6LYR" isautoclose="true" style="z-index:5; filter:blendTrans(duration=0.5)" onmouseover="NOF_KeepOpen(&#39;NavigationBar1_6LYR&#39;, NavigationBar1_3LYR)" onmouseout="NOF_KeepClose()"><table width="10" border="0" cellspacing="1" cellpadding="0" bgcolor=""><tbody><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/a09-_avl_code.html" onmouseover="F_roll(&#39;NavigationBar1_6s0&#39; ,1, &#39;NavigationBar1_6&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_6s0&#39; ,2, &#39;NavigationBar1_6&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/A09--AVL-Code_Np1.gif" id="NavigationBar1_6s0" name="NavigationBar1_6s0" onload="F_loadRollover(this,&#39;./A09--AVL-Code_NRp2.gif&#39;,0)"></a></td></tr></tbody></table></div>
+<div id="NavigationBar1_4LYR" isautoclose="true" style="z-index:5; filter:blendTrans(duration=0.5)" onmouseover="NOF_KeepOpen(&#39;NavigationBar1_4LYR&#39;, null)" onmouseout="NOF_KeepClose()"><table width="10" border="0" cellspacing="1" cellpadding="0" bgcolor=""><tbody><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/code.html#Core-Classes" onmouseover="F_roll(&#39;NavigationBar1_4s0&#39; ,1, &#39;NavigationBar1_4&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_4s0&#39; ,2, &#39;NavigationBar1_4&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Core-Classes_Np1.gif" id="NavigationBar1_4s0" name="NavigationBar1_4s0" onload="F_loadRollover(this,&#39;./Core-Classes_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/code.html#Primitive-Functions" onmouseover="F_roll(&#39;NavigationBar1_4s1&#39; ,1, &#39;NavigationBar1_4&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_4s1&#39; ,2, &#39;NavigationBar1_4&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Primitive-Functions_Np1.gif" id="NavigationBar1_4s1" name="NavigationBar1_4s1" onload="F_loadRollover(this,&#39;./Primitive-Functions_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/code.html#Application-Routines" onmouseover="F_roll(&#39;NavigationBar1_4s2&#39; ,1, &#39;NavigationBar1_4&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_4s2&#39; ,2, &#39;NavigationBar1_4&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Application-Routines_Np1.gif" id="NavigationBar1_4s2" name="NavigationBar1_4s2" onload="F_loadRollover(this,&#39;./Application-Routines_NRp2.gif&#39;,0)"></a></td></tr></tbody></table></div>
+<div id="NavigationBar1_5LYR" isautoclose="true" style="z-index: 5; top: 100px; left: 785px; visibility: hidden; clip: rect(auto auto 801px auto);" onmouseover="NOF_KeepOpen(&#39;NavigationBar1_5LYR&#39;, null)" onmouseout="NOF_KeepClose()"><table width="10" border="0" cellspacing="1" cellpadding="0" bgcolor=""><tbody><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/journals.html" onmouseover="F_roll(&#39;NavigationBar1_5s0&#39; ,1, &#39;NavigationBar1_5&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_5s0&#39; ,2, &#39;NavigationBar1_5&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/Journals_Np1.gif" id="NavigationBar1_5s0" name="NavigationBar1_5s0" onload="F_loadRollover(this,&#39;./Journals_NRp2.gif&#39;,0)"></a></td></tr><tr><td><a class="nof-navPositioning" href="http://geomalgorithms.com/websites.html" onmouseover="F_roll(&#39;NavigationBar1_5s1&#39; ,1, &#39;NavigationBar1_5&#39;, &#39;1&#39;)" onmouseout="F_roll(&#39;NavigationBar1_5s1&#39; ,2, &#39;NavigationBar1_5&#39;, &#39;1&#39;)" style="display: block;"><img border="0" src="./Intersections of Rays, Planes and Triangles (3D)_files/WebSites_Np1_1.gif" id="NavigationBar1_5s1" name="NavigationBar1_5s1" onload="F_loadRollover(this,&#39;./WebSites_NRp2_1.gif&#39;,0)"></a></td></tr></tbody></table></div>
+
+  <!-- Analytics Code Start -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script src="./Intersections of Rays, Planes and Triangles (3D)_files/ga.js.download" type="text/javascript"></script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-36434615-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- Analytics Code End -->
+
+
+ </body></html>
