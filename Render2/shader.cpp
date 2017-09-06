@@ -210,9 +210,7 @@ double Shader::findOcclusion( const Scene &scene, const HitInfo &hit, Color &col
 			}
 			theta -= angleRange;
 		}
-		//color = color *  (1 - (occlusions / totalRayCount));
-
-
+		//color = color *  (1 - (occlusions / totalRayCount))
 
 
 	}
@@ -222,8 +220,6 @@ double Shader::findOcclusion( const Scene &scene, const HitInfo &hit, Color &col
 		angleRange =  Pi / numberOfDivisions  ; // the entire range
 		double theta = angleRange;
 		double phi = (startingPhi - (Pi/2.0)) + angleRange;
-		
-	
 		
 		//for ( double theta = angleRange ; theta < Pi ; theta += angleRange )
 		for ( int outerTheta = 0; outerTheta < (numberOfDivisions - 1) ; ++ outerTheta)
@@ -332,7 +328,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 		double temp1 = max ( 0, E * RR ) ;
 		double temp2 = pow ( max ( 0, E * RR ) , e);
 
-		color += emission * ( specular * ( pow ( max ( 0, E * RR ) , e) ) ) ;
+		color += emission * ( specular * ( pow ( max ( 0.0, E * RR ) , e) ) ) ;
 	}
 
 	//generateSoftShadows ( scene, hit, color );

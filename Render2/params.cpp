@@ -148,7 +148,7 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 		pch = strtok (NULL, " ,.-");
 	}
 
-	int numOfFieldsPerFace = 0;
+	int numOfFieldsPerFace = 1;
 	int x = 0;
 	bool hasTextureVert = true;
 	bool hasVertexNormal = false ;
@@ -160,14 +160,13 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 				hasTextureVert = false;
 				hasVertexNormal = true;
 			}
-			x++;
-			numOfFieldsPerFace++;
-		}
-		else {
+			
 			numOfFieldsPerFace++;
 		}
 		x++;
 	}
+
+	if ( numOfFieldsPerFace == 3 ) hasVertexNormal = true ;
 
 	//store each face data and it's elements in a 2d array
 	for ( int i = 0 ; i < vecOut.size() ; ++ i ) {
@@ -180,6 +179,7 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 	}
 
 	object.triangles.push_back ( BSP_Node(numOfTriangle) );
+	
 	object.triangles.back().triVert1 = object.points[faceData[0][0]]; //first point
 	object.triangles.back().triVert2 = object.points[faceData[1][0]]; //second point
 	object.triangles.back().triVert3 = object.points[faceData[2][0]]; //third point
@@ -207,24 +207,34 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx2, calcNormal );
 	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx3, calcNormal );
 
-	// TODO Vertex textures and interpolation
+	// TODO interpolation
 	// TODO Trapezoidal decomp
-	if ( vecOut.size() == 4 ) //the face is a quad, or of order n. Triangulate
-	{
+	if ( vecOut.size() == 4 ) { //the face is a quad, or of order n. Triangulate
+	
 		object.triangles.push_back ( BSP_Node(++numOfTriangle) ); //make a new triangle for the fourth point
 		object.triangles.back().triVert1 = object.points[faceData[2][0]] ; //vert 3 of prior triangle
 		object.triangles.back().triVert2 = object.points[faceData[3][0]];  //vert 4 
 		object.triangles.back().triVert3 = object.points[faceData[0][0]] ; //vert 1 of prior triangle
+		object.triangles.back().triIndx1 = faceData[2][0];
+		object.triangles.back().triIndx2 = faceData[3][0];
+		object.triangles.back().triIndx3 = faceData[0][0];
 		object.triangles.back().triNormal = object.vertexNormals[faceData[3][numOfFieldsPerFace-1]]; //get vertex normal of fourth point
 
-		//CALC NORMAL OF TRIANGLE, MAKE SURE IT IS IN THE SAME DIR AS THE NORMAL OF THE MIDDLE POINT
-		Vec3 calcNormal = Unit((object.triangles.back().triVert1 - object.triangles.back().triVert2) ^
-						  (object.triangles.back().triVert3 - object.triangles.back().triVert2));
+		//CALC NORMAL OF TRIANGLE, MAKE SURE IT IS IN THE SAME DIR AS THE NORMAL OF THE MIDDLE POINT, (B - A) x (C - A)
+		Vec3 calcNormal = Unit((object.triangles.back().triVert2 - object.triangles.back().triVert1) ^
+					  (object.triangles.back().triVert3 - object.triangles.back().triVert2));
 
-		if ( (calcNormal * (object.triangles.back().triNormal)) < 0.0 )
-			calcNormal = -1.0 * calcNormal ;
+		if ( hasVertexNormal ) {
+			object.triangles.back().triNormal = object.vertexNormals[faceData[2][numOfFieldsPerFace - 1] ]; //get vertex normal of second point
+			if ( (calcNormal * (object.triangles.back().triNormal)) < 0.0 )
+				calcNormal = -1.0 * calcNormal ;
+		}
 		
 		object.triangles.back().triNormal = calcNormal;
+
+		addUniqueNormals ( adjMatrix, object.triangles.back().triIndx1, calcNormal );
+		addUniqueNormals ( adjMatrix, object.triangles.back().triIndx2, calcNormal );
+		addUniqueNormals ( adjMatrix, object.triangles.back().triIndx3, calcNormal );
 	}
 
 	delete[] writable;

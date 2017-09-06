@@ -20,11 +20,10 @@ static const Color
 	DEFAULT_BACKGROUND_COLOR  = Color( 0.15, 0.25, 0.35 ),
 	DEFAULT_TERMINATION_COLOR = Color( 0.0, 0.0, 0.0 );
 
-static Material *Copy( Material* &mat, const Material &material )
-	{
+static Material * Copy( Material * mat, const Material &material ){
 	if( mat == NULL || !(*mat == material) ) mat = new Material( material );
 	return mat;
-	}
+}
 
 static bool Skip( char *line )
 {
@@ -221,6 +220,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 	material.translucency = Black;
 	material.ref_index    = 0.0;
 	material.Phong_exp    = 0.0;
+	bool objectFlipYZFlip = false;
 
 	camera.x_res = default_image_width;
 	camera.y_res = default_image_height;
@@ -262,7 +262,6 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 		if( get["x_win"]        && get[camera.x_win]          ) continue;
 		if( get["y_win"]        && get[camera.y_win]          ) continue;
 		
-		
 		if( get["ambient"]      && get[material.ambient]      ) continue;            
 		if( get["diffuse"]      && get[material.diffuse]      ) continue;
 		if( get["specular"]     && get[material.specular]     ) continue;
@@ -272,6 +271,13 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 		if( get["Phong_exp"]    && get[material.Phong_exp]    ) continue;
 		if( get["ref_index"]    && get[material.ref_index]    ) continue;
 
+		if( get["flipYZ"]		&& get.getString ( tempObjectString ) ) {
+			if ( tempObjectString == "0" ||  tempObjectString == "1" )
+				objectFlipYZFlip = std::stoi( tempObjectString ) ;
+			else cerr << "Error in assigning flipYZ String" << endl;
+			continue ;	
+		}
+
 		if( get["object"]		&& get.getString ( tempObjectString )) { // encountered an object in the scene file, instantiate the object and assign the material
 
 			cout << "Encountered an object named : " << tempObjectString << endl ;
@@ -279,7 +285,20 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 			object = new Object ();
 			this->sceneObjects.push_back ( object );
 			object->nameOfObject = tempObjectString;
-			object->material = Copy ( mat, material ) ;
+			object->material = Copy ( mat, material );
+			object->flipYZ = objectFlipYZFlip ;
+
+			// Set defaults.
+			material.diffuse      = White;
+			material.emission     = Black;
+			material.specular     = White;
+			material.ambient      = Black;
+			material.reflectivity = Black;
+			material.translucency = Black;
+			material.ref_index    = 0.0;
+			material.Phong_exp    = 0.0;
+			objectFlipYZFlip	  = false; 
+
 			continue;
 		}
 		
@@ -354,16 +373,20 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 					if ( !get.getPoint (tempVec ))
 						cout << "Error retrieving point at line " << line_num << endl;
 					else	
-						(*currentIteratorObject)->points.push_back  ( Vec3(tempVec.x, tempVec.y, tempVec.z ));
+						((*currentIteratorObject)->flipYZ ) ? (*currentIteratorObject)->points.push_back  ( Vec3(tempVec.x, tempVec.z, tempVec.y )) :
+															  (*currentIteratorObject)->points.push_back  ( Vec3(tempVec.x, tempVec.y, tempVec.z ));
 				}
 				else if ( get["f"] ){
 					adjMatrix.resize((*currentIteratorObject)->points.size());
+					//cout << line_num << endl;
+					//if ( line_num == 13784 ) 
+						//int fdgfdg = 34;
 					if ( !get.returnCoordOfFace ( *(*currentIteratorObject), numOfTriangle,adjMatrix  )) //TODO assign each node to it's parent object
 						cout << "Error retrieving face at line " << line_num << endl;
 					numOfTriangle++;
 				}
 				else
-					cout << "UN ID in Obj file @ line" << line_num << endl;	
+					cout << "UN ID in Obj file @ line" << line_num << " : " << get.returnString() <<  endl;	
 				line_num++;
 			}
 		}
@@ -387,7 +410,7 @@ bool Scene::BuildBSP () {
 
 	for ( std::vector< Object * >::iterator sceneObjectIterator = sceneObjects.begin() ; sceneObjectIterator != sceneObjects.end() ; ++sceneObjectIterator ) {
 		
-		//randomizeTriangles ( (*sceneObjectIterator)->triangles);
+		randomizeTriangles ( (*sceneObjectIterator)->triangles);
 		vector < BSP_Node * > tris ;
 
 		for ( unsigned int i = 0 ; i < (*sceneObjectIterator)->triangles.size(); i++ )

@@ -121,6 +121,7 @@ struct Object{
 	vector <Vec3> points;
 	vector <Vec3> vertexNormals;
 	vector <Vec2> vertexTexture;
+	bool flipYZ ;
 	BSP_Node * root ;
 	Material * material;
 };

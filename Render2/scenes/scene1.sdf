@@ -1,7 +1,7 @@
 
 
 #eye     (7.0,-2.0, 2.8)
-eye     (5.0, -2.0, 2.8)
+eye     (10.0, -2.0, 2.8)
 #eye     (5.0,-3.0, 2.8)
 #eye		 (-7.0,-2.0, 2.8)
 lookat  (0.0, 1.1, 0.25)
@@ -25,15 +25,29 @@ diffuse  		[0.34, 0.37, 0.88]
 ambient  		[.1,   .1,   .1]
 specular		[1.0, .85,  .75]
 Phong_exp		25.0
-object		    gourd
+#object		    gourd
 #object		    gourdred
 #object			split_test
 #object 		cube
 #object			ground
 
+emission 		[0, 0, 0]
+diffuse  		[0.34, 0.37, 0.88]
+ambient  		[.1,   .1,   .1]
+specular		[0.0, 0.0,  0.0]
+Phong_exp		0.0
+object			ground
+
+emission 		[0, 0, 0]
 diffuse  		[0.34, 0.37, 0.88]
 ambient  		[.1,   .1,   .1]
 specular		[1.0, .85,  .75]
-#object			ground
+Phong_exp		25.0
+flipYZ			1
+object			Golden_Buddha_low
+
+
+
+
 
 end

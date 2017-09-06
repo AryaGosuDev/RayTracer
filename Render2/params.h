@@ -22,6 +22,7 @@ class ParamReader {
 		bool returnCoordOfFace ( Object & object, int & numOfTriangle, vector<vector<Vec3>> & );
 		bool getPoint ( Vec3 & v );
 		bool getTexture ( Vec2 & v );
+		string returnString () { return params ; } 
 	private:
 		void SkipBlanks();
 		string params;
