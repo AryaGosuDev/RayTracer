@@ -227,6 +227,5 @@ bool Object::Intersect (const Ray & ray, HitInfo & hitinfo ) const {
 	}
 
 	return _info.found;
-
 }
 

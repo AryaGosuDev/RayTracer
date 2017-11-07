@@ -31,10 +31,36 @@ struct Material {         // Surface material for shading.
 	long   type;          // Reserved for future use.
 	};
 
+struct Transformation {
+	Vec3 translation;
+	Vec3 rotation;
+	Vec3 scale ;
+	bool Istranslation;
+	bool Isrotation;
+	bool Isscale;
+
+	Transformation() : translation ( 0.0, 0.0, 0.0 ),
+					   rotation ( 0.0, 0.0, 0.0) ,
+					   scale ( 0.0, 0.0, 0.0 ),
+					   Istranslation ( false ),
+					   Isrotation ( false ),
+					   Isscale ( false ){
+	}
+
+	void reset() {
+		translation = Vec3 ( 0.0, 0.0, 0.0 );
+		rotation = Vec3 ( 0.0, 0.0, 0.0 );
+		scale = Vec3 ( 0.0, 0.0, 0.0 );
+		Istranslation = false ;
+		Isrotation = false ;
+		Isscale = false ;
+	}
+};
+
 struct HitInfo {          // Records all info at ray-object intersection.
 	const Object *ignore; // One object in scene to ignore (used by Cast).
 	const Object *object; // The object that was hit (set by Intersect).
-	BSP_Node * tri; // The triangle that has been hit by the ray
+	BSP_Node * tri;		  // The triangle that has been hit by the ray
 	double  distance;     // Distance to hit (used & reset by Intersect).
 	Vec3    point;        // ray-object intersection point (set by Intersect).
 	Vec3    normal;       // Surface normal (set by Intersect).
@@ -42,6 +68,23 @@ struct HitInfo {          // Records all info at ray-object intersection.
 	Ray     ray;          // The ray that hit the surface (set by Cast).
 	float   BayCentricU;  // Baycentric parameters of the triangle
 	float	BayCentricV;  
+
+	HitInfo() : ignore(0) , object(0), tri(0) {}
+
+	HitInfo & operator= ( const HitInfo & rhs ) {
+		ignore = rhs.ignore;
+		object = rhs.object;
+		tri = rhs.tri;
+		distance = rhs.distance;
+		point = rhs.point;
+		normal = rhs.normal;
+		uv = rhs.uv;
+		ray = rhs.ray;
+		BayCentricU = rhs.BayCentricU;
+		BayCentricV = rhs.BayCentricV;
+
+		return *this;
+	}
 };
 
 struct Camera {           // Defines the position of the eye/camera.
@@ -86,10 +129,14 @@ struct Shader {
 	virtual Color generateNormalShadows (const Scene &, const HitInfo &, Color &color ) const ; 
 	virtual Color generateSoftShadows (const Scene &, const HitInfo &, Color &color ) const ; 
 	virtual double findOcclusion (const Scene &, const HitInfo &, Color &color ) const ; 
+	virtual double findOcclusionNew (const Scene &, const HitInfo &, Color &color, double radiusOfHemisphere, int  ) const ; 
 
-	
 	virtual string MyName() const { return "shader"; }
 	virtual bool Default() const { return true; }
+
+	int ambientOcclusionSamples ;
+	int ambientOcclusionHemisphereRadius ;
+
 	};
 
 struct Envmap { // Each object can have its own environment map.
@@ -124,6 +171,7 @@ struct Object{
 	bool flipYZ ;
 	BSP_Node * root ;
 	Material * material;
+	Transformation trnsf ;
 };
 
 struct BSP_Node{

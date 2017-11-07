@@ -18,24 +18,40 @@ y_res 400
 # Set constants that will apply to all objects, until reset.
 
 emission     	[1, 1, 1]
-spherelight     (-6.0, 4.0, 10.0) 1
+spherelight     (6.0, 4.0, 10.0) 1
 
-emission 		[0, 0, 0]
-diffuse  		[0.34, 0.37, 0.88]
-ambient  		[.1,   .1,   .1]
-specular		[1.0, .85,  .75]
-Phong_exp		25.0
+#emission 		[0, 0, 0]
+#diffuse  		[0.84, 0.67, 0.28]
+#ambient  		[.1,   .1,   .1]
+#specular		[1.0, .85,  .75]
+#Phong_exp		25.0
+#flipYZ			1
 #object		    gourd
-#object		    gourdred
-#object			split_test
-#object 		cube
-#object			ground
+
+#emission 		[0, 0, 0]
+#diffuse  		[0.34, 0.88, 0.38]
+#ambient  		[.1,   .1,   .1]
+#specular		[0.0, 0.0,  0.0]
+#Phong_exp		2.0
+#translate		(0.0, 3.0, -0.5 )
+#flipYZ			1
+#object 			cube
+
+#emission 		[0, 0, 0]
+#diffuse  		[0.84, 0.37, 0.38]
+#ambient  		[.1,   .1,   .1]
+#specular		[0.0, 0.0,  0.0]
+#Phong_exp		2.0
+#translate		(0.0, 5.0, 0.0)
+#flipYZ			1
+#object 			cube
 
 emission 		[0, 0, 0]
 diffuse  		[0.34, 0.37, 0.88]
 ambient  		[.1,   .1,   .1]
 specular		[0.0, 0.0,  0.0]
 Phong_exp		0.0
+translate		(0.0, 0.0, 0.5)
 object			ground
 
 emission 		[0, 0, 0]
@@ -44,10 +60,7 @@ ambient  		[.1,   .1,   .1]
 specular		[1.0, .85,  .75]
 Phong_exp		25.0
 flipYZ			1
+#translate		(6.0, -1.0, .5)
 object			Golden_Buddha_low
-
-
-
-
 
 end

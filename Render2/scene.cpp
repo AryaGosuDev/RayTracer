@@ -86,32 +86,7 @@ Scene::Scene() {
 	shader = new Shader();
 }
 
-// Finds the closest point of intersection among all the objects.
-// The information about the collision is stored in hitinfo.
-bool Scene::Cast( const Ray &ray, HitInfo &hitinfo ) const {
-	double cmprDistance = 0 ;
-	HitInfo tempHitInfo   ;
 
-	// Iterate through all the objects, lights are not considered objects at the moment.
-	for ( std::vector<Object * >::const_iterator objsBegin = sceneObjects.begin() ; objsBegin != sceneObjects.end(); objsBegin++ ){
-		if( *objsBegin == NULL || *objsBegin == hitinfo.ignore ) return false;
-		if( (*objsBegin)->Intersect( ray, hitinfo ) ){
-			if ( cmprDistance == 0 ){
-				cmprDistance = hitinfo.distance ;
-				hitinfo.object = (*objsBegin) ;
-			}
-			else if ( cmprDistance > hitinfo.distance ){
-				
-				cmprDistance = hitinfo.distance ;
-				hitinfo.object = (*objsBegin);
-
-			}
-			hitinfo.ray = ray; // Save the ray in world coordinates.
-			return true;
-		}
-	}
-	return false;
-}
 
 /*
 //Will return true if the point that is passed is already inside some object
@@ -184,6 +159,37 @@ Color Scene::Trace( const Ray &ray ) const {
 	return color;
 }
 
+// Finds the closest point of intersection among all the objects.
+// The information about the collision is stored in hitinfo.
+bool Scene::Cast( const Ray &ray, HitInfo &hitinfo ) const {
+	double cmprDistance = 0 ;
+	HitInfo tempInfo ;
+
+	// Iterate through all the objects, lights are not considered objects at the moment.
+	for ( std::vector<Object * >::const_iterator objsBegin = sceneObjects.begin() ; 
+				objsBegin != sceneObjects.end() && ( *objsBegin != NULL || *objsBegin != hitinfo.ignore ) ; 
+				objsBegin++ ){
+
+		if( (*objsBegin)->Intersect( ray, hitinfo ) ){
+			if ( cmprDistance == 0 ){
+				cmprDistance = hitinfo.distance ;
+				hitinfo.object = (*objsBegin) ;
+				tempInfo = hitinfo ;
+			}
+			else if ( cmprDistance > hitinfo.distance ){
+				
+				cmprDistance = hitinfo.distance ;
+				hitinfo.object = (*objsBegin);
+				tempInfo = hitinfo ;
+			}
+			hitinfo.ray = ray; // Save the ray in world coordinates.
+		}
+	}
+
+	hitinfo = tempInfo ;
+
+	return ((hitinfo.object != 0) ?  true :  false);
+}
 
 bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 	int line_num = 0;
@@ -195,6 +201,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 	//Envmap    *env = NULL;  // Current environment map.
 	Material  *mat = NULL;  // Current material pointer.
 	Material   material;    // Current material.
+	Transformation tempTrnsf;
 	string	   tempObjectString;
 
 	//scene.object    = NULL;
@@ -220,7 +227,11 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 	material.translucency = Black;
 	material.ref_index    = 0.0;
 	material.Phong_exp    = 0.0;
+
 	bool objectFlipYZFlip = false;
+	bool objectScale	  = false;
+	bool objectRotate	  = false;
+	bool objectTranslate  = false;
 
 	camera.x_res = default_image_width;
 	camera.y_res = default_image_height;
@@ -278,6 +289,19 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 			continue ;	
 		}
 
+		if ( get["translate"]    && get[tempTrnsf.translation] ) {
+			objectTranslate = true ;
+			continue;
+		}
+		if ( get["rotation"]    && get[tempTrnsf.rotation] ) {
+			objectRotate = true ;
+			continue;
+		}
+		if ( get["scale"]    && get[tempTrnsf.scale] ) {
+			objectScale = true ;
+			continue;
+		}
+
 		if( get["object"]		&& get.getString ( tempObjectString )) { // encountered an object in the scene file, instantiate the object and assign the material
 
 			cout << "Encountered an object named : " << tempObjectString << endl ;
@@ -286,7 +310,11 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 			this->sceneObjects.push_back ( object );
 			object->nameOfObject = tempObjectString;
 			object->material = Copy ( mat, material );
+			object->trnsf = tempTrnsf ;
 			object->flipYZ = objectFlipYZFlip ;
+			object->trnsf.Istranslation = objectTranslate;
+			object->trnsf.Isrotation = objectRotate;
+			object->trnsf.Isscale = objectScale;
 
 			// Set defaults.
 			material.diffuse      = White;
@@ -298,6 +326,10 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 			material.ref_index    = 0.0;
 			material.Phong_exp    = 0.0;
 			objectFlipYZFlip	  = false; 
+			objectTranslate		  = false;
+			objectRotate		  = false;
+			objectScale			  = false;
+			tempTrnsf.reset() ;
 
 			continue;
 		}
@@ -368,13 +400,18 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 						cout << "Error retrieving normal" << endl;
 					else
 						(*currentIteratorObject)->vertexNormals.push_back (Vec3(tempVec.x, tempVec.y, tempVec.z ));
-				}
+				}	
 				else if ( get["v"] ){
 					if ( !get.getPoint (tempVec ))
 						cout << "Error retrieving point at line " << line_num << endl;
 					else	
 						((*currentIteratorObject)->flipYZ ) ? (*currentIteratorObject)->points.push_back  ( Vec3(tempVec.x, tempVec.z, tempVec.y )) :
 															  (*currentIteratorObject)->points.push_back  ( Vec3(tempVec.x, tempVec.y, tempVec.z ));
+					if ( (*currentIteratorObject)->trnsf.Istranslation ){
+						((*currentIteratorObject)->points[(*currentIteratorObject)->points.size() - 1]).x += (*currentIteratorObject)->trnsf.translation.x ;
+						((*currentIteratorObject)->points[(*currentIteratorObject)->points.size() - 1]).y += (*currentIteratorObject)->trnsf.translation.y ;
+						((*currentIteratorObject)->points[(*currentIteratorObject)->points.size() - 1]).z += (*currentIteratorObject)->trnsf.translation.z ;
+					}
 				}
 				else if ( get["f"] ){
 					adjMatrix.resize((*currentIteratorObject)->points.size());
@@ -386,7 +423,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 					numOfTriangle++;
 				}
 				else
-					cout << "UN ID in Obj file @ line" << line_num << " : " << get.returnString() <<  endl;	
+					cout << "Unidentified ID in obj file @ line" << line_num << " : " << get.returnString() <<  endl;	
 				line_num++;
 			}
 		}
@@ -410,7 +447,7 @@ bool Scene::BuildBSP () {
 
 	for ( std::vector< Object * >::iterator sceneObjectIterator = sceneObjects.begin() ; sceneObjectIterator != sceneObjects.end() ; ++sceneObjectIterator ) {
 		
-		randomizeTriangles ( (*sceneObjectIterator)->triangles);
+		//randomizeTriangles ( (*sceneObjectIterator)->triangles);
 		vector < BSP_Node * > tris ;
 
 		for ( unsigned int i = 0 ; i < (*sceneObjectIterator)->triangles.size(); i++ )
@@ -460,13 +497,6 @@ BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
 	if ( v.size() == 0 )		
 		return NULL;
 	if ( v.size() <= 1){ //leaf node
-		//BSP_Node * newNode = new BSP_Node() ;
-		//newNode->triVert1 = v[0]->triVert1 ;
-		//newNode->triVert2 = v[0]->triVert2 ;
-		//newNode->triVert3 = v[0]->triVert3 ;
-		//newNode->triNormal = v[0]->triNormal;
-		//newNode->node = v[0]->node;
-		//return newNode;
 		return v[0] ; //return the node that is by itself.
 	}
 	else{
@@ -493,16 +523,6 @@ BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
 				return NULL;
 			}
 		}
-
-		//BSP_Node * newNodeTop = new BSP_Node() ;
-		//newNodeTop->triVert1 = v[0]->triVert1 ;
-		//newNodeTop->triVert2 = v[0]->triVert2 ;
-		//newNodeTop->triVert3 = v[0]->triVert3 ;
-		//newNodeTop->triNormal = v[0]->triNormal;
-		//newNodeTop->node = v[0]->node;
-		//newNodeTop->left = buildBSPTree ( vLeft );
-		//newNodeTop->right = buildBSPTree ( vRight );
-		//return newNodeTop;
 
 		v[0]->left = buildBSPTree ( vLeft );
 		v[0]->right = buildBSPTree ( vRight );

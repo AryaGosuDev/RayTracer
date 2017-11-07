@@ -3,6 +3,7 @@
 #include "ray_tracer.h"
 #include "util.h"
 #include "params.h"
+#include <random>
 
 inline Vec3 getInterpolatedNormal ( const HitInfo & hitinfo ) {
 	return hitinfo.BayCentricU * hitinfo.tri->vertNormal2 + hitinfo.BayCentricV * hitinfo.tri->vertNormal3 + ( 1 - hitinfo.BayCentricU - hitinfo.BayCentricV ) * hitinfo.tri->vertNormal1 ;
@@ -75,10 +76,10 @@ Color Shader::generateSoftShadows( const Scene &scene, const HitInfo &hit, Color
 	return color;
 }
 
-Color Shader::generateNormalShadows( const Scene &scene, const HitInfo &hit, Color &color ) const{
+Color Shader::generateNormalShadows( const Scene &scene, const HitInfo &hit, Color & color ) const{
 	
 	Vec3   P = hit.point; // Point where ray hit object in the scene
-	double colorDivisor = 2.0;
+	double colorDivisor = 1.3;
 	
 	//make a ray from the object            
 	HitInfo hitinfoshadow;             // Holds info to pass to shader.
@@ -108,6 +109,106 @@ Color Shader::generateNormalShadows( const Scene &scene, const HitInfo &hit, Col
 	 return color;
 }
 
+double Shader::findOcclusionNew ( const Scene & scene, const HitInfo & hit , Color & color, double radiusOfHemisphere, int AORaysToGenerate ) const {
+
+	if ( AORaysToGenerate == 0 ) return 1;
+
+	int occlusions = 0;
+	Vec3 newAxesZ, newAxesX, newAxesY, t ;
+
+	//rng
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(0.0, 2.0);
+
+
+	//define new axes based on the tangent of the hit surface normal
+	newAxesZ = Unit (hit.normal ) ;
+	t =  newAxesZ;
+
+	double smallestComponentZ = abs ( newAxesZ.z ),
+		   smallestComponentX = abs ( newAxesZ.x ),
+		   smallestComponentY = abs ( newAxesZ.y );
+
+	if ( smallestComponentZ <= smallestComponentX ) {
+		if ( smallestComponentZ <= smallestComponentY )
+			t.z = 1;
+	}
+	else if ( smallestComponentX <= smallestComponentZ ) {
+		if ( smallestComponentX <= smallestComponentY ) 
+			t.x = 1 ;
+	}
+	else t.y = 1 ;
+
+	newAxesX = Unit ( t ^ newAxesZ ) ;
+	newAxesY = newAxesZ ^ newAxesX ; 
+
+	//Unit Square to unit disc code
+
+	for ( int AORayIteration = 0 ; AORayIteration < AORaysToGenerate ; ++AORayIteration ) {
+
+		Vec2 squarePoint ( dis(gen) - 1, dis(gen) - 1 );
+		double phi, r, u, v ;
+		double a = squarePoint.x ;
+		double b = squarePoint.y;
+
+		if ( a > -b ){
+			if ( a > b ) {
+				r = a ;
+				phi = ( Pi / 4.0 ) * ( b / a ) ;
+			}
+			else {
+				r = b ;
+				phi = ( Pi / 4.0 ) * ( 2.0 - (a/b));
+			}
+		}
+		else {
+			if ( a < b ) {
+				r = -a ;
+				phi = (Pi / 4.0 ) * ( 4.0 + ( b / a ) );
+			}
+			else {
+				r = -b ;
+				if ( b != 0 )
+					phi = (Pi / 4.0 ) * ( 6.0 - (a/b));
+				else
+					phi = 0 ;
+			}
+		}
+
+		u = r * cos ( phi ) ;
+		v = r * sin ( phi ) ;
+
+		// finding z intercept of the ambient occlusion hemisphere
+		Vec3 VectorComponentX = u * newAxesX, VectorComponentY = v * newAxesY, VectorComponentZ  ;
+		Vec3 VectorBaseZ = VectorComponentX + VectorComponentY ;    // the base vector of the ray that intercepts the hemisphere
+		double rayLegLength = (( radiusOfHemisphere * radiusOfHemisphere ) - ( Length( VectorBaseZ ) * Length( VectorBaseZ ) ));
+
+		Vec3 RayFromCenterOfHemisphere = ((rayLegLength / radiusOfHemisphere) * newAxesZ ) + VectorBaseZ ;
+
+		//Shoot rays from the hemisphere in all directions and find a hit
+		Ray AOray;
+		AOray.direction = Unit(RayFromCenterOfHemisphere );
+		AOray.generation = 1;
+		AOray.origin = hit.point + ( AOray.direction * .0001 ) ;
+
+		HitInfo hitinfoAO;             // Holds info to pass to shader.
+		hitinfoAO.ignore = NULL;       // Don't ignore any objects.
+		hitinfoAO.distance = Infinity; // Follow the full ray.e point on the object back to the light source
+
+		if ( scene.Cast ( AOray, hitinfoAO) && hitinfoAO.distance < radiusOfHemisphere ) {
+			occlusions ++;
+		}
+		if ( occlusions > 10  ) {
+			int fdgdfg =4;
+
+			}
+	}
+
+	return  (1.0 - (occlusions / (double)AORaysToGenerate));
+
+}
+
 double Shader::findOcclusion( const Scene &scene, const HitInfo &hit, Color &color ) const
 {
 	//color.red = 1;
@@ -135,8 +236,7 @@ double Shader::findOcclusion( const Scene &scene, const HitInfo &hit, Color &col
 	double angleRange = 0;
 	
 
-	if ( abs ( hit.normal.z ) > abs ( hit.normal.x ) )
-	{
+	if ( abs ( hit.normal.z ) > abs ( hit.normal.x ) ){
 
 		angleRange =  Pi / numberOfDivisions  ; // the entire range
 		double theta = startingTheta + (Pi / 2.0) - angleRange ;
@@ -289,7 +389,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 	Vec3   O = hit.ray.origin; //ray origin
 	Vec3   P = hit.point; //point where ray hit object
 	//Vec3   N = hit.normal; //normal of the surface
-	Vec3   N = getInterpolatedNormal ( hit ) ; // Interpolated normal of the surface
+	Vec3   N = Unit (getInterpolatedNormal ( hit )) ; // Interpolated normal of the surface
 	Vec3   E = Unit( O - P );  // direction of the ray
 	Vec3   R = Unit( ( 2.0 * ( E * N ) ) * N - E );
 	
@@ -298,16 +398,14 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 
 	double diffuse_intensity = .2;
 
-	double occlusion = 0;
-
 	//if( E * N < 0.0 ) N = -N;  // Flip the normal if necessary.
 
 	color.blue = 0;
 	color.red = 0;
 	color.green = 0;
 
-	//occlusion =  findOcclusion ( scene, hit, color ) ;
-
+	double occlusion = findOcclusionNew ( scene, hit, color, 1.0, 0 ) ;
+	
 	//return color;
 
 	for( unsigned i = 0; i < scene.NumLights(); i++ ){
@@ -319,8 +417,8 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 		// AMBIET + DIFFUSE
 		L = Unit ( LightPos - P) ;
 
-		//color += emission * ( (occlusion*   ambient) + ( diffuse * max ( 0, N * L) ) ) ;
-		color += emission * ( ( ambient) + ( diffuse * max ( 0, N * L) ) ) ;
+		color += emission * ( (occlusion*   ambient) + ( diffuse * max ( 0, N * L) ) ) ;
+		//color += emission * ( ( ambient) + ( diffuse * max ( 0, N * L) ) ) ;
 
 		//SPECULATIVE
 		RR = (-1.0 * L) + (2.0 * ( L * N ) * N);

@@ -1,9 +1,9 @@
-﻿Build started 9/6/2017 1:12:07 AM.
+﻿Build started 11/6/2017 11:57:55 AM.
      1>Project "C:\Projects\RayTracer\Render2\Render2.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt scene.cpp
          scene.cpp
-     1>scene.cpp(276): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>scene.cpp(287): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.lib" /MACHINE:X64 x64\Debug\aabb.obj
          x64\Debug\main.obj
@@ -21,4 +21,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.91
+Time Elapsed 00:00:01.06

@@ -91,16 +91,8 @@ bool Rasterizer::Rasterize( string file_name_out, const Camera &cam, const Scene
 		{
 			// i == y
 			// j == x
-			if ( j == 177 && i == 152 ) {
+			if ( j == 376 && i == 212 ) {
 				int fdgfd = 43;
-			}
-
-			if ( j == 206 && i == 147 ) {
-				int fdgfd = 43;
-			}
-
-			if ( j == 236 && i == 142 ) {
-				int fdgfdg = 5 ;
 			}
 
 			ray.direction = Unit( O + (j + 0.5) * dR - (i + 0.5) * dU  );
