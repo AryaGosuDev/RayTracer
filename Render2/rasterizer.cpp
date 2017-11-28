@@ -2,6 +2,7 @@
 #include "ray_tracer.h"
 #include "ppm_image.h"
 #include "params.h"
+#include <thread>
 
 int Sample::debug_line = 0;
 
@@ -82,10 +83,6 @@ bool Rasterizer::Rasterize( string file_name_out, const Camera &cam, const Scene
 		cout.flush();
 
 		Sample::debug_line = i;
-
-		if ( i == 252 ) {
-			int fdgfdg = 4 ;
-		}
 
 		for( unsigned int j = 0; j < cam.x_res; j++ )
 		{

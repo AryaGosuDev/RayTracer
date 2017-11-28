@@ -13,65 +13,64 @@ inline Vec3 getInterpolatedNormal ( const HitInfo & hitinfo ) {
 Color Shader::generateSoftShadows( const Scene &scene, const HitInfo &hit, Color &color ) const
 {
 	const PrimitiveObject *obj = scene.GetLight(0);
-	
+	const SphereLight *Sobj    = dynamic_cast<SphereLight*>(const_cast<PrimitiveObject *>(obj)) ;
+
 	AABB lightBox = GetBox( *obj ); //3d box
 
 	Vec3 temp;
 	Color colorSoftShadow ( 0 , 0 , 0 );
 
-	//COMMENTED OUT
-	/*
-	for ( int i = 0 ; spherePoints[99].z == 0 ; ++ i )
-	{
-		
-		spherePoints[i] =  Vec3 ( rand ( lightBox.X.min, lightBox.X.max ) , 
-									   rand ( lightBox.Y.min, lightBox.Y.max ) ,
-									   rand ( lightBox.Z.min, lightBox.Z.max )) ;
+	std::vector<Vec3> spherePoints;
+
+	Vec3 LightCenter = Center ( lightBox ) ;
+
+	const int spherePointsSize = 100 ;
+	//int spherePointsTemp = spherePointsSize ;
+	int divisionsInX = spherePointsSize;
+	int divisionsInY = 1;
+	int radiusOfSphere = Sobj->radius ;
+
+	while ( divisionsInX % 2 == 0 ) {
+		divisionsInX = divisionsInX / 2 ;
+		divisionsInY *= 2 ;
 	}
-	*/
 
-	
-	double lightContributors = 0.0;
+	//create distribution of lights on a rectangular plane cutting through the great circule of the sphere light
 
-	//COMMENTED OUT
-	/*
+	for ( int i = 0 ; i < divisionsInX ; ++ i ) {
+		for ( int j = 0 ; j < divisionsInY  ; ++ j ) {
+				spherePoints.push_back(Vec3(LightCenter.x - 1 + (( j * 2 + 1 ) /  (double)divisionsInY)  , LightCenter.y - 1 + ((i * 2 + 1) / (double)divisionsInX), LightCenter.z)) ;
+		}
+	}
 
-	for ( int i = 0 ; i < spherePoints.size() ; ++ i )
-	{
-		Vec3   P = hit.point; //point where ray hit object
+	int lightContributors = 0;
+
+	for ( int i = 0 ; i < spherePoints.size() ; ++ i ){
+		Vec3 P = hit.point; //point where ray hit object
 
 		HitInfo hitinfoshadow;             // Holds info to pass to shader.
 		//hitinfoshadow.ignore = obj;       // Don't ignore any objects.
-		hitinfoshadow.ignore = obj;       // Don't ignore any objects.
+		hitinfoshadow.ignore = NULL;       // Don't ignore any objects.
 		hitinfoshadow.distance = Infinity; // Follow the full ray.e point on the object back to the light source
 
 		//if we hit an object along the way to the light, this should be a shadow
 		Ray shadowray;
 		shadowray.origin     = P;     // All shadow rays originate from the point on the shape.
 		shadowray.type       = shadow_ray; // These rays are given no special meaning.
-		//shadowray.from = hit.object;
+		shadowray.from       = hit.object;
 		shadowray.generation = 1;           // Rays cast from the eye are first-generation.
 
 		shadowray.direction = Unit ( spherePoints [ i ] - P ) ;
 		shadowray.origin = P + (shadowray.direction * 0.05) ;
 
-		if ( scene.Cast ( shadowray, hitinfoshadow ) == true && hit.object != hitinfoshadow.object ) 
-		{
-			//color = color / 6 ;
+		if ( scene.Cast ( shadowray, hitinfoshadow ) && hit.object != hitinfoshadow.object ) {
 			lightContributors++;
 		}
 
 	}
-	*/
 
-	lightContributors = lightContributors / 100.0; 
-
-	if ( lightContributors > 0.0 )
-	{
-		//if ( lightContributors <= ( 1.0/21.0) ) lightContributors = 1.0/19.0;
-		//color = color *  ( 1.0 / ( 20.0 *  lightContributors ));
-		color = color * ( 1 - lightContributors );
-	}
+	if ( lightContributors > 0 )
+		color = color * ( 1.0 - ((double)lightContributors)/((double)spherePoints.size()) );
 
 	return color;
 }
@@ -429,8 +428,8 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 		color += emission * ( specular * ( pow ( max ( 0.0, E * RR ) , e) ) ) ;
 	}
 
-	//generateSoftShadows ( scene, hit, color );
-	generateNormalShadows ( scene, hit, color );
+	generateSoftShadows ( scene, hit, color );
+	//generateNormalShadows ( scene, hit, color );
 	return color;
 	
 	Ray reflectiveRay;
