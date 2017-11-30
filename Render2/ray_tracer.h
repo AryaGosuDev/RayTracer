@@ -11,7 +11,7 @@
 #include "interval.h"     // Defines a (min,max) interval of the real line.
 #include "params.h"
 
-
+const struct RasterDetails;
 
 struct Sample {           // A point and weight returned from a sampling algorithm.
 	Vec3   P;
@@ -154,6 +154,7 @@ struct Rasterizer  {  // The rasterizer creates all the primary rays.
 		const Scene &scene    // Global scene description: object, envmap, etc.
 		) const;
 
+	void Normal_Raster(RasterDetails & , const int, const int);
 	virtual bool Anti_Aliasing();
 	virtual bool Depth_Of_Field_Effect();
 	};
