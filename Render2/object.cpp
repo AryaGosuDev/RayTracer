@@ -83,64 +83,6 @@ double triangle_intersection(const Vec3& orig, const Vec3& dir, const Vec3 & pla
 	return (e2 * qvec) * inv_det;
 }
 
-double rayTriangleIntersect( 
-	const Vec3 &orig, const Vec3 &dir, const Vec3 & planeNormal,
-	const Vec3 &v0, const Vec3 &v1, const Vec3 &v2, 
-	float &u, float &v) 
-{ 
-	double t;
-	// compute plane's normal
-	Vec3 v0v1 = v1 - v0; 
-	Vec3 v0v2 = v2 - v0; 
-	// no need to normalize
-	Vec3 N = v0v1 ^ v0v2; // N 
-	float denom = N * N; 
- 
-	// Step 1: finding P
- 
-	// check if ray and plane are parallel ?
-	float NdotRayDirection = N * dir; 
-	if (fabs(NdotRayDirection) < 1e-8) // almost 0 
-		return false; // they are parallel so they don't intersect ! 
- 
-	// compute d parameter using equation 2
-	double d = N * v0; 
- 
-	// compute t (equation 3)
-	t = ((N*orig) + d) / NdotRayDirection; 
-	// check if the triangle is in behind the ray
-	if (t < 0) return false; // the triangle is behind 
- 
-	// compute the intersection point using equation 1
-	Vec3 P = orig + t * dir; 
- 
-	// Step 2: inside-outside test
-	Vec3 C; // vector perpendicular to triangle's plane 
- 
-	// edge 0
-	Vec3 edge0 = v1 - v0; 
-	Vec3 vp0 = P - v0; 
-	C = edge0^ vp0; 
-	if (N*C < 0) return false; // P is on the right side 
- 
-	// edge 1
-	Vec3 edge1 = v2 - v1; 
-	Vec3 vp1 = P - v1; 
-	C = edge1 ^ vp1; 
-	if ((u = N*C) < 0)  return false; // P is on the right side 
- 
-	// edge 2
-	Vec3 edge2 = v0 - v2; 
-	Vec3 vp2 = P - v2; 
-	C = edge2^vp2; 
-	if ((v = N*C) < 0) return false; // P is on the right side; 
- 
-	u /= denom; 
-	v /= denom; 
- 
-	return d; // this ray hits the triangle 
-} 
-
 // Recursive depth first search intersect test ray with triangle
 bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){ 
 
@@ -149,7 +91,6 @@ bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){
 	//leaf node, recursion base case
 	if ( !info.found && current != NULL && current->left == NULL && current->right == NULL ) { 
 		distanceToIntersection = triangle_intersection( info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v );
-		//distanceToIntersection = rayTriangleIntersect( info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v );
 		if ( distanceToIntersection > 0.0 ){
 			updateHitInfo ( distanceToIntersection, info, current );
 			return true;
@@ -181,8 +122,7 @@ bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){
 			intersectTreeTraversal ( info , current->left );
 
 			distanceToIntersection = triangle_intersection( info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v );
-			//distanceToIntersection = rayTriangleIntersect( info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v );
-		
+			
 			if ( distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection  ) {
 				updateHitInfo ( distanceToIntersection, info, current );
 				return true;
@@ -194,8 +134,7 @@ bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){
 			intersectTreeTraversal ( info , current->right );
 
 			distanceToIntersection = triangle_intersection( info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v );
-			//distanceToIntersection = rayTriangleIntersect( info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v );
-		
+			
 			if ( distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection ) {
 				updateHitInfo ( distanceToIntersection, info, current );
 				return true;

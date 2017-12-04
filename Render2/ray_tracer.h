@@ -155,8 +155,8 @@ struct Rasterizer  {  // The rasterizer creates all the primary rays.
 		) const;
 
 	void Normal_Raster(RasterDetails & , const int, const int);
-	virtual bool Anti_Aliasing();
-	virtual bool Depth_Of_Field_Effect();
+	void Anti_Aliasing(RasterDetails & , const int, const int);
+	void Depth_Of_Field_Effect(RasterDetails & , const int, const int);
 	};
 
 struct Object{

@@ -3,6 +3,7 @@
 #include "util.h"
 #include <iostream>
 #include <fstream> 
+#include <random>
 
 Object * object ;
 
@@ -447,7 +448,7 @@ bool Scene::BuildBSP () {
 
 	for ( std::vector< Object * >::iterator sceneObjectIterator = sceneObjects.begin() ; sceneObjectIterator != sceneObjects.end() ; ++sceneObjectIterator ) {
 		
-		//randomizeTriangles ( (*sceneObjectIterator)->triangles);
+		randomizeTriangles ( (*sceneObjectIterator)->triangles);
 		vector < BSP_Node * > tris ;
 
 		for ( unsigned int i = 0 ; i < (*sceneObjectIterator)->triangles.size(); i++ )
@@ -473,10 +474,16 @@ bool Scene::BuildBSP () {
 //Fisher–Yates shuffle
 void  Scene::randomizeTriangles ( vector <BSP_Node> & triangles) {
 
-	srand ((unsigned int ) time(NULL));
+	//srand ((unsigned int ) time(NULL));
+	try {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	//std::uniform_real_distribution<int> dis(0.0, 2.0);
 
 	for ( int i = (int) triangles.size()  ; i >=2 ; i-- ){
-		int k = rand () % i + 1 ;
+		//int k = rand () % i + 1 ;
+		std::uniform_real_distribution<> dis(1, i);
+		int k = dis ( gen ) ;
 
 		if ( i != k ){
 			BSP_Node temp; 
@@ -485,7 +492,10 @@ void  Scene::randomizeTriangles ( vector <BSP_Node> & triangles) {
 			triangles[ i - 1 ] = triangles[ k - 1 ];
 			triangles[ k - 1 ] = temp;
 		} 
-	}
+		} }
+	catch ( std::exception ex ) {
+		cout << ex.what()  << endl ;
+		}
 }
 
 // Build the Binary space partition tree recursivly using auto partitioning.

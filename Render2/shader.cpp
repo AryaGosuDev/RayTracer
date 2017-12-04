@@ -7,7 +7,6 @@
 
 inline Vec3 getInterpolatedNormal ( const HitInfo & hitinfo ) {
 	return hitinfo.BayCentricU * hitinfo.tri->vertNormal2 + hitinfo.BayCentricV * hitinfo.tri->vertNormal3 + ( 1 - hitinfo.BayCentricU - hitinfo.BayCentricV ) * hitinfo.tri->vertNormal1 ;
-	//return hitinfo.BayCentricU * hitinfo.tri->vertNormal1 + hitinfo.BayCentricV * hitinfo.tri->vertNormal3 + ( 1 - hitinfo.BayCentricU - hitinfo.BayCentricV ) * hitinfo.tri->vertNormal2 ;
 }
 
 Color Shader::generateSoftShadows( const Scene &scene, const HitInfo &hit, Color &color ) const
@@ -25,7 +24,6 @@ Color Shader::generateSoftShadows( const Scene &scene, const HitInfo &hit, Color
 	Vec3 LightCenter = Center ( lightBox ) ;
 
 	const int spherePointsSize = 100 ;
-	//int spherePointsTemp = spherePointsSize ;
 	int divisionsInX = spherePointsSize;
 	int divisionsInY = 1;
 	int radiusOfSphere = Sobj->radius ;
@@ -98,8 +96,9 @@ Color Shader::generateNormalShadows( const Scene &scene, const HitInfo &hit, Col
 	shadowray.origin = P + (shadowray.direction * 0.001) ;
 
 	// Determine whether the ray cast to the light has intersected with a face facing the ray.
-	 if ( scene.Cast ( shadowray, hitinfoshadow ) && shadowray.direction * hitinfoshadow.normal <= 0 ) // && hit.object != hitinfoshadow.object ) //&& !hit.object->Inside(shadowray.origin))// && hit.object != hitinfoshadow.object ) 
-	 {
+	 //if ( scene.Cast ( shadowray, hitinfoshadow ) && shadowray.direction * hitinfoshadow.normal <= 0 ) // && hit.object != hitinfoshadow.object ) //&& !hit.object->Inside(shadowray.origin))// && hit.object != hitinfoshadow.object ) 
+	 if ( scene.Cast ( shadowray, hitinfoshadow ) && hit.object != hitinfoshadow.object )
+     {
 		//color.blue = 0;
 		//color.red = 0 ;
 		//color.green = .9;
@@ -119,7 +118,6 @@ double Shader::findOcclusionNew ( const Scene & scene, const HitInfo & hit , Col
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<> dis(0.0, 2.0);
-
 
 	//define new axes based on the tangent of the hit surface normal
 	newAxesZ = Unit (hit.normal ) ;
@@ -198,14 +196,9 @@ double Shader::findOcclusionNew ( const Scene & scene, const HitInfo & hit , Col
 		if ( scene.Cast ( AOray, hitinfoAO) && hitinfoAO.distance < radiusOfHemisphere ) {
 			occlusions ++;
 		}
-		if ( occlusions > 10  ) {
-			int fdgdfg =4;
-
-			}
 	}
 
 	return  (1.0 - (occlusions / (double)AORaysToGenerate));
-
 }
 
 double Shader::findOcclusion( const Scene &scene, const HitInfo &hit, Color &color ) const
@@ -403,7 +396,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 	color.red = 0;
 	color.green = 0;
 
-	double occlusion = findOcclusionNew ( scene, hit, color, 1.0, 0 ) ;
+	double occlusion = findOcclusionNew ( scene, hit, color, 2.0, 0 ) ;
 	
 	//return color;
 
@@ -428,10 +421,11 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 		color += emission * ( specular * ( pow ( max ( 0.0, E * RR ) , e) ) ) ;
 	}
 
-	generateSoftShadows ( scene, hit, color );
-	//generateNormalShadows ( scene, hit, color );
+	//generateSoftShadows ( scene, hit, color );
+	generateNormalShadows ( scene, hit, color );
 	return color;
 	
+	/*****************  REFLECTION CODE ***********/
 	Ray reflectiveRay;
 	
 	reflectiveRay.generation = hit.ray.generation + 1 ;

@@ -98,58 +98,6 @@ void _thread_function_to_call_ ( const Rasterizer * _this ,
 
 			  ((const_cast<Rasterizer*>(_this))->*fptr) ( rasterD, idx, idy ) ;
 			  // ^ pointer to member function
-
-
-									 /*
-
-	// Create an image of the given resolution.
-	PPM_Image I( rasterD.cam->x_res, rasterD.cam->y_res );
-
-	
-	// Initialize all the fields of the first-generation ray except for "direction".
-	Ray ray;
-	ray.origin     = rasterD.cam->eye;     // All initial rays originate from the eye.
-	ray.type       = generic_ray; // These rays are given no special meaning.
-	ray.generation = 1;           // Rays cast from the eye are first-generation.
-
-	// Loop over the entire image, casting a single ray per pixel.
-
-	double workItemsPerThreadX = (double)rasterD.cam->x_res / (double)threadDivisionsInX ;
-	double workItemsPerThreadY = (double)rasterD.cam->y_res / (double)threadDivisionsInY ;
-
-	int endingWorkItemsX = idx * workItemsPerThreadX + workItemsPerThreadX ;
-	int endingWorkItemsY = idy * workItemsPerThreadY + workItemsPerThreadY ;
-	*/
-	/********* NORMAL CODE **********/
-									 /*
-	for( unsigned int i = idy * workItemsPerThreadY ; i < endingWorkItemsY; i++ ){
-		// Overwrite the line number written to the console.
-		cout << rubout( i ) << (i+1);
-		cout.flush();
-
-		Sample::debug_line = i;
-
-		for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
-
-			ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
-
-			//ray.direction = Unit (( O + (j + 0.5) * dR - (i + 0.5) * dU  ) - cam.eye);
-
-			I(i,j) = ToneMap( rasterD.scene->Trace( ray ) );
-		}
-	}
-	
-	// Thus far the image exists only in memory.  Now write it out to a file.
-
-	cout << "\nWriting image file " << rasterD.img_file_name << "... ";
-	cout.flush();
-	I.Write( rasterD.img_file_name );
-	cout << "done." << endl;
-	//return true;
-
-
-	*/
-
 	}
 								 
 // Rasterize casts all the initial rays starting from the eye.
@@ -173,14 +121,14 @@ bool Rasterizer::Rasterize( string file_name_out, const Camera &cam, const Scene
 
 			for (int i = 0; i < threadDivisionsInX ; ++i) {
 				for ( int j = 0 ; j < threadDivisionsInY ; ++j ) {
-					 //tt[i + j] = std::thread(Rasterizer::Normal_Raster, rasterD, i, j);
-					tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Normal_Raster, rasterD, i, j);
-					//tt[i + j] = std::thread();
+					 
+					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Normal_Raster, rasterD, i, j);
+					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Anti_Aliasing, rasterD, i, j);
+					tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Depth_Of_Field_Effect, rasterD, i, j);
 				}
 			}
 
 			for (int i = 0; i < threadDivisionsInX * threadDivisionsInY ; ++i) {
-				
 				tt[i].join();
 			}
 			cout << "Total threads started : " << totalThreads << endl ;
@@ -213,6 +161,7 @@ void Rasterizer::Normal_Raster (RasterDetails & rasterD , const int idx, const i
 	/********* NORMAL CODE **********/
 								 
 	for( unsigned int i = idy * workItemsPerThreadY ; i < endingWorkItemsY; i++ ){
+
 		// Overwrite the line number written to the console.
 		//cout << rubout( i ) << (i+1);
 		//cout << spaceout( idy * threadDivisionsInX  + idx  ) << rubout( i ) << (i+1);
@@ -240,19 +189,34 @@ void Rasterizer::Normal_Raster (RasterDetails & rasterD , const int idx, const i
 
 }
 
-bool Rasterizer::Anti_Aliasing  ()
+void Rasterizer::Anti_Aliasing (RasterDetails & rasterD , const int idx, const int idy)
 {
-		/***********************    ANTI ALIASING CODE ***************/
-	/*
-	cout << "Rendering line 0";
-	for( unsigned int i = 0; i < cam.y_res; i++ )
-	{
-		// Overwrite the line number written to the console.
-		cout << rubout( i ) << (i+1);
-		cout.flush();
+    PPM_Image & I = *rasterD.I ;
 
-		for( unsigned int j = 0; j < cam.x_res; j++ )
-		{
+	// Initialize all the fields of the first-generation ray except for "direction".
+	Ray ray;
+	ray.origin     = rasterD.cam->eye;     // All initial rays originate from the eye.
+	ray.type       = generic_ray; // These rays are given no special meaning.
+	ray.generation = 1;           // Rays cast from the eye are first-generation.
+
+	// Loop over the entire image, casting a single ray per pixel.
+
+	double workItemsPerThreadX = (double)rasterD.cam->x_res / (double)threadDivisionsInX ;
+	double workItemsPerThreadY = (double)rasterD.cam->y_res / (double)threadDivisionsInY ;
+
+	int endingWorkItemsX = idx * workItemsPerThreadX + workItemsPerThreadX ;
+	int endingWorkItemsY = idy * workItemsPerThreadY + workItemsPerThreadY ;
+
+	/***********************    ANTI ALIASING CODE ***************/
+	//cout << "Rendering line 0";
+	for( unsigned int i = idy * workItemsPerThreadY ; i < endingWorkItemsY; i++ ){
+
+		// Overwrite the line number written to the console.
+		//cout << rubout( i ) << (i+1);
+		//cout.flush();
+
+		for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
+
 			Color contributedColor ( 0, 0, 0 );
 
 			for(float fragmenty = 1; fragmenty < 4; fragmenty += 2)
@@ -263,13 +227,12 @@ bool Rasterizer::Anti_Aliasing  ()
 					
 					//ray.direction = Unit( O + (j + 0.5) * dR - (i + 0.5) * dU  );
 
-					ray.direction = Unit( O + ((j + ( fragmentx *  0.25)) * dR) - ((i + (fragmenty *0.25)) * dU)  );
+					ray.direction = Unit( rasterD.O + ((j + ( fragmentx *  0.25)) * rasterD.dR) - ((i + (fragmenty *0.25)) * rasterD.dU));
 
-					contributedColor += scene.Trace( ray );
+					contributedColor += rasterD.scene->Trace( ray );
 					
 					//I(i,j) = ToneMap( scene.Trace( ray ) );
 				}
-
 			}
 
 			contributedColor = contributedColor / 4;
@@ -277,37 +240,46 @@ bool Rasterizer::Anti_Aliasing  ()
 			I(i,j) = ToneMap( contributedColor ); 
 		}
 	}
-	*/
-	return true;
+	I.Write( rasterD.img_file_name );
+
 }
 
-bool Rasterizer::Depth_Of_Field_Effect()
+void Rasterizer::Depth_Of_Field_Effect(RasterDetails & rasterD , const int idx, const int idy)
 {
 	Color contributedDOF (0, 0, 0);
+
+	PPM_Image & I = *rasterD.I ;
+
+	// Initialize all the fields of the first-generation ray except for "direction".
+	Ray ray;
+	ray.origin     = rasterD.cam->eye;     // All initial rays originate from the eye.
+	ray.type       = generic_ray; // These rays are given no special meaning.
+	ray.generation = 1;           // Rays cast from the eye are first-generation.
+
+	// Loop over the entire image, casting a single ray per pixel.
+
+	double workItemsPerThreadX = (double)rasterD.cam->x_res / (double)threadDivisionsInX ;
+	double workItemsPerThreadY = (double)rasterD.cam->y_res / (double)threadDivisionsInY ;
+
+	int endingWorkItemsX = idx * workItemsPerThreadX + workItemsPerThreadX ;
+	int endingWorkItemsY = idy * workItemsPerThreadY + workItemsPerThreadY ;
+
 	/**************  Depth of Field code ***************/
-	/*
-	for ( unsigned int i = 0; i < cam.y_res ; i++ )
-	{
-		cout << rubout( i ) << (i+1);
-		cout.flush();
+	for( unsigned int i = idy * workItemsPerThreadY ; i < endingWorkItemsY; i++ ){
+		//cout << rubout( i ) << (i+1);
+		//cout.flush();
 
-		 for( unsigned int j = 0; j < cam.x_res; j++ )
-		 {
-			 for ( int yLens = DistLensGradations ; yLens >= -DistLensGradations ; yLens--)
-			 {
-				 for ( int xLens = -DistLensGradations ; xLens <= DistLensGradations  ; xLens ++ )
-				 {
+		 for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
+
+			 for ( int yLens = rasterD.DistLensGradations ; yLens >= -rasterD.DistLensGradations ; yLens--){
+
+				 for ( int xLens = -rasterD.DistLensGradations ; xLens <= rasterD.DistLensGradations  ; xLens ++ ){
+
 					 //cout << "here" << endl;
-					 Vec3 LensOrigin (  cam.eye + ( xLens  * XGradation) + ( yLens * YGradation));
-					 Vec3 GLens ( Unit( cam.lookat - LensOrigin ) );
-					 Vec3 O ( cam.vpdist * GLens + xmin * R + ymax * U );
-					 Vec3 focalPoint (  O + (j + 0.5) * dR - (i + 0.5) * dU);
-
-					// Vec3 focalL ( focalPoint
-					 
-
-					 //ray.direction = Unit ( focalPoint - cam.eye );
-					 //ray.direction = Unit (focalPoint - LensOrigin) ;
+					 Vec3 LensOrigin (  rasterD.cam->eye + ( xLens  * rasterD.XGradation) + ( yLens * rasterD.YGradation));
+					 Vec3 GLens ( Unit( rasterD.cam->lookat - LensOrigin ) );
+					 Vec3 O ( rasterD.cam->vpdist * GLens + rasterD.xmin * rasterD.R + rasterD.ymax * rasterD.U );
+					 Vec3 focalPoint (  O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU);
 
 					 ray.direction = Unit ( focalPoint);
 					 ray.origin = LensOrigin;
@@ -315,19 +287,17 @@ bool Rasterizer::Depth_Of_Field_Effect()
 					 ray.generation = 1;
 					 ray.type = generic_ray ;
 					 //contributedDOF += scene.Trace( ray );
-					 contributedDOF += scene.Trace( ray );
-
-
+					 contributedDOF += rasterD.scene->Trace( ray );
 				 }
 			 }
-			 contributedDOF = contributedDOF / ( DistLensDim * DistLensDim );
+			 contributedDOF = contributedDOF / ( rasterD.DistLensDim * rasterD.DistLensDim );
 			 I(i,j) = ToneMap( contributedDOF );
 			 contributedDOF.red = 0;
 			 contributedDOF.green = 0;
 			 contributedDOF.blue = 0;
 		 }
 	}
-	*/
-	return true ;
+
+	I.Write( rasterD.img_file_name );
 }
 
