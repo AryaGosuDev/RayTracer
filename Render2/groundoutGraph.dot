@@ -1,1 +1,1 @@
-digraph g { graph []; node [ fontsize="16" shape = "ellipse"]; edge [];"node1" [ label = "1 | 0.000000 0.000000 1.000000 " shape = "record" ];"node0" [ label = "0 | 0.000000 -0.000000 1.000000 " shape = "record" ];"node1"-> "node0" [ label = "right"];}
+digraph g { graph []; node [ fontsize="16" shape = "ellipse"]; edge [];"node1" [ label = "1 | 0.000000 0.000000 1.000000 " shape = "record" ];"node0" [ label = "0 | 0.000000 -0.000000 1.000000 " shape = "record" ];"node1"-> "node0" [ label = "left"];}

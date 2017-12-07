@@ -122,9 +122,9 @@ bool Rasterizer::Rasterize( string file_name_out, const Camera &cam, const Scene
 			for (int i = 0; i < threadDivisionsInX ; ++i) {
 				for ( int j = 0 ; j < threadDivisionsInY ; ++j ) {
 					 
-					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Normal_Raster, rasterD, i, j);
+					tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Normal_Raster, rasterD, i, j);
 					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Anti_Aliasing, rasterD, i, j);
-					tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Depth_Of_Field_Effect, rasterD, i, j);
+					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Depth_Of_Field_Effect, rasterD, i, j);
 				}
 			}
 

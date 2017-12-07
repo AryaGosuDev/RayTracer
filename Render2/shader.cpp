@@ -423,7 +423,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 
 	//generateSoftShadows ( scene, hit, color );
 	generateNormalShadows ( scene, hit, color );
-	return color;
+	//return color;
 	
 	/*****************  REFLECTION CODE ***********/
 	Ray reflectiveRay;
@@ -513,7 +513,6 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 		return ( transl * ( ( beerR * scene.Trace (reflectiveRay)) + (( 1 - beerR ) * scene.Trace ( transLRay  )))) ;
 	}
 	else {
-		//color = color * occlusion ;
-		return ( color + ( reflective * scene.Trace (reflectiveRay ) )  );
+		return ( color + ( reflective * scene.Trace (reflectiveRay)));
 	}
 }
