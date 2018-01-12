@@ -1,7 +1,17 @@
-﻿Build started 12/4/2017 3:52:26 PM.
+﻿Build started 12/12/2017 4:46:27 PM.
      1>Project "C:\Projects\RayTracer\Render2\Render2.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt rasterizer.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt aabb.cpp main.cpp object.cpp params.cpp quad.cpp rasterizer.cpp scene.cpp shader.cpp sphere.cpp util.cpp
+         aabb.cpp
+         Generating Code...
+         Compiling...
+         util.cpp
+         sphere.cpp
+         shader.cpp
+     1>shader.cpp(29): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
+         scene.cpp
+     1>scene.cpp(288): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>scene.cpp(486): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
          rasterizer.cpp
      1>c:\projects\raytracer\render2\ppm_image.h(29): warning C4244: 'argument' : conversion from 'const float' to 'channel', possible loss of data
      1>rasterizer.cpp(158): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
@@ -22,6 +32,54 @@
      1>rasterizer.cpp(268): warning C4018: '<' : signed/unsigned mismatch
      1>rasterizer.cpp(272): warning C4244: 'initializing' : conversion from 'double' to 'unsigned int', possible loss of data
      1>rasterizer.cpp(272): warning C4018: '<' : signed/unsigned mismatch
+         quad.cpp
+         params.cpp
+     1>params.cpp(26): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>params.cpp(38): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>params.cpp(50): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>params.cpp(62): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>params.cpp(64): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>params.cpp(73): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>params.cpp(75): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>params.cpp(85): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>params.cpp(87): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>params.cpp(97): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>params.cpp(99): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>params.cpp(109): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>params.cpp(111): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>params.cpp(121): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>params.cpp(123): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>params.cpp(145): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(200) : see declaration of 'strtok'
+     1>params.cpp(148): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(200) : see declaration of 'strtok'
+     1>params.cpp(175): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(200) : see declaration of 'strtok'
+     1>params.cpp(176): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(200) : see declaration of 'strtok'
+     1>C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\xutility(2176): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\xutility(2157) : see declaration of 'std::_Copy_impl'
+                 params.cpp(139) : see reference to function template instantiation '_OutIt std::copy<std::_String_iterator<_Mystr>,char*>(_InIt,_InIt,_OutIt)' being compiled
+                 with
+                 [
+                     _OutIt=char *,
+                     _Mystr=std::_String_val<std::_Simple_types<char>>,
+                     _InIt=std::_String_iterator<std::_String_val<std::_Simple_types<char>>>
+                 ]
+         object.cpp
+     1>object.cpp(44): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>object.cpp(49): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         main.cpp
+         Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.lib" /MACHINE:X64 x64\Debug\aabb.obj
          x64\Debug\main.obj
@@ -39,4 +97,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.19
+Time Elapsed 00:00:05.43

@@ -380,7 +380,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 	Color  transl   = mat->translucency ;
 	Vec3   O = hit.ray.origin; //ray origin
 	Vec3   P = hit.point; //point where ray hit object
-	//Vec3   N = hit.normal; //normal of the surface
+	Vec3   SurfaceNonInterpolatedN = hit.normal; //normal of the surface
 	Vec3   N = Unit (getInterpolatedNormal ( hit )) ; // Interpolated normal of the surface
 	Vec3   E = Unit( O - P );  // direction of the ray
 	Vec3   R = Unit( ( 2.0 * ( E * N ) ) * N - E );
@@ -430,7 +430,8 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 	
 	reflectiveRay.generation = hit.ray.generation + 1 ;
 
-	R =  (- 1.0 * E) + (2.0 * ( E * N ) * N);
+	//R =  (- 1.0 * E) + (2.0 * ( E * N ) * N);
+	R =  (- 1.0 * E) + (2.0 * ( E * SurfaceNonInterpolatedN ) * SurfaceNonInterpolatedN);
 	
 	reflectiveRay.direction = R;
 	reflectiveRay.origin = P + ( reflectiveRay.direction * Epsilon)   ;
@@ -451,7 +452,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 		Vec3 tRefr;
 
 		double beerRefractr, beerRefractg, beerRefractb ;
-
+		/*
 		if( E * N < 0.0 )
 			R =  (- 1.0 * E) + (2.0 * ( E * ( -1 * N )) * ( -1 * N));
 		else 
@@ -465,6 +466,23 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 			tRefr = cosRefract - ( N * sqrt ( cosSqRefract ) ) ;
 
 			refractionCoef = E * N ;
+			*/
+
+		// **** USE NON INTERPOLATED NORMAL ***
+
+		if( E * SurfaceNonInterpolatedN < 0.0 )
+			R =  (- 1.0 * E) + (2.0 * ( E * ( -1 * SurfaceNonInterpolatedN )) * ( -1 * SurfaceNonInterpolatedN));
+		else 
+			R =  (- 1.0 * E) + (2.0 * ( E * SurfaceNonInterpolatedN ) * SurfaceNonInterpolatedN);
+
+		if ( (( -1 * E ) * SurfaceNonInterpolatedN ) < 0.0 ) {
+			dnRefract = (-1 * E) * SurfaceNonInterpolatedN ; 
+			cosRefract = ( ( -1 * E ) - ( SurfaceNonInterpolatedN * dnRefract )   ) / k ;
+			cosSqRefract = 1 - ((1 -  ( dnRefract * dnRefract )) / ( k * k));
+
+			tRefr = cosRefract - ( SurfaceNonInterpolatedN * sqrt ( cosSqRefract ) ) ;
+
+			refractionCoef = E * SurfaceNonInterpolatedN ;
 
 			transl.blue = 1;
 			transl.green = 1;
@@ -479,8 +497,14 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 			transl.green = beerRefractg;
 			transl.blue = beerRefractb;
 
-			dnRefract = (-1 * E) * ( -1 * N) ; 
-			cosRefract = (  ( -1 * E ) - ( ( -1 * N) * dnRefract )   ) / k ;
+			//dnRefract = (-1 * E) * ( -1 * N) ; 
+			//cosRefract = (  ( -1 * E ) - ( ( -1 * N) * dnRefract )   ) / k ;
+			//cosSqRefract = 1 - ((1 -  ( dnRefract * dnRefract  )) / ( k * k));
+
+			// **** USE NON INTERPOLATED NORMAL ***
+
+			dnRefract = (-1 * E) * ( -1 * SurfaceNonInterpolatedN) ; 
+			cosRefract = (  ( -1 * E ) - ( ( -1 * SurfaceNonInterpolatedN) * dnRefract )   ) / k ;
 			cosSqRefract = 1 - ((1 -  ( dnRefract * dnRefract  )) / ( k * k));
 
 			if ( cosSqRefract < 0.0 ) {
@@ -492,8 +516,13 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 				return ( transl * scene.Trace (transLRay)); 
 			}
 			else {
-				tRefr = cosRefract - ( ( -1 * N) * sqrt ( cosSqRefract ) ) ;
-				refractionCoef = tRefr * N ;
+				//tRefr = cosRefract - ( ( -1 * N) * sqrt ( cosSqRefract ) ) ;
+				//refractionCoef = tRefr * N ;
+
+				// **** USE NON INTERPOLATED NORMAL ***
+
+				tRefr = cosRefract - ( ( -1 * SurfaceNonInterpolatedN) * sqrt ( cosSqRefract ) ) ;
+				refractionCoef = tRefr * SurfaceNonInterpolatedN ;
 			}
 		}
 

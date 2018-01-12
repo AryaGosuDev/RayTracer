@@ -52,7 +52,7 @@ static const double
 static const int
 	default_image_width  = 400,  // Default image width (x resolution).
 	default_image_height = 400,  // Default image height (y resolution).
-	default_max_tree_depth = 2;  // Default cap on ray tree depth.
+	default_max_tree_depth = 6;  // Default cap on ray tree depth.
 
 enum raytracer_error {
 	no_errors = 0,
