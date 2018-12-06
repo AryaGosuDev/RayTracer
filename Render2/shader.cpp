@@ -26,7 +26,7 @@ Color Shader::generateSoftShadows( const Scene &scene, const HitInfo &hit, Color
 	const int spherePointsSize = 100 ;
 	int divisionsInX = spherePointsSize;
 	int divisionsInY = 1;
-	int radiusOfSphere = Sobj->radius ;
+	//int radiusOfSphere = Sobj->radius ;
 
 	while ( divisionsInX % 2 == 0 ) {
 		divisionsInX = divisionsInX / 2 ;

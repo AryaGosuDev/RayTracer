@@ -1,25 +1,21 @@
-/***************************************************************************
-* sphere.cpp   (primitive object plugin)                                   *
-*                                                                          *
-* A sphere of given radius and center.  This is one of the most basic      *
-* objects to ray trace.                                                    *
-*                                                                          *
-* To intersect a ray with a sphere with the given center and radius, we    *
-* solve the following equation for s: || Q + sR - C || = radius, where Q   *
-* is the ray origin, R is the ray direction, and C is the center of the    *
-* sphere.  This is equivalent to  ( A + sR )^T ( A + sR ) = radius^2,      *
-* where A = Q - C.  Expanding, A.A + 2 s A.R + s^2 R.R = radius^2,         *
-* where "." denotes the dot product.  Since R is a unit vercor, R.R = 1.   *
-* Rearranging, we have s^2 + (2 A.R) s + (A.A - radius^2) = 0, which is    *
-* a quadratic equation in s, the distance along the ray to the point of    *
-* intersection.  If this equation has complex roots, then the ray misses   *
-* the sphere.  Otherwise, we must determine whether either of the roots    *
-* falls on the positive part of the ray, and if so, which is closer.       *
-*                                                                          *
-* History:                                                                 *
-*   10/10/2004  Broken out of objects.C file.                              *
-*                                                                          *
-***************************************************************************/
+
+/*
+  A sphere of given radius and center.                                     
+         
+//From Book
+To intersect a ray with a sphere with the given center and radius, we    
+solve the following equation for s: || Q + sR - C || = radius, where Q   
+is the ray origin, R is the ray direction, and C is the center of the    
+sphere.  This is equivalent to  ( A + sR )^T ( A + sR ) = radius^2,      
+where A = Q - C.  Expanding, A.A + 2 s A.R + s^2 R.R = radius^2,         
+where "." denotes the dot product.  Since R is a unit vercor, R.R = 1.   
+Rearranging, we have s^2 + (2 A.R) s + (A.A - radius^2) = 0, which is    
+a quadratic equation in s, the distance along the ray to the point of    
+intersection.  If this equation has complex roots, then the ray misses   
+the sphere.  Otherwise, we must determine whether either of the roots    
+falls on the positive part of the ray, and if so, which is closer.       
+*/
+
 #include "ray_tracer.h"
 #include "util.h"
 #include "params.h"
@@ -45,7 +41,7 @@ PrimitiveObject *SphereLight::ReadString( const string &params ) // Reads params
 		return new SphereLight( cent, r );
 	}
 	return NULL;
-	}
+}
 
 Interval SphereLight::GetSlab( const Vec3 &v ) const
 	{

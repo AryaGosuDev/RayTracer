@@ -53,6 +53,10 @@ extern AABB GetBox(  // Construct a box from three slabs.
 	const PrimitiveObject &obj
 	);
 
+extern AABB GetBoxPolygon ( // Construct a bounding box of a polygon
+        const Object * 
+ );
+
 extern bool operator==(
 	const Material &a,
 	const Material &b

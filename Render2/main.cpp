@@ -6,6 +6,7 @@ int main( int argc, char *argv[] )
 	Scene  scene;
 	Camera camera;
 	scene.rasterize = new Rasterizer();
+	
 
 	cout << "Tracer Begin" << endl ;
 
@@ -27,10 +28,16 @@ int main( int argc, char *argv[] )
 
 	auto start = std::chrono::steady_clock::now();
 
+	/*
 	if( !scene.rasterize->Rasterize( fnameOutput, camera, scene)){
 		cerr << "Error encountered while rasterizing." << endl;
 		return error_rasterizing_image;
 	}
+	*/
+
+	//I AM INSTEAD GOING TO CALCULATE RADIOSITY FOR THE WHOLE SCENE
+	scene.radiosity = new Radiosity(&scene);
+
 
 	auto end = std::chrono::steady_clock::now();
 

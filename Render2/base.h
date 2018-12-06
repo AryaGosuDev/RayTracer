@@ -31,12 +31,12 @@ struct Scene;      // The camera, lights, object(s), etc.
 struct Rasterizer; // The function that casts primary rays & creates an image.
 struct Builder;    // Builds the scene, usually by reading a file (e.g. sdf).
 struct BSP_Node;   // Node of the tree
+struct Radiosity;  // Reconstructs the radiosity of the entire scene.
 
 // Path constants.
 static const string DefaultScene = "scenes/";
 
 // Miscellaneous numerical constants.
-
 static const double 
 	Pi          = 3.14159265358979,
 	TwoPi       = 2.0 * Pi,

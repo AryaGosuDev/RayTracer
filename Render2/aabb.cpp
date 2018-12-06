@@ -1,16 +1,8 @@
-/***************************************************************************
-* aabb.cpp                                                                 *
-*                                                                          *
-* The AABB structure encodes a three-dimensional axis-aligned box as a     *
-* collection of three intervals, one for each axis.  These boxes are ideal *
-* as bounding boxes as they are equipped with a very efficient ray-box     *
-* intersector.  There are also a number of useful methods & functions that *
-* expand the box, transform it, compute its surface area, etc.             *
-*                                                                          *
-* History:                                                                 *
-*   12/11/2004  Initial coding.                                            *
-*                                                                          *
-***************************************************************************/
+                                                                      
+// Encodes a three-dimensional axis-aligned box as a collection of three intervals, one for each axis.  
+// These boxes are ideal as bounding boxes as they are equipped with a very efficient ray-box intersector.  
+// Methods and functions that expand the box, transform, surface area, etc...             
+
 #include "aabb.h"
 #include "util.h"
 
@@ -46,7 +38,7 @@ AABB operator*( const Mat3x3 &M, const AABB &box )
     }
 
 // Determine whether the given ray intersects the box.  If there is an intersection,
-// but it's farther than "max_dist", then regard it as a miss.
+// but it's farther than max_dist, then regard it as a miss.
 
 bool Hit( const Ray &ray, const AABB &A, double max_dist )
     {

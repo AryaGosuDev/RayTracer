@@ -26,7 +26,13 @@ inline void updateHitInfo ( double & distanceToIntersection, InterceptInfo & inf
 // orig and dir defines the ray. v0, v1, v2 defines the triangle.
 // returns the distance from the ray origin to the intersection or 0.
 // Möller-Trumbore algorithm
-double triangle_intersection(const Vec3& orig, const Vec3& dir, const Vec3 & planeNormal, const Vec3& v0, const Vec3& v1, const Vec3& v2, float &u, float & v ) {
+double triangle_intersection(const Vec3& orig, 
+							 const Vec3& dir, 
+							 const Vec3 & planeNormal, 
+							 const Vec3& v0, 
+							 const Vec3& v1, 
+							 const Vec3& v2, 
+							 float &u, float & v ) {
 	Vec3 e1 = v1 - v0;
 	Vec3 e2 = v2 - v0;
 	// Calculate planes normal vector

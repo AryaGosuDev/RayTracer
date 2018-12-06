@@ -5,7 +5,7 @@
 #include <fstream> 
 #include <random>
 
-Object * object ;
+//Object * object ;
 
 using std::string ;
 
@@ -82,6 +82,7 @@ void makeDotFile ( BSP_Node * v, string &nodeString, string &connectionString ) 
 
 Scene::Scene() {
 	rasterize = NULL;
+	radiosity = NULL ;
 	max_tree_depth = default_max_tree_depth;
 
 	shader = new Shader();
@@ -204,6 +205,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 	Material   material;    // Current material.
 	Transformation tempTrnsf;
 	string	   tempObjectString;
+	Object * object;
 
 	//scene.object    = NULL;
 	
@@ -386,7 +388,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 				else break;
 			}
 			else  {
-				// TODO TAKE IN material file.
+				// materials file
 				if ( get["mtllib"] ){
 
 				}
@@ -424,7 +426,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 					numOfTriangle++;
 				}
 				else
-					cout << "Unidentified ID in obj file @ line" << line_num << " : " << get.returnString() <<  endl;	
+					cout << "Unidentified ID in obj file @ line : " << line_num << " : " << get.returnString() <<  endl;	
 				line_num++;
 			}
 		}

@@ -10,42 +10,35 @@ struct Vec3 {
 	double x;
 	double y;
 	double z;
-	};
+};
 
-inline double LengthSquared( const Vec3 &A )
-	{
+inline double LengthSquared( const Vec3 &A ){
 	return A.x * A.x + A.y * A.y + A.z * A.z;
-	}
+}
 
-inline double Length( const Vec3 &A )
-	{
+inline double Length( const Vec3 &A ){
 	return sqrt( LengthSquared( A ) );
-	}
+}
 
-inline Vec3 operator+( const Vec3 &A, const Vec3 &B )
-	{
+inline Vec3 operator+( const Vec3 &A, const Vec3 &B ){
 	return Vec3( A.x + B.x, A.y + B.y, A.z + B.z );
-	}
+}
 
-inline Vec3 operator-( const Vec3 &A, const Vec3 &B )
-	{
+inline Vec3 operator-( const Vec3 &A, const Vec3 &B ){
 	return Vec3( A.x - B.x, A.y - B.y, A.z - B.z );
-	}
+}
 
-inline Vec3 operator-( const Vec3 &A )  // Unary minus.
-	{
+inline Vec3 operator-( const Vec3 &A ) {  // Unary minus.
 	return Vec3( -A.x, -A.y, -A.z );
-	}
+}
 
-inline Vec3 operator*( double a, const Vec3 &A )
-	{
+inline Vec3 operator*( double a, const Vec3 &A ){
 	return Vec3( a * A.x, a * A.y, a * A.z );
-	}
+}
 
-inline Vec3 operator*( const Vec3 &A, double a )
-	{
+inline Vec3 operator*( const Vec3 &A, double a ){
 	return Vec3( a * A.x, a * A.y, a * A.z );
-	}
+}
 
 inline double operator*( const Vec3 &A, const Vec3 &B )  // Inner product.
 	{

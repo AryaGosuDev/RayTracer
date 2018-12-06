@@ -7,16 +7,15 @@
 REGISTER_PLUGIN ( QuadLight );
 
 PrimitiveObject *QuadLight::ReadString( const string &params ) // Read params from string.
-    {
+{
     Vec3 v1, v2, v3, v4;
     ParamReader get( params );
     if( get[MyName()] && get[v1] && get[v2] && get[v3] && get[v4] )
         return new QuadLight( v1, v2, v3, v4 );
     return NULL;
-    }
+}
 
-QuadLight::QuadLight( const Vec3 &A_, const Vec3 &B_, const Vec3 &C_, const Vec3 &D_ )
-    {
+QuadLight::QuadLight( const Vec3 &A_, const Vec3 &B_, const Vec3 &C_, const Vec3 &D_ ){
     A = A_; // Store the vertices.
     B = B_;
     C = C_;
@@ -38,10 +37,10 @@ QuadLight::QuadLight( const Vec3 &A_, const Vec3 &B_, const Vec3 &C_, const Vec3
     Ebc = Unit( C - B );
     Ecd = Unit( D - C );
     Eda = Unit( A - D ); 
-    }
+}
 
 Interval QuadLight::GetSlab( const Vec3 &v ) const
-    {
+{
     const double a = v * A;
     const double b = v * B;
     const double c = v * C;
@@ -49,10 +48,10 @@ Interval QuadLight::GetSlab( const Vec3 &v ) const
     if( c <= d )
          return Interval( min( a, b, c ), max( a, b, d ) ) / ( v * v );
     else return Interval( min( a, b, d ), max( a, b, c ) ) / ( v * v );
-    }
+}
 
 bool QuadLight::Intersect( const Ray &ray, HitInfo &hitinfo ) const
-    {
+{
     // Compute the point of intersection with the plane containing the quad.
     // Report a miss if the ray does not hit this plane.
 
@@ -78,7 +77,7 @@ bool QuadLight::Intersect( const Ray &ray, HitInfo &hitinfo ) const
     hitinfo.normal   = N;
     //hitinfo.object   = this;
     return true;
-    }
+}
 
 // This function generates nxn stratified samples over the surface of the quad.
 // The weight of each sample is the quad area / n^2, times the area-to-solid-angle
@@ -87,8 +86,7 @@ bool QuadLight::Intersect( const Ray &ray, HitInfo &hitinfo ) const
 // (NOTE: currently this is only correct for parallelograms.  To handle arbitrary
 // quads correctly, we must also compute the Jacobian for each sample point.)
 
-int QuadLight::GetSamples( const Vec3 &O, const Vec3 &N1, Sample *samples, int n ) const
-    {
+int QuadLight::GetSamples( const Vec3 &O, const Vec3 &N1, Sample *samples, int n ) const{
     int k = 0;
     double darea = area / ( n * n );  // differential area.
     double delta = 1.0 / n;
@@ -113,8 +111,4 @@ int QuadLight::GetSamples( const Vec3 &O, const Vec3 &N1, Sample *samples, int n
     // square of the number requested.
 
     return n * n;
-    }
-
-
-
-
+}

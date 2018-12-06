@@ -114,6 +114,7 @@ struct Scene {
 	virtual const PrimitiveObject *GetLight( unsigned i ) const { return lights[i]; } 
 	virtual unsigned NumLights() const { return (unsigned ) lights.size(); }
 	Rasterizer *rasterize;   // This casts all primary rays & makes the image.
+	Radiosity *radiosity;    // Pointer to the radiosity object. Will initiate and calculate the radiosity of the scene.
 	vector<PrimitiveObject*> lights;  // All objects that are emitters.
 	vector<Object*> sceneObjects ;
 
@@ -254,6 +255,17 @@ struct QuadLight : public Light {
 	double area; // Area of the quad.
 	Vec3   Eab, Ebc, Ecd, Eda;
 	Vec3   A, B, C, D;  
+};
+
+struct Radiosity {
+	Radiosity() {}
+	Radiosity(  Scene * _scene ) ;
+	virtual ~Radiosity() ;
+
+	bool buildInitialQuadTree();
+
+	Scene * scene ;
+
 };
 
 #endif

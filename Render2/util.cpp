@@ -1,13 +1,6 @@
-/***************************************************************************
-* util.cpp                                                                 *
-*                                                                          *
-* Miscellaneous utilities, such as predicates on materials & objects.      *
-*                                                                          *
-* History:                                                                 *
-*   10/16/2005  Added ToString function for plugin_type.                   *
-*   12/11/2004  Initial coding.                                            *
-*                                                                          *
-***************************************************************************/
+
+// misc. utilities such as predicates on materials & objects.      *
+
 #include "ray_tracer.h"
 #include "util.h"
 
@@ -34,6 +27,57 @@ AABB GetBox( const PrimitiveObject &obj ){
 	box.Z = obj.GetSlab( Vec3( 0, 0, 1 ) );
 	return box;
 	}
+
+AABB GetBoxPolygon ( const Object * _object ) {
+
+	vector<Vec3>::const_iterator pointsIter = _object->points.cbegin();
+	double HiX , LowX = 0.0;
+	double HiY , LowY = 0.0;
+	double HiZ , LowZ = 0.0;
+	bool isFirst = true  ;
+
+	for ( ; pointsIter != _object->points.cend(); ++pointsIter ) {
+
+		if ( isFirst ) { 
+			HiX = LowX = pointsIter->x ;
+			HiY = LowY = pointsIter->y ;
+			HiZ = LowZ = pointsIter->z ;
+			isFirst = !isFirst ;
+
+		}
+		else {
+			if ( pointsIter->x > HiX )  HiX = pointsIter->x ;
+			else if ( pointsIter->x < LowX )  LowX = pointsIter->x ;
+
+			if ( pointsIter->y > HiY )  HiY = pointsIter->y ;
+			else if ( pointsIter->y < LowY )  LowY = pointsIter->y ;
+
+			if ( pointsIter->z > HiZ )  HiZ = pointsIter->z ;
+			else if ( pointsIter->z < LowZ )  LowZ = pointsIter->z ;
+		}
+	}
+
+	AABB tempBox ( Interval ( LowX, HiX ), Interval ( LowY, HiY ), Interval ( LowZ, HiZ ));
+
+	return tempBox ;
+}
+
+bool AABBIntersect ( const AABB & _a, const AABB & _b ){
+
+	double diff1 = ((_a.X.max - _a.X.min) / 2.0) + ((_b.X.max - _b.X.min ) / 2.0 ) ;
+
+	if ( diff1 < abs( ( (_a.X.max + _a.X.min) / 2.0 ) - ( (_b.X.max + _b.X.min ) / 2.0 ) ) ) return false;
+
+	double diff2 = ((_a.Y.max - _a.Y.min) / 2.0) + ((_b.Y.max - _b.Y.min ) / 2.0 ) ;
+
+	if ( diff2 < abs( ( (_a.Y.max + _a.Y.min) / 2.0 ) - ( (_b.Y.max + _b.Y.min ) / 2.0 ) ) ) return false;
+
+	double diff3 = ((_a.Z.max - _a.Z.min) / 2.0) + ((_b.Z.max - _b.Z.min ) / 2.0 ) ;
+
+	if ( diff3 < abs( ( (_a.Z.max + _a.Z.min) / 2.0 ) - ( (_b.Z.max + _b.Z.min ) / 2.0 ) ) ) return false;
+
+	return true;
+}
 
 double rand( double a, double b ){
 	double x = float(rand()) / RAND_MAX;

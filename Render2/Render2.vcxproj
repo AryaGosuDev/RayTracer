@@ -119,6 +119,7 @@
     <ClCompile Include="params.cpp" />
     <ClCompile Include="ppm_image.cpp" />
     <ClCompile Include="quad.cpp" />
+    <ClCompile Include="radiosity.cpp" />
     <ClCompile Include="rasterizer.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="shader.cpp" />
