@@ -28,6 +28,7 @@ AABB GetBox( const PrimitiveObject &obj ){
 	return box;
 	}
 
+// return an axis aligned bounding box for a polygon
 AABB GetBoxPolygon ( const Object * _object ) {
 
 	vector<Vec3>::const_iterator pointsIter = _object->points.cbegin();
@@ -65,17 +66,11 @@ AABB GetBoxPolygon ( const Object * _object ) {
 bool AABBIntersect ( const AABB & _a, const AABB & _b ){
 
 	double diff1 = ((_a.X.max - _a.X.min) / 2.0) + ((_b.X.max - _b.X.min ) / 2.0 ) ;
-
 	if ( diff1 < abs( ( (_a.X.max + _a.X.min) / 2.0 ) - ( (_b.X.max + _b.X.min ) / 2.0 ) ) ) return false;
-
 	double diff2 = ((_a.Y.max - _a.Y.min) / 2.0) + ((_b.Y.max - _b.Y.min ) / 2.0 ) ;
-
 	if ( diff2 < abs( ( (_a.Y.max + _a.Y.min) / 2.0 ) - ( (_b.Y.max + _b.Y.min ) / 2.0 ) ) ) return false;
-
 	double diff3 = ((_a.Z.max - _a.Z.min) / 2.0) + ((_b.Z.max - _b.Z.min ) / 2.0 ) ;
-
 	if ( diff3 < abs( ( (_a.Z.max + _a.Z.min) / 2.0 ) - ( (_b.Z.max + _b.Z.min ) / 2.0 ) ) ) return false;
-
 	return true;
 }
 

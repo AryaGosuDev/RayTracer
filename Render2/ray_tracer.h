@@ -17,7 +17,7 @@ struct Sample {           // A point and weight returned from a sampling algorit
 	Vec3   P;
 	double w;
 	static int debug_line ;
-	};
+};
 
 struct Material {         // Surface material for shading.
 	Color  diffuse;       // Diffuse color.
@@ -29,7 +29,7 @@ struct Material {         // Surface material for shading.
 	double Phong_exp;     // Phong exponent for specular highlights.
 	double ref_index;     // Refractive index.
 	long   type;          // Reserved for future use.
-	};
+};
 
 struct Transformation {
 	Vec3 translation;
@@ -96,7 +96,7 @@ struct Camera {           // Defines the position of the eye/camera.
 	Interval y_win;       // Vertical extent of view window (typically [-1,1]).
 	unsigned x_res;       // Horizontal image resolution in pixels.
 	unsigned y_res;       // Vertical image resolution in pixels.
-	};
+};
 
 struct PrimitiveObject ;
 
@@ -138,13 +138,13 @@ struct Shader {
 	int ambientOcclusionSamples ;
 	int ambientOcclusionHemisphereRadius ;
 
-	};
+};
 
 struct Envmap { // Each object can have its own environment map.
 	Envmap() {}
 	virtual ~Envmap() {}
 	virtual Color Shade( const Ray &ray ) const = 0;
-	};
+};
 
 struct Rasterizer  {  // The rasterizer creates all the primary rays.
 	Rasterizer() {}
@@ -158,7 +158,7 @@ struct Rasterizer  {  // The rasterizer creates all the primary rays.
 	void Normal_Raster(RasterDetails & , const int, const int);
 	void Anti_Aliasing(RasterDetails & , const int, const int);
 	void Depth_Of_Field_Effect(RasterDetails & , const int, const int);
-	};
+};
 
 struct Object{
 	Object () {}
@@ -204,8 +204,6 @@ struct BSP_Node{
 
 	Object * parentObject ;
 };
-
-
 
 struct PrimitiveObject{
 	PrimitiveObject() { material = 0; shader = 0; envmap = 0;  }
@@ -262,9 +260,11 @@ struct Radiosity {
 	Radiosity(  Scene * _scene ) ;
 	virtual ~Radiosity() ;
 
-	bool buildInitialQuadTree();
+	void buildInitialQuadTree();
+	void findFormFactor();
 
 	Scene * scene ;
+	int numOfElements;
 
 };
 

@@ -1,0 +1,2029 @@
+
+<!-- saved from url=(0092)http://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?print=1 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<style type="text/css">
+table, body {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px;}
+h3.title {font-size: 16px; background: #eeeeee; width: 100%; padding: 3px;}
+span.gamacode {
+	/*font-family: "courier new";*/
+	display: block;
+	padding-left: 20px;
+	text-align: left;
+}
+@media screen and (min-width:480px) {
+	.content{
+		width: 750px; 
+		margin:auto;
+		word-wrap: break-word;
+	}
+}
+@media screen and (max-width:768px) {
+	.content{
+			width: 100% !important;
+			font-size:14px !important;
+			word-wrap: break-word;
+	}
+	.content img {
+		max-width: 100%;
+		height: auto !important;
+	}   
+	.content table {
+                width : inherit !important;
+        }
+
+	
+}
+</style>
+
+<title>Gamasutra - Simple Intersection Tests For Games</title>
+<link rel="stylesheet" type="text/css" href="chrome-extension://immhpnclomdloikkpcefncmfgjbkojmh/css/emoji.css"></head>
+<body><div class="content">
+<div style="border: 2px solid #ccc; width: 100%;"><a href="http://www.gamasutra.com/"><img border="0" src="./Gamasutra - Simple Intersection Tests For Games_files/gamalogo.gif"></a>
+	<a href="javascript:window.print()"><img src="./Gamasutra - Simple Intersection Tests For Games_files/print.gif" style="border: 0pt none ; float: right; margin-top: 10px;"></a>
+</div>
+<div style="clear:both;"></div>
+<h3 class="title">Simple Intersection Tests For Games</h3>
+By miguel gomez
+<p align="left">
+Whether 
+it's your car crossing the finish line at 180 miles per hour, or a bullet 
+tearing through the chest of your best friend, all games make use of 
+collision detection for object interaction. This article describes some 
+simple intersection tests for the most useful shapes: spheres and boxes.
+</p>
+<p align="left">
+<strong>Sweep 
+Tests for Moving Objects</strong>
+</p>
+<p align="left">
+A 
+common approach to collision detection is to simply test for whether 
+two objects are overlapping at the end of each frame. The problem with 
+this method is that quickly moving objects can pass through each other 
+without detection. To avoid this problem, their trajectories can be 
+subdivided and the objects checked for overlap at each point; however, 
+this gets expensive if either object experienced a large displacement. 
+On the other hand, a sweep test can efficiently determine a lower and 
+upper bound for the time of overlap, which can then be used as more 
+optimal starting points for the subdivision algorithm.
+</p>
+<p align="left">
+<strong>A 
+Sphere-Plane Sweep Test</strong>
+</p>
+<p align="left">
+Figure 
+1 shows an example of a quickly moving sphere passing through a plane. 
+It can be seen that <strong>C<sub>0</sub></strong> is on the positive side of 
+the plane and <strong>C<sub>1</sub></strong> is on its negative side.
+</p>
+<div align="left">
+<table border="0" cellspacing="0" cellpadding="6" width="172" align="center" bgcolor="#ffffff">
+	<tbody>
+		<tr>
+			<td> 
+			<div align="center">
+			<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig1.gif" alt="Kuras" width="458" height="224" align="absmiddle">
+			</div>
+			</td>
+		</tr>
+		<tr align="center">
+			<td height="27"><strong>Figure 
+			1. A sphere passes through a plane.</strong></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+<p align="left">
+&nbsp;
+</p>
+<p align="left">
+In 
+general, if a sphere penetrated a plane at some point during the frame, 
+then <em>d<sub>0</sub>&gt;r</em> and <em>d<sub>1</sub>&lt;r</em>, where 
+<em>r</em> is the radius of the sphere and <em>d<sub>0</sub></em> and <em>d<sub>1</sub></em> 
+are the signed distances from the plane to <strong>C<sub>0</sub></strong> and 
+<strong>C<sub>1</sub></strong>, respectively. The signed distance from a point 
+<strong>C</strong> to a plane can be calculated with the formula
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq1.gif" alt="" width="186" height="94">
+</p>
+<p align="left">
+More 
+efficiently, we can store the plane in the form {<strong>n</strong><em>, D</em>}, 
+where
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq2.gif" alt="" width="82" height="28">
+</p>
+<p align="left">
+The 
+distance <em>d</em> is then calculated
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq3.gif" alt="" width="102" height="28">
+</p>
+<p align="left">
+The 
+trajectory from <strong>C<sub>0</sub></strong> to <strong>C<sub>1</sub></strong> can be 
+parameterized with a variable <em>u</em>, which may be thought of as <em>normalized 
+time,</em> since its value is 0 at <strong>C<sub>0</sub></strong> and 1 at <strong>C<sub>1</sub></strong>. 
+The normalized time at which the sphere first intersects the plane is 
+given by
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq4.gif" alt="" width="98" height="56">
+</p>
+<p align="left">
+The 
+center of the sphere at this time can then be interpolated with an affine 
+combination of <strong>C<sub>0</sub></strong> and <strong>C<sub>1</sub></strong>
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq5.gif" alt="" width="188" height="30">
+</p>
+<p align="left">
+This 
+formula interpolates <strong>C<sub>i</sub></strong> correctly as long as <em>d<sub>0</sub></em> 
+is not equal to <em>d<sub>1</sub></em> (which is the case if displacement 
+has occurred), even when <em>r </em>= 0 (the case of a line segment). 
+If desired, the parameter <em>u</em> can also be used to linearly interpolate 
+the orientation of an object at this point.	
+</p>
+<p align="left">
+In 
+this example, it was assumed that the sphere approached the plane from 
+the positive side and that the sphere was not already penetrating the 
+plane at <strong>C<sub>0.</sub></strong>. In the case that there could have been 
+penetration on the previous frame, the condition |<em>d<sub>0</sub></em>|&lt;=<em>r</em> 
+should also be checked. Listing 1 gives an implementation of this sphere-plane 
+sweep test.
+</p>
+<p align="left">
+<em><strong>Listing 
+1. A sphere-plane sweep test.</strong></em>
+</p>
+<p align="left">
+#include "vector.h"
+</p>
+<p align="left">
+class PLANE
+</p>
+<p align="left">
+{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	public:<br>
+	<br>
+	VECTOR N; <br>
+	//unit normal<br>
+	<br>
+	SCALAR D; <br>
+	//distance from the plane to the origin 
+	from a <br>
+	//normal and a point
+</blockquote>
+</div>
+<blockquote>
+	<p align="left">
+	PLANE( const VECTOR&amp; 
+	p0, const VECTOR&amp; n ):	N(n), 
+	D(-N.dot(p0))<br>
+	{}<br>
+	//from 3 points
+	</p>
+	<p align="left">
+	PLANE( const VECTOR&amp; 
+	p0, const VECTOR&amp; p1, <br>
+	const VECTOR&amp; p2 ):	N((p1-p0).cross(p2-p0).unit()),<br>
+	D(-N.dot(p0))<br>
+	{}<br>
+	//signed distance from the 
+	plane topoint 'p' along 
+	<br>
+	//the unit normal
+	</p>
+	<p align="left">
+	const SCALAR distanceToPoint( 
+	const VECTOR&amp; p ) const<br>
+	{
+	</p>
+</blockquote>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	 
+</blockquote>
+</div>
+<blockquote>
+	
+	<div align="left">
+	<blockquote>
+		&nbsp; 
+	</blockquote>
+	</div>
+	<blockquote>
+		<p align="left">
+		return N.dot(p) + D;
+		</p>
+	</blockquote>
+	 
+	<p align="left">
+	}
+	</p>
+</blockquote>
+<p align="left">
+};
+</p>
+<p align="left">
+const bool SpherePlaneSweep<br>
+(<br>
+const SCALAR	r,	//sphere 
+radius<br>
+const VECTOR&amp;	C0,	//previous 
+position of sphere<br>
+const VECTOR&amp;	C1,	//current 
+position of sphere<br>
+const PLANE&amp;	plane,	//the 
+plane<br>
+VECTOR&amp;		Ci,	//position 
+of sphere when it first touched the plane<br>
+SCALAR&amp;		u	//normalized 
+time of collision
+</p>
+<p align="left">
+)
+</p>
+<p align="left">
+{
+</p>
+<p align="left">
+	const SCALAR d0 
+= plane.distanceToPoint( C0 );<br>
+const SCALAR d1 = plane.distanceToPoint( 
+C1 );
+</p>
+<p align="left">
+		//check if 
+it was touching on previous frame<br>
+if( fabs(d0) &lt;= r )
+</p>
+<p align="left">
+		{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	Ci = C0;<br>
+	u = 0;<br>
+	return true;
+</blockquote>
+</div>
+<p align="left">
+		}
+</p>
+<p align="left">
+		//check if 
+the sphere penetrated during this frame<br>
+if( d0&gt;r &amp;&amp; d1&lt;r 
+)<br>
+{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	u = (d0-r)/(d0-d1);		//normalized 
+	time<br>
+	Ci = (1-u)*C0 + u*C1;	//point 
+	of first contact<br>
+	return true;
+</blockquote>
+</div>
+<p align="left">
+		}
+</p>
+<p align="left">
+	return false;
+</p>
+<p align="left">
+}
+</p>
+<p align="left">
+For 
+the definition of the VECTOR class, please see [3].
+</p>
+<hr name="false">
+<p>
+<strong>A 
+Sphere-Sphere Sweep Test</strong>
+</p>
+<p align="left">
+Figure 
+2 shows two spheres that collided between frames. If these spheres experienced 
+acceleration during the frame, their trajectories will be second or 
+higher order curves; however, usually their paths can be accurately 
+approximated as linear segments according to the equations
+</p>
+<p align="center">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq6.gif" alt="" width="128" height="170">
+</p>
+<p align="left">
+&nbsp;
+</p>
+<p align="center">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig2.GIF" alt="" width="390" height="358" align="middle">
+</p>
+<p align="left">
+Since 
+both spheres traveled for the same amount of time, <em>u</em> is the same 
+for both trajectories. The square of the distance between the lines 
+is
+</p>
+<p align="center">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq7.gif" alt="" width="228" height="32">
+</p>
+<p align="left">
+and 
+to calculate when they first make contact, we must solve for <em>u</em> 
+such that
+</p>
+<p align="center">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq8.gif" alt="" width="320" height="38">
+</p>
+<p align="left">
+This 
+leads to the quadratic equation
+</p>
+<p align="center">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq9.gif" alt="" width="356" height="106">
+</p>
+<p align="left">
+The 
+vector <strong>v<sub>ba</sub></strong> can be thought of as the displacement of 
+B observed by A. This equation is quadratic in <em>u</em>, so there may 
+be no solution (the spheres never collided), one solution (they just 
+glanced each other), or two solutions (in which case the lesser solution 
+is when they began to overlap and the greater is when they became disjoint 
+again). Again, it is a good idea to check for overlap at the beginning 
+of the frame, since this will handle the case of two stationary spheres. 
+Listing 2 shows an implementation of the sphere-sphere sweep test.
+</p>
+<p align="left">
+<strong><em>Listing 
+2. The sphere-sphere sweep test.</em></strong>
+</p>
+<p align="left">
+#include 
+"vector.h"
+</p>
+<p align="left">
+template&lt; 
+class T &gt;
+</p>
+<p align="left">
+	inline 
+void SWAP( T&amp; a, T&amp; b )<br>
+//swap the values of a and b
+</p>
+<p align="left">
+	{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	const 
+	T temp = a;<br>
+	a = b;<br>
+	b = temp;
+</blockquote>
+</div>
+<p align="left">
+	}
+</p>
+<p align="left">
+// Return 
+true if r1 and r2 are real<br>
+inline bool 
+QuadraticFormula<br>
+(<br>
+const SCALAR 
+a,<br>
+const SCALAR 
+b,<br>
+const SCALAR 
+c,<br>
+SCALAR&amp; 
+r1,		//first<br>
+SCALAR&amp; 
+r2		//and second roots<br>
+)
+</p>
+<p align="left">
+{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	&nbsp; 
+</blockquote>
+</div>
+<blockquote>
+	<p align="left">
+	const 
+	SCALAR q = b*b - 4*a*c; <br>
+	if( q &gt;= 0 )
+	</p>
+	<p align="left">
+	{
+	</p>
+	<p align="left">
+	&nbsp;
+	</p>
+	<div align="left">
+	<blockquote>
+		&nbsp; 
+	</blockquote>
+	</div>
+	<blockquote>
+		<p align="left">
+		const 
+		SCALAR sq = sqrt(q);<br>
+		const SCALAR 
+		d = 1 / (2*a);<br>
+		r1 = ( -b + sq 
+		) * d;<br>
+		r2 = ( -b - sq 
+		) * d;<br>
+		return true;//real 
+		roots
+		</p>
+	</blockquote>
+	<p align="left">
+	}
+	</p>
+	<p align="left">
+	else
+	</p>
+	<p align="left">
+	{
+	</p>
+	<p align="left">
+	&nbsp;
+	</p>
+	<div align="left">
+	<blockquote>
+		&nbsp; 
+	</blockquote>
+	</div>
+	<blockquote>
+		<p align="left">
+		return 
+		false;//complex roots
+		</p>
+	</blockquote>
+	<p align="left">
+	}
+	</p>
+</blockquote>
+<p align="left">
+}
+</p>
+<p align="left">
+const 
+bool SphereSphereSweep<br>
+(<br>
+const SCALAR	ra,	//radius 
+of sphere A<br>
+const VECTOR&amp;	A0,	//previous 
+position of sphere A<br>
+const VECTOR&amp;	A1,	//current 
+position of sphere A<br>
+const SCALAR	rb,	//radius 
+of sphere B<br>
+const VECTOR&amp;	B0,	//previous 
+position of sphere B<br>
+const VECTOR&amp;	B1,	//current 
+position of sphere B<br>
+SCALAR&amp;		u0,	//normalized 
+time of first collision<br>
+SCALAR&amp;		u1	//normalized 
+time of second collision
+</p>
+<p align="left">
+)
+</p>
+<p align="left">
+{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	const 
+	VECTOR va = A1 - A0;<br>
+	//vector from A0 to A1<br>
+	<br>
+	const VECTOR 
+	vb = B1 - B0;<br>
+	//vector from B0 to B1<br>
+	<br>
+	const VECTOR 
+	AB = B0 - A0;<br>
+	//vector from A0 to B0<br>
+	<br>
+	const VECTOR 
+	vab = vb - va;<br>
+	//relative velocity (in normalized time)<br>
+	<br>
+	const SCALAR rab = ra + rb;<br>
+	<br>
+	const SCALAR 
+	a = vab.dot(vab);<br>
+	//u*u coefficient<br>
+	<br>
+	const SCALAR 
+	b = 2*vab.dot(AB);<br>
+	//u coefficient<br>
+	<br>
+	const SCALAR 
+	c = AB.dot(AB) - rab*rab;<br>
+	//constant term
+</blockquote>
+</div>
+<blockquote>
+	<p align="left">
+	//check 
+	if they're currently overlapping<br>
+	if( AB.dot(AB) 
+	&lt;= rab*rab )
+	</p>
+	<p align="left">
+	{
+	</p>
+	<p align="left">
+	&nbsp;
+	</p>
+	<div align="left">
+	<blockquote>
+		&nbsp; 
+	</blockquote>
+	</div>
+	<blockquote>
+		<p align="left">
+		u0 
+		= 0;<br>
+		u1 = 0;<br>
+		return 
+		true;
+		</p>
+	</blockquote>
+	<p align="left">
+	}
+	</p>
+	<p align="left">
+	//check 
+	if they hit each other <br>
+	// during the frame<br>
+	if( QuadraticFormula( 
+	a, b, c, u0, u1 ) )<br>
+	{
+	</p>
+	<p align="left">
+	&nbsp;
+	</p>
+	<div align="left">
+	<blockquote>
+		&nbsp; 
+	</blockquote>
+	</div>
+	<blockquote>
+		<p align="left">
+		if( 
+		u0 &gt; u1 )<br>
+		SWAP( u0, 
+		u1 );<br>
+		return 
+		true;
+		</p>
+	</blockquote>
+	<p align="left">
+	}
+	</p>
+	<p align="left">
+	return 
+	false;
+	</p>
+</blockquote>
+<p align="left">
+}
+</p>
+<hr name="false">
+<p align="left">
+<strong>An 
+Axis-Aligned Bounding Box (AABB) Sweep Test</strong><strong> 
+</strong><strong> </strong>
+</p>
+<p align="left">
+Just 
+like the name says, the faces of an axis-aligned bounding box are aligned 
+with the coordinate axes of its parent frame (see Figure 3). In most 
+cases AABBs can fit an object more tightly than a sphere, and their 
+overlap test is extremely fast.
+</p>
+<p align="left">
+To 
+see if A and B overlap, a separating axis test is used along the x, 
+y, and z-axes. If the two boxes are disjoint, then at least one of these 
+will form a separating axis. Figure 4 illustrates an overlap test in 
+one dimension.
+</p>
+<p align="left">
+&nbsp;
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig3.gif" alt="" width="432" height="186" align="middle">
+</p>
+<p align="left">
+&nbsp;
+</p>
+<p align="center">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig4.gif" alt="" width="408" height="106">
+</p>
+<p align="left">
+In 
+this example the x-axis forms a separating axis because
+</p>
+<p align="center">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq10.gif" alt="" width="106" height="38">
+</p>
+<p align="left">
+Note 
+that the separating axis test will return true even if one box fully 
+contains the other. A more general separating axis test is given in 
+the section below on oriented bounding boxes (OBB’s). Listing 3 defines 
+an AABB class that implements this overlap test.
+</p>
+<p align="left">
+<em><strong>Listing 
+3. An AABB class.</strong></em>
+</p>
+<p align="left">
+#include 
+"vector.h"
+</p>
+<p align="left">
+// An 
+axis-aligned bounding box
+</p>
+<p align="left">
+class 
+AABB<br>
+{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	public:
+</blockquote>
+</div>
+<blockquote>
+	<p align="left">
+	VECTOR P; //position<br>
+	VECTOR E; 
+	//x,y,z extents<br>
+	
+	</p>
+	<blockquote>
+		<p align="left">
+		AABB( 
+		const VECTOR&amp; p, <br>
+		const VECTOR&amp; e ):	P(p), 
+		E(e)
+		</p>
+		<p align="left">
+		{}
+		</p>
+	</blockquote>
+</blockquote>
+<p align="left">
+	//returns 
+true if this is overlapping b<br>
+const bool 
+overlaps( const AABB&amp; b ) const<br>
+{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	const 
+	VECTOR T = b.P - P;//vector from A to B<br>
+	return	fabs(T.x) 
+	&lt;= (E.x + b.E.x)
+</blockquote>
+</div>
+<blockquote>
+	<p align="left">
+	&amp;&amp;
+	</p>
+	<p align="left">
+	fabs(T.y) 
+	&lt;= (E.y + b.E.y)
+	</p>
+	<p align="left">
+	&amp;&amp;
+	</p>
+	<p align="left">
+	fabs(T.z) 
+	&lt;= (E.z + b.E.z);
+	</p>
+</blockquote>
+<p align="left">
+	}
+</p>
+<p align="left">
+	//NOTE: 
+since the vector indexing operator is not const,<br>
+//we must cast 
+away the const of the this pointer in the<br>
+//following 
+min() and max() functions<br>
+	//min x, 
+y, or z
+</p>
+<p align="left">
+	const 
+SCALAR min( long i ) const
+</p>
+<p align="left">
+	{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	return 
+	((AABB*)this)-&gt;P[i] - ((AABB*)this)-&gt;E[i];
+</blockquote>
+</div>
+<p align="left">
+	}
+</p>
+<p align="left">
+	//max 
+x, y, or z<br>
+const SCALAR 
+max( long i ) const
+</p>
+<p align="left">
+	{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	return 
+	((AABB*)this)-&gt;P[i] + ((AABB*)this)-&gt;E[i];
+</blockquote>
+</div>
+<p align="left">
+	}
+</p>
+<p align="left">
+};
+</p>
+<p align="left">
+For 
+more information on AABBs and their applications, please see [8].
+</p>
+<p align="left">
+Just 
+like spheres, AABBs can be swept to find the first and last occurrence 
+of overlap. In Figure 5(a), A and B experienced displacements <strong>v<sub>a</sub></strong> 
+and <strong>v<sub>b</sub></strong>, respectively, while Figure 5(b) shows B's 
+displacement as observed by A.
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig5.gif" alt="" width="478" height="156">
+</p>
+<p align="left">
+&nbsp;
+</p>
+<p align="left">
+Figure 6 shows 
+B's displacement as observed by A. 
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig6.gif" alt="" width="368" height="208">
+</p>
+<p align="left">
+In 
+this example, the normalized times it took for the x-extents and y-extents 
+to overlap are given by
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq11.gif" alt="" width="312" height="60">
+</p>
+<p align="left">
+and 
+it can be seen that the x-extents will cross before the y-extents. The 
+two boxes cannot overlap until all the extents are overlapping, and 
+the boxes will cease to overlap when any one of these extents becomes 
+disjoint. If <em>u<sub>0,x</sub></em>, <em>u<sub>0,y</sub></em>, and <em>u<sub>0,z</sub></em> 
+were the times at which the x, y, and z-extents began to overlap, then 
+the earliest time at which the boxes could have begun to overlap was
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq12.gif" alt="" width="174" height="28">
+</p>
+<p align="left">
+Likewise, 
+if <em>u<sub>1,x</sub></em>, <em>u<sub>1,y</sub></em>, and <em>u<sub>1,z</sub></em> 
+are the times at which the x, y, and z-extents become disjoint, then 
+the earliest time at which the boxes could have become disjoint was
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq13.gif" alt="" width="170" height="30">
+</p>
+<p align="left">
+In 
+order for the two boxes to have overlapped during their displacement, 
+the condition
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq14.gif" alt="" width="62" height="26">
+</p>
+<p align="left">
+must 
+have been met. Just like in the sphere sweep test, the positions of 
+first and last overlap can be linearly interpolated with <em>u</em>. Listing 
+4 gives an implementation of this AABB sweep algorithm.
+</p>
+<p align="left">
+<em><strong>Listing 
+4. An AABB sweep algorithm.</strong></em>
+</p>
+<p align="left">
+#include 
+"aabb.h"
+</p>
+<p align="left">
+//Sweep 
+two AABB's to see if and when they first<br>
+//and last 
+were overlapping
+</p>
+<p align="left">
+const 
+bool AABBSweep<br>
+(
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	const 
+	VECTOR&amp;	Ea,	//extents of AABB A<br>
+	const VECTOR&amp;	A0,	//its 
+	previous position<br>
+	const VECTOR&amp;	A1,	//its 
+	current position<br>
+	const VECTOR&amp;	Eb,	//extents 
+	of AABB B<br>
+	const VECTOR&amp;	B0,	//its 
+	previous position<br>
+	const VECTOR&amp;	B1,	//its 
+	current position<br>
+	SCALAR&amp;			u0,	//normalized 
+	time of first collision<br>
+	SCALAR&amp;			u1	//normalized 
+	time of second collision
+</blockquote>
+</div>
+<p align="left">
+)
+</p>
+<p align="left">
+{
+</p>
+<p align="left">
+&nbsp;
+</p>
+<div align="left">
+<blockquote>
+	const 
+	AABB A( A0, Ea );//previous state of AABB A<br>
+	const AABB 
+	B( B0, Eb );//previous state of AABB B<br>
+	const VECTOR 
+	va = A1 - A0;//displacement of A<br>
+	const VECTOR 
+	vb = B1 - B0;//displacement of B
+</blockquote>
+</div>
+<blockquote>
+	<p align="left">
+	//the 
+	problem is solved in A's frame of reference
+	</p>
+	<p align="left">
+	 VECTOR 
+	v = vb - va;<br>
+	//relative 
+	velocity (in normalized time)
+	</p>
+	<p align="left">
+	 VECTOR 
+	u_0(0,0,0);<br>
+	//first times of overlap along each axis
+	</p>
+	<p align="left">
+	VECTOR 
+	u_1(1,1,1);<br>
+	//last times of overlap along each axis
+	</p>
+	<p align="left">
+	//check 
+	if they were overlapping <br>
+	// on the 
+	previous frame<br>
+	if( A.overlaps(B) 
+	)<br>
+	{
+	</p>
+	<p align="left">
+	&nbsp;
+	</p>
+	<div align="left">
+	<blockquote>
+		&nbsp; 
+	</blockquote>
+	</div>
+	<blockquote>
+		<p align="left">
+		u0 
+		= u1 = 0;<br>
+		return 
+		true;
+		</p>
+	</blockquote>
+	<p align="left">
+	}
+	</p>
+	<p align="left">
+	//find 
+	the possible first and last times<br>
+	//of overlap 
+	along each axis<br>
+	for( long 
+	i=0 ; i&lt;3 ; i++ )<br>
+	{
+	</p>
+	<p align="left">
+	&nbsp;
+	</p>
+	<div align="left">
+	<blockquote>
+		&nbsp; 
+	</blockquote>
+	</div>
+	<blockquote>
+		<p align="left">
+		if( 
+		A.max(i)&lt;B.min(i) &amp;&amp; v[i]&lt;0 )<br>
+		{
+		</p>
+		<p align="left">
+		&nbsp;
+		</p>
+		<div align="left">
+		<blockquote>
+			u_0[i] 
+			= (A.max(i) - B.min(i)) / v[i];
+		</blockquote>
+		</div>
+		<p align="left">
+		}
+		</p>
+		<p align="left">
+		else 
+		if( B.max(i)&lt;A.min(i) &amp;&amp; v[i]&gt;0 )<br>
+		{
+		</p>
+		<p align="left">
+		&nbsp;
+		</p>
+		<div align="left">
+		<blockquote>
+			u_0[i] 
+			= (A.min(i) - B.max(i)) / v[i];
+		</blockquote>
+		</div>
+		<p align="left">
+		}
+		</p>
+		<p align="left">
+		if( 
+		B.max(i)&gt;A.min(i) &amp;&amp; v[i]&lt;0 )<br>
+		{ 
+		</p>
+		<div align="left">
+		<blockquote>
+			u_1[i] = (A.min(i) 
+			- B.max(i)) / v[i]; 
+		</blockquote>
+		</div>
+		<p align="left">
+		}
+		</p>
+		<p align="left">
+		else 
+		if( A.max(i)&gt;B.min(i) &amp;&amp; v[i]&gt;0 )<br>
+		{
+		</p>
+		<p align="left">
+		&nbsp;
+		</p>
+		<div align="left">
+		<blockquote>
+			u_1[i] 
+			= (A.max(i) - B.min(i)) / v[i]; 
+		</blockquote>
+		</div>
+		<p align="left">
+		}
+		</p>
+	</blockquote>
+	<p align="left">
+	}
+	</p>
+	<p align="left">
+	//possible 
+	first time of overlap<br>
+	u0 = MAX( 
+	u_0.x, MAX(u_0.y, u_0.z) );
+	</p>
+	<p align="left">
+	//possible 
+	last time of overlap<br>
+	u1 = MIN( 
+	u_1.x, MIN(u_1.y, u_1.z) );
+	</p>
+	<p align="left">
+	//they 
+	could have only collided if<br>
+	//the first 
+	time of overlap occurred<br>
+	//before 
+	the last time of overlap<br>
+	return u0 
+	&lt;= u1;
+	</p>
+</blockquote>
+<p align="left">
+}
+</p>
+<hr name="false">
+<p>
+<strong>A 
+Box-Sphere Intersection Test</strong>
+</p>
+<p align="left">
+A 
+very elegant box-sphere intersection test is described in [1]. Figure 
+7 shows two configurations of a sphere and a box in 2D. Sphere A is 
+closest to an edge, whereas sphere B is closest to a corner. The algorithm 
+calculates the square of the distance from the box to the sphere by 
+analyzing the orientation of the sphere relative to the box in a single 
+loop.
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig7.gif" alt="" width="322" height="168">
+</p>
+<p align="left">
+If 
+the box is not axis aligned, simply transform the center of the sphere 
+to the box's local coordinate frame. Listing 5 gives an implementation 
+of Arvo's algorithm.
+</p>
+<p align="left">
+<strong>Listing 
+5. Arvo's algorithm.</strong>
+</p>
+<p align="left">
+#include 
+"aabb.h"
+</p>
+<p align="left">
+//Check 
+to see if the sphere overlaps the AABB<br>
+const bool 
+AABBOverlapsSphere ( 
+const AABB&amp;		B, 
+const SCALAR	r, 
+VECTOR&amp;			C 
+) <br>
+{  
+</p>
+<div align="left">
+<blockquote>
+	float s, d = 0; 
+</blockquote>
+</div>
+<blockquote>
+	<p align="left">
+	//find 
+	the square of the distance<br>
+	//from the 
+	sphere to the box<br>
+	for( long 
+	i=0 ; i&lt;3 ; i++ ) <br>
+	{  
+	</p>
+	<div align="left">
+	<blockquote>
+		if( 
+		C[i] &lt; B.min(i) )<br>
+		{
+	</blockquote>
+	</div>
+	<blockquote>
+		<p align="left">
+		&nbsp;
+		</p>
+		<div align="left">
+		<blockquote>
+			s 
+			= C[i] - B.min(i);<br>
+			d += 
+			s*s; 
+		</blockquote>
+		</div>
+		<p align="left">
+		}
+		</p>
+		<p align="left">
+		else 
+		if( C[i] &gt; B.max(i) )<br>
+		{ 
+		</p>
+		<div align="left">
+		<blockquote>
+			s = C[i] - B.max(i);<br>
+			d += 
+			s*s; 
+		</blockquote>
+		</div>
+		<p align="left">
+		}
+		</p>
+	</blockquote>
+	<p align="left">
+	}<br>
+	return d 
+	&lt;= r*r;
+	</p>
+</blockquote>
+<p align="left">
+}
+</p>
+<hr name="false">
+<p align="left">
+<strong>An 
+Oriented Bounding Box (OBB) Intersection Test</strong>
+</p>
+<p align="left">
+A 
+drawback of using an axis-aligned bounding box is that it can’t fit 
+rotating geometry very tightly. 
+</p>
+<p align="left">
+On 
+the other hand, an oriented bounding box can be rotated with the objects, 
+fitting the geometry with less volume than an AABB. This requires that 
+the orientation of the box must also be specified. Figure 8 shows a 
+2D example, where <strong>A</strong><sup>1</sup>, <strong>A</strong><sup>2</sup>, <strong>B</strong><sup>1</sup> 
+and <strong>B</strong><sup>2</sup> are the local axes of boxes A and B.
+</p>
+<p align="left">
+&nbsp;
+</p>
+<p align="left">
+&nbsp;
+</p>
+<p align="left">
+&nbsp;
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig8.gif" alt="" width="430" height="198">
+</p>
+<p align="left">
+For 
+OBBs, the separating axis test must be generalized to three dimensions. 
+A box's scalar projection onto a unit vector <strong>L</strong> creates an interval 
+along the axis defined by <strong>L</strong>.
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig9.gif" alt="" width="398" height="244"> 
+</p>
+<p align="left">
+The 
+radius of the projection of box A onto <strong>L</strong> is
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq15.gif" alt="" width="258" height="46">
+</p>
+<p align="left">
+The 
+same is true for B, and <strong>L</strong> forms a separating axis if
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq16.gif" alt="" width="110" height="32">
+</p>
+<p align="left">
+Note 
+that <strong>L</strong> does not have to be a unit vector for this test to work. 
+The boxes A and B are disjoint if none of the 6 principal axes and their 
+9 cross products form a separating axis. These tests are greatly simplified 
+if <strong>T</strong> and B’s basis vectors (<strong>B</strong><sup>1</sup>, <strong>B</strong><sup>2</sup>, 
+<strong>B</strong><sup>3</sup>) are transformed into A’s coordinate frame.
+</p>
+<p align="left">
+An 
+OBB class and an implementation of the OBB overlap test is given in 
+Listing 6 below.
+</p>
+<table border="0" width="100%">
+	<tbody>
+		<tr align="left">
+			<td width="450"> 
+			<p align="left">
+			<strong><em>Listing 
+			6. An OBB class.</em></strong>
+			</p>
+			<p align="left">
+			#include 
+			"coordinate_frame.h"
+			</p>
+			<p align="left">
+			class 
+			OBB : public COORD_FRAME<br>
+			{
+			</p>
+			<p align="left">
+			public:
+			</p>
+			<p align="left">
+			&nbsp;
+			</p>
+			<div align="left">
+			<blockquote>
+				VeCTOR 
+				E; //extents<br>
+				OBB( 
+				const VECTOR&amp; e ):	E(e)
+			</blockquote>
+			</div>
+			<blockquote>
+				<p align="left">
+				{}
+				</p>
+			</blockquote>
+			<p align="left">
+			};
+			</p>
+			<p align="left">
+			//check 
+			if two oriented bounding boxes overlap<br>
+			const 
+			bool OBBOverlap<br>
+			(
+			</p>
+			<p align="left">
+			&nbsp;
+			</p>
+			<div align="left">
+			<blockquote>
+				//A<br>
+				VECTOR&amp;	a,	//extents<br>
+				VECTOR&amp;	Pa,	//position<br>
+				VECTOR*	A,	//orthonormal 
+				basis
+			</blockquote>
+			</div>
+			<blockquote>
+				<p align="left">
+				//B<br>
+				VECTOR&amp;	b,	//extents<br>
+				VECTOR&amp;	Pb,	//position<br>
+				VECTOR*	B	//orthonormal 
+				basis
+				</p>
+			</blockquote>
+			<p align="left">
+			)
+			</p>
+			<p align="left">
+			{
+			</p>
+			<p align="left">
+			&nbsp;
+			</p>
+			<div align="left">
+			<blockquote>
+				//translation, 
+				in parent frame<br>
+				VECTOR 
+				v = Pb - Pa;
+			</blockquote>
+			</div>
+			<blockquote>
+				<p align="left">
+				//translation, 
+				in A's frame<br>
+				VECTOR 
+				T( v.dot(A[0]), v.dot(A[1]), v.dot(A[2]) );
+				</p>
+				<p align="left">
+				//B's 
+				basis with respect to A's local frame<br>
+				SCALAR 
+				R[3][3];<br>
+				float 
+				ra, rb, t;<br>
+				long 
+				i, k;
+				</p>
+				<p align="left">
+				//calculate 
+				rotation matrix<br>
+				for( 
+				i=0 ; i&lt;3 ; i++ )
+				</p>
+				<p align="left">
+				&nbsp;
+				</p>
+				<div align="left">
+				<blockquote>
+					for( 
+					k=0 ; k&lt;3 ; k++ )
+				</blockquote>
+				</div>
+				<blockquote>
+					<p align="left">
+					&nbsp;
+					</p>
+					<div align="left">
+					<blockquote>
+						R[i][k] 
+						= A[i].dot(B[k]); 
+					</blockquote>
+					</div>
+					<blockquote>
+						<p align="left">
+						/*ALGORITHM: 
+						Use the separating axis test for all 15 
+						potential <br>
+						separating axes. If a separating 
+						axis could not be found, the two <br>
+						boxes overlap. */
+						</p>
+						<p align="left">
+						//A's 
+						basis vectors<br>
+						for( 
+						i=0 ; i&lt;3 ; i++ )<br>
+						{
+						</p>
+						<p align="left">
+						&nbsp;
+						</p>
+						<div align="left">
+						<blockquote>
+							<p>
+							ra 
+							= a[i];
+							</p>
+							<p>
+							 
+							rb 
+							= <br>
+							b[0]*fabs(R[i][0]) + b[1]*fabs(R[i][1]) + b[2]*fabs(R[i][2]);
+							</p>
+						</blockquote>
+						</div>
+						<blockquote>
+							<p align="left">
+							t 
+							= fabs( T[i] );
+							</p>
+							<p align="left">
+							if( 
+							t &gt; ra + rb ) <br>
+							return false;
+							</p>
+						</blockquote>
+						<p align="left">
+						}
+						</p>
+						<p align="left">
+						//B's 
+						basis vectors<br>
+						for( 
+						k=0 ; k&lt;3 ; k++ )<br>
+						{
+						</p>
+						<p align="left">
+						&nbsp;
+						</p>
+						<blockquote>
+							ra 
+							= <br>
+							a[0]*fabs(R[0][k]) + a[1]*fabs(R[1][k]) + a[2]*fabs(R[2][k]);
+						</blockquote>
+						<blockquote>
+							<p align="left">
+							rb 
+							= b[k];
+							</p>
+							<p align="left">
+							t 
+							= <br>
+							fabs( T[0]*R[0][k] + T[1]*R[1][k] + <br>
+							T[2]*R[2][k] );
+							</p>
+							<p align="left">
+							if( 
+							t &gt; ra + rb )<br>
+							return 
+							false;
+							</p>
+						</blockquote>
+						<p align="left">
+						}
+						</p>
+						<p align="left">
+						//9 
+						cross products<br>
+						<br>
+						//L 
+						= A0 x B0<br>
+						ra 
+						= <br>
+						a[1]*fabs(R[2][0]) + a[2]*fabs(R[1][0]);
+						</p>
+						<p align="left">
+						rb 
+						= <br>
+						b[1]*fabs(R[0][2]) + b[2]*fabs(R[0][1]);
+						</p>
+						<p align="left">
+						t 
+						= <br>
+						fabs( T[2]*R[1][0] - <br>
+						T[1]*R[2][0] );
+						</p>
+						<p align="left">
+						if( 
+						t &gt; ra + rb )<br>
+						return 
+						false;
+						</p>
+						<p align="left">
+						//L 
+						= A0 x B1<br>
+						ra 
+						= <br>
+						a[1]*fabs(R[2][1]) + a[2]*fabs(R[1][1]);
+						</p>
+						<p align="left">
+						rb 
+						= <br>
+						b[0]*fabs(R[0][2]) + b[2]*fabs(R[0][0]);
+						</p>
+						<p align="left">
+						t 
+						= <br>
+						fabs( T[2]*R[1][1] - <br>
+						T[1]*R[2][1] );
+						</p>
+						<p align="left">
+						if( 
+						t &gt; ra + rb )<br>
+						return 
+						false;
+						</p>
+						<p align="left">
+						//L 
+						= A0 x B2<br>
+						 
+						ra = <br>
+						a[1]*fabs(R[2][2]) + a[2]*fabs(R[1][2]);
+						</p>
+						<p align="left">
+						rb 
+						= <br>
+						b[0]*fabs(R[0][1]) + b[1]*fabs(R[0][0]);
+						</p>
+						<p align="left">
+						t 
+						= <br>
+						fabs( T[2]*R[1][2] - <br>
+						T[1]*R[2][2] );
+						</p>
+						<p align="left">
+						if( 
+						t &gt; ra + rb )<br>
+						return 
+						false;
+						</p>
+						<p align="left">
+						//L 
+						= A1 x B0<br>
+						ra 
+						= <br>
+						a[0]*fabs(R[2][0]) + a[2]*fabs(R[0][0]);
+						</p>
+						<p align="left">
+						rb 
+						= <br>
+						b[1]*fabs(R[1][2]) + b[2]*fabs(R[1][1]);
+						</p>
+						<p align="left">
+						t 
+						= <br>
+						fabs( T[0]*R[2][0] - <br>
+						T[2]*R[0][0] );
+						</p>
+						<p align="left">
+						if( 
+						t &gt; ra + rb )<br>
+						return 
+						false;
+						</p>
+						<p align="left">
+						//L 
+						= A1 x B1<br>
+						ra 
+						= <br>
+						a[0]*fabs(R[2][1]) + a[2]*fabs(R[0][1]);
+						</p>
+						<p align="left">
+						rb 
+						= <br>
+						b[0]*fabs(R[1][2]) + b[2]*fabs(R[1][0]);
+						</p>
+						<p align="left">
+						t 
+						= <br>
+						fabs( T[0]*R[2][1] - <br>
+						T[2]*R[0][1] );
+						</p>
+						<p align="left">
+						if( 
+						t &gt; ra + rb )<br>
+						return 
+						false;
+						</p>
+						<p align="left">
+						//L 
+						= A1 x B2<br>
+						ra 
+						= <br>
+						a[0]*fabs(R[2][2]) + a[2]*fabs(R[0][2]);
+						</p>
+						<p align="left">
+						rb 
+						= <br>
+						b[0]*fabs(R[1][1]) + b[1]*fabs(R[1][0]);
+						</p>
+						<p align="left">
+						t 
+						= <br>
+						fabs( T[0]*R[2][2] - <br>
+						T[2]*R[0][2] );
+						</p>
+						<p align="left">
+						if( 
+						t &gt; ra + rb )<br>
+						return 
+						false;
+						</p>
+						<p align="left">
+						//L 
+						= A2 x B0<br>
+						ra 
+						= <br>
+						a[0]*fabs(R[1][0]) + a[1]*fabs(R[0][0]);
+						</p>
+						<p align="left">
+						rb 
+						= <br>
+						b[1]*fabs(R[2][2]) + b[2]*fabs(R[2][1]);
+						</p>
+						<p align="left">
+						t 
+						= <br>
+						fabs( T[1]*R[0][0] - <br>
+						T[0]*R[1][0] );
+						</p>
+						<p align="left">
+						if( 
+						t &gt; ra + rb )<br>
+						return 
+						false;
+						</p>
+						<p align="left">
+						//L 
+						= A2 x B1<br>
+						ra 
+						= <br>
+						a[0]*fabs(R[1][1]) + a[1]*fabs(R[0][1]);
+						</p>
+						<p align="left">
+						rb 
+						= <br>
+						b[0] *fabs(R[2][2]) + b[2]*fabs(R[2][0]);
+						</p>
+						<p align="left">
+						t 
+						= <br>
+						fabs( T[1]*R[0][1] - <br>
+						T[0]*R[1][1] );
+						</p>
+						<p align="left">
+						if( 
+						t &gt; ra + rb )<br>
+						return 
+						false;
+						</p>
+						<p align="left">
+						//L 
+						= A2 x B2<br>
+						ra 
+						= <br>
+						a[0]*fabs(R[1][2]) + a[1]*fabs(R[0][2]);
+						</p>
+						<p align="left">
+						rb 
+						= <br>
+						b[0]*fabs(R[2][1]) 
+						+ b[1]*fabs(R[2][0]);
+						</p>
+						<p align="left">
+						t 
+						= <br>
+						fabs( T[1]*R[0][2] - <br>
+						T[0]*R[1][2] );
+						</p>
+						<p align="left">
+						if( 
+						t &gt; ra + rb )<br>
+						return 
+						false;
+						</p>
+						<p align="left">
+						/*no 
+						separating axis found,<br>
+						the 
+						two boxes overlap */
+						</p>
+						<p align="left">
+						 
+						return 
+						true;
+						</p>
+					</blockquote>
+					<p align="left">
+					}
+					</p>
+				</blockquote>
+			</blockquote>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<blockquote>
+	<blockquote>
+		<p>
+		&nbsp;
+		</p>
+	</blockquote>
+</blockquote>
+<p>
+For 
+a more complete discussion of OBBs and the separating axis test, please 
+see [3]. Some other applications of the separating axis test are given 
+next.
+</p>
+<hr name="false">
+<p>
+<strong>An 
+OBB-Line Segment Test</strong>
+</p>
+<p align="left">
+Testing 
+a box and a line segment for intersection requires checking only six 
+separating axes: the box's three principal axes, and the vector cross 
+products of these axes with <strong>l</strong>, the line direction. Again, the 
+vectors used for these tests do not have to be normalized, and these 
+tests can be simplified by transforming the line segment into the box’s 
+coordinate frame.
+</p>
+<p align="left">
+One 
+application of this test is to see if a camera's line of sight is obscured. 
+Testing every polygon in a scene could be prohibitively expensive, but 
+if these polygons are stored in an AABB or an OBB tree, a box-segment 
+test can quickly determine a potential set of polygons. A segment-polygon 
+test can then be used to determine if any polygons in this subset are 
+actually obscuring the line of sight.
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig10.gif" alt="" width="354" height="198">
+</p>
+<p align="left">
+The 
+function in Listing 7 assumes the line segment has already been transformed 
+to box space.
+</p>
+<p align="justify">
+<strong>Listing 
+7.</strong>
+</p>
+<p>
+#include "aabb.h"
+</p>
+<p align="justify">
+const 
+bool AABB_LineSegmentOverlap<br>
+(
+</p>
+<p align="justify">
+&nbsp;
+</p>
+<blockquote>
+	const VECTOR&amp;	l,	//line 
+	direction<br>
+	const VECTOR&amp;	mid,	 
+	//midpoint of the line <br>
+	// segment<br>
+	const SCALAR	hl,	//segment 
+	half-length<br>
+	const AABB&amp;	b	//box
+</blockquote>
+<p align="justify">
+)
+</p>
+<p align="justify">
+{
+</p>
+<p align="justify">
+&nbsp;
+</p>
+<blockquote>
+	<p>
+	/* ALGORITHM: Use 
+	the separating axis <br>
+	theorem to see 
+	if the line segment <br>
+	and the box overlap. A line 
+	<br>
+	segment is a degenerate OBB. */
+	</p>
+	<p>
+	const VECTOR T 
+	= b.P - mid;<br>
+	VECTOR v;<br>
+	SCALAR r;
+	</p>
+	<p>
+	//do any of the 
+	principal axes<br>
+	//form a 
+	separating axis?
+	</p>
+	<p>
+	if( fabs(T.x) &gt; 
+	b.E.x + hl*fabs(l.x) )<br>
+	return false;
+	</p>
+	<p>
+	if( fabs(T.y) &gt; 
+	b.E.y + hl*fabs(l.y) )<br>
+	return false;
+	</p>
+	<p>
+	if( fabs(T.z) &gt; 
+	b.E.z + hl*fabs(l.z) )<br>
+	return false;
+	</p>
+	<p>
+	/* NOTE: Since 
+	the separating axis is<br>
+	perpendicular 
+	to the line in these<br>
+	last four 
+	cases, the line does not<br>
+	contribute 
+	to the projection. */
+	</p>
+	<p>
+	//l.cross(x-axis)?
+	</p>
+	<p>
+	r = b.E.y*fabs(l.z) 
+	+ b.E.z*fabs(l.y);
+	</p>
+	<p>
+	if( fabs(T.y*l.z 
+	- T.z*l.y) &gt; r )<br>
+	return false;
+	</p>
+	<p>
+	//l.cross(y-axis)?
+	</p>
+	<p>
+	r = b.E.x*fabs(l.z) 
+	+ b.E.z*fabs(l.x);<br>
+	<br>
+	if( fabs(T.z*l.x - T.x*l.z) &gt; r )<br>
+	return false;
+	</p>
+	<p>
+	//l.cross(z-axis)?
+	</p>
+	<p>
+	r = b.E.x*fabs(l.y) 
+	+ b.E.y*fabs(l.x);
+	</p>
+	<p>
+	if( fabs(T.x*l.y 
+	- T.y*l.x) &gt; r )<br>
+	return false;
+	</p>
+	<p>
+	return true;
+	</p>
+</blockquote>
+<p align="justify">
+}
+</p>
+<p align="justify">
+<strong>OBB 
+to AABB conversion</strong>
+</p>
+<p align="left">
+Converting 
+an OBB to an AABB merely involves calculating the extents of the OBB 
+along the x, y, and z-axes of its parent frame. For example the extent 
+of the OBB along the x-axis is
+</p>
+<p align="center">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq17.gif" alt="" width="418" height="34">
+</p>
+<p align="left">
+The 
+extents along the y and z-axes are calculated similarly.
+</p>
+<hr name="false">
+<p>
+<strong>A 
+Box-Plane Intersection Test</strong>
+</p>
+<p align="left">
+As 
+you can see from Figure 11, a box-plane intersection test only requires 
+checking whether or not <strong>n</strong> forms a separating axis.
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/fig11.gif" alt="" width="306" height="216">
+</p>
+<p align="left">
+The 
+box and the plane overlap if the condition
+</p>
+<p align="left">
+<img src="./Gamasutra - Simple Intersection Tests For Games_files/Eq18.gif" alt="" width="252" height="44">
+</p>
+<p align="left">
+is 
+met, where <em>d</em> is the distance from the center of the box to the 
+plane.
+</p>
+<p align="left">
+<strong>Further 
+Reading</strong>
+</p>
+<p align="left">
+Due 
+to time and space, all of the useful intersection tests could not be 
+described here. Some good polygon algorithms are given in [5] and [6]. 
+References [4] and [8] present unique algorithms for generating and 
+manipulating box trees. Bobic and Lander survey the subject of actual 
+collision detection (determining a point of contact and a surface normal) 
+in [2], [6] and [7], which is definitely an expansive, active area of 
+research. If you plan on employing more advanced collision detection 
+algorithms in your games, you should definitely check out all of the 
+references given below.
+</p>
+<p align="left">
+<strong>Soon 
+after receiving his degree in Physics, Miguel Gomez was lucky enough 
+to land a job as a game programmer. Since then he has programmed physics 
+and graphics for <em>PGA Tour Golf ’96</em>, <em>Hyperblade</em>, <em>Microsoft 
+Baseball 3D</em>, and <em>Destruction Derby 64</em>. He is currently perfecting 
+the collision detection and fluid physics for a kayak racing title at 
+Looking Glass Studios in Redmond. Please send questions and comments 
+to <a href="mailto:miguel@lglass.com">miguel@lglass.com</a>.</strong>
+</p>
+<p align="left">
+<strong>References</strong>
+</p>
+<p align="left">
+[1] 
+J. Arvo. A simple method for box-sphere intersection testing. In A. 
+Glassner, editor, <em>Graphics Gems</em>, pp. 335-339, Academic Press, 
+Boston, MA, 1990.
+</p>
+<p align="left">
+[2] 
+N. Bobic. "Advanced Collision Detection Techniques". <em>Game 
+Developer</em> 6(5):32-42, 1999
+</p>
+<p align="left">
+[3] 
+M. Gomez. <a href="http://www.gamasutra.com/view/feature/3354/c_data_structures_for_rigidbody_.php">"C++ Data 
+Structures for Rigid-Body Physics"</a>. <em>Gamasutra, </em>July 
+2, 1999
+</p>
+<p align="left">
+[4] 
+S. Gottschalk, M. C. Lin, and D. Manocha.<em> "</em>OBBTree: A Hierarchical 
+Structure for Rapid Interference Detection.<em>"</em> In <em>Proc. 
+SIGGRAPH</em>, pp. 171-180, 1996.
+</p>
+<p align="left">
+[5] 
+M. Held. "ERIT - A Collection of Efficient and Reliable Intersection 
+Tests". <em>Journal of Graphics Tools</em>, 2(4):25-44, 1997.
+</p>
+<p align="left">
+[6] 
+J. Lander. "Crashing into the New Year". <em>Game Developer</em> 
+6(1):21-27, 1999
+</p>
+<p align="left">
+[7] 
+J. Lander. "When Two Hearts Collide". <em>Game Developer</em> 
+6(2):19-24, 1999
+</p>
+<p align="left">
+[8] 
+G. Van den Bergen. "Efficient Collision Detection of Complex Deformable 
+Models Using AABB Trees". <em>Journal of Graphics Tools</em>, 2(4):1-14, 
+1997.
+</p>
+
+
+<p style="background: #eee; text-align: center; padding: 5px;"><a href="http://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php">Return to the full version of this article</a><br>
+Copyright © 
+<script type="text/javascript">
+  <!--
+  var currentTime = new Date()
+  var year = currentTime.getFullYear()
+  document.write( year)
+  //-->
+</script>2018
+
+UBM Tech, All rights reserved
+</p>
+
+
+</div> 
+
+</body></html>
