@@ -1,5 +1,7 @@
 #include "ray_tracer.h"
 #include "util.h"
+#include <random>
+#include <stack>
 
 struct ObjectNode {
 
@@ -60,6 +62,22 @@ struct QuadTreeNode : public BSP_Node {
 
 	bool visited;
 	bool delVisited;
+};
+
+
+struct FormFactorStackNode {
+
+	FormFactorStackNode ( QuadTreeNode * _quadTreeNode  ) {
+		quadTreeNode = _quadTreeNode;
+		if ( quadTreeNode->children.size() > 0 ) internal = true ; 
+		else internal = false;
+
+		visited = false;
+	}
+
+	QuadTreeNode * quadTreeNode;
+	bool visited ;
+	bool internal; 
 };
 
 // objects in the scene excluding light
@@ -187,28 +205,159 @@ void Radiosity::buildInitialQuadTree () {
 	}
 }
 
+
+inline void returnFilledElementsOfObject ( QuadTreeNode * _v , vector<QuadTreeNode * > & _a ) {
+
+	std::stack<FormFactorStackNode> stackFormFactor ;
+
+	//for all the initial elements of the object node
+	for ( auto &elements : _v->children ) {
+
+		for ( vector<QuadTreeNode *>::const_iterator iterQuads = v->children.cend() - 1 ; iterQuads >= v->children.cbegin() ; --iterQuads )
+			stackFormFactor.push ( FormFactorStackNode(*iterQuads));
+	}
+
+	while ( !stackFormFactor.empty() ) {
+		FormFactorStackNode temp = stackFormFactor.top();
+		stackFormFactor.pop();
+		if ( temp.quadTreeNode->children.size() > 0 ) 
+			for ( vector<QuadTreeNode *>::iterator iterQuads = temp.quadTreeNode->children.end - 1 ;
+				iterQuads >= temp.quadTreeNode->children.begin() ; 
+				--iterQuads ) 
+
+					stackFormFactor.push ( FormFactorStackNode(*iterQuads));
+		else {
+			_a.emplace_back ( stackFormFactor.top().quadTreeNode ) ;
+			stackFormFactor.pop() ;
+		}
+	}
+}
+
+bool Radiosity::castFromElementToElement ( const Ray &ray, HitInfo &hitinfo, QuadTreeNode * i, QuadTreeNode * j, const Vec3 &xi, const Vec3 &yi  ) {
+
+	double cmprDistance = 0.0 ;
+	HitInfo tempInfo ;
+
+	for ( std::vector<Object * >::const_iterator objsBegin = scene->sceneObjects.begin ; 
+		  objsBegin != scene->sceneObjects.end() && ( *objsBegin != NULL || *objsBegin != hitinfo.ignore ) ; 
+		  objsBegin++ ){
+
+				if( (*objsBegin)->Intersect( ray, hitinfo ) ){
+					if ( cmprDistance == 0 ){
+						cmprDistance = hitinfo.distance ;
+						hitinfo.object = (*objsBegin) ;
+						tempInfo = hitinfo ;
+					}
+					else if ( cmprDistance > hitinfo.distance ){
+				
+						cmprDistance = hitinfo.distance ;
+						hitinfo.object = (*objsBegin);
+						tempInfo = hitinfo ;
+					}
+					hitinfo.ray = ray; // Save the ray in world coordinates.
+				}
+	}
+	hitinfo = tempInfo ;
+
+	return ((hitinfo.object != 0 &&
+		     hitinfo.object == j->object &&
+		     Length(hitinfo.point - yi) < Epsilon &&
+			 ray.direction * j->triNormal < 0  ) ?  true :  false);
+}
+
+bool Radiosity::isVisibleXiToXj ( QuadTreeNode * i, QuadTreeNode * j, const Vec3 &xi, const Vec3 &yi ) {
+
+	Ray ray;
+	ray.direction = Unit (yi - xi ) ;
+	ray.origin     = xi + ( Epsilon * ray.direction ) ; // cast from above the element surface
+	ray.type       = generic_ray; // These rays are given no special meaning.
+	ray.generation = 1;           // Rays cast from the element are first-generation.
+
+	HitInfo hitinfo;             
+	hitinfo.ignore = NULL;       // Don't ignore any objects.
+	hitinfo.distance = Infinity; // Follow the full ray.
+
+	if ( castFromElementToElement ( ray, hitinfo ) ){
+		if( hitinfo.object == NULL ) cout << "Error : hitinfo in isVisibleXitoXj  did not return an collision with object" << endl ; 
+
+		else {
+
+		}
+	}
+	else cout << "isVisibleXitoXj detected no collisions between elements" << endl ; 
+}
+
+inline Vec3 returnRandomPointOnElement( QuadTreeNode * i ) {
+	
+	try {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+
+		double u = 0.0, v = 0.0 ;
+
+		do {
+			std::uniform_real_distribution<> dis (0.0, 1.0 ) ;
+
+			u = dis ( gen ) ;
+			v = dis ( gen ) ;
+
+		} while ( u + v <= 1.0 ) ;
+
+		Vec3 P ;
+		P.x = (( 1.0 - u - v ) * i->triVert1.x) + (u * i->triVert2.x) + (v * i->triVert3.x) ;
+		P.y = (( 1.0 - u - v ) * i->triVert1.y) + (u * i->triVert2.y) + (v * i->triVert3.y) ;
+		P.z = (( 1.0 - u - v ) * i->triVert1.z) + (u * i->triVert2.z) + (v * i->triVert3.z) ;
+
+		return P ;
+	}
+	catch ( std::exception ex ) {
+		cout <<"Error in inline Vec3 returnRandomPointOnElement : " << ex.what()  << endl ;
+	}
+}
+
+
+double Radiosity::findFormFactorTerm ( QuadTreeNode * i , QuadTreeNode * j ) {
+	
+	double formFactorij = 0 ;
+
+	//shoot 5 rays from element i to element j
+	for ( int k = 0 ; k < 5 ; ++k ) {
+		Vec3 xi = returnRandomPointOnElement ( i ) ;
+		Vec3 xj = returnRandomPointOnElement ( j ) ;
+
+		bool isVisibleXitoXj ( i, j, xi, xj ) ;
+	}
+}
+
 void Radiosity::findFormFactor() {
 
-	K = ( double ** ) malloc ( numOfElements * sizeof ( double * )) ;
+	// Size of K matrix.
+	int n = numOfElements + scene->NumLights() ;
 
-	for ( int i = 0 ; i < numOfElements ; ++ i )
-		K[i] = ( double * ) malloc ( numOfElements * sizeof ( double ));
+	K = ( double ** ) malloc ( n * sizeof ( double * )) ;
 
-	FF = ( double ** ) malloc ( numOfElements * sizeof ( double * )) ;
+	for ( int i = 0 ; i < n ; ++ i )
+		K[i] = ( double * ) malloc ( n * sizeof ( double ));
 
-	for ( int i = 0 ; i < numOfElements ; ++ i )
-		FF[i] = ( double * ) malloc ( numOfElements * sizeof ( double ));
+	FF = ( double ** ) malloc ( n * sizeof ( double * )) ;
+
+	for ( int i = 0 ; i < n ; ++ i )
+		FF[i] = ( double * ) malloc ( n * sizeof ( double ));
 
 	// Find the form factor matrix.
 	// Iterate through all the triangles and find the FF with all other triangles in the scene.
 	// Use the structure of the QuadTree to iterate through all the triangles.
+	vector<QuadTreeNode * > tempQuadVector ;
 
+	//for every object
+	for ( auto &v : quadTreeRoot->children ) {
+		returnFilledElementsOfObject ( v, tempQuadVector ) ;
+	}
 
-
-
-
-
-
-
-
+	for ( int i = 0 ; i < numOfElements ; ++i ) {
+		for (  int j = 0 ; j < numOfElements  ; ++j ) {
+			if ( i == j ) FF [i][j] = 1.0 ; 
+			else FF[i][j] = findFormFactorTerm ( tempQuadVector[i], tempQuadVector[j] ) ;
+		}
+	}
 }
