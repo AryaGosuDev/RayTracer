@@ -33,7 +33,7 @@ Color Shader::generateSoftShadows( const Scene &scene, const HitInfo &hit, Color
 		divisionsInY *= 2 ;
 	}
 
-	//create distribution of lights on a rectangular plane cutting through the great circule of the sphere light
+	//create distribution of lights on a rectangular plane cutting through the great circle of the sphere light
 
 	for ( int i = 0 ; i < divisionsInX ; ++ i ) {
 		for ( int j = 0 ; j < divisionsInY  ; ++ j ) {

@@ -57,6 +57,8 @@ extern AABB GetBoxPolygon ( // Construct a bounding box of a polygon
         const Object * 
  );
 
+extern int returnHighestValueIndx ( double * ) ;
+
 extern bool operator==(
 	const Material &a,
 	const Material &b

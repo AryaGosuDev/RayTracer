@@ -52,7 +52,7 @@ Interval SphereLight::GetSlab( const Vec3 &v ) const
 
 bool SphereLight::Intersect( const Ray &ray, HitInfo &hitinfo ) const
 	{
-	const Vec3 A( ray.origin - center ); // (5, -2, 2.79 ) - ( 0, 0, 0 )
+	const Vec3 A( ray.origin - center ); 
 	const Vec3 R( ray.direction ); // based upon screen resolution, etc.... ray.direction = Unit( O + (j + 0.5) * dR - (i + 0.5) * dU  ); //du and dr are gradations based on the resolution, O = origin
 	const double b = 2.0 * ( A * R ); 
 	const double discr = b * b - 4.0 * ( A * A - radius2 );  // The discriminant.
