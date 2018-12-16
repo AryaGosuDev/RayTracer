@@ -94,12 +94,12 @@ bool operator==( const Material &a, const Material &b )
 		a.type         == b.type; 
 	}
 
-int returnHighestValueIndx ( double * _a ) {
+int returnHighestValueIndx ( double * _a, int & n ) {
 	double val = 0.0 ;
 	int indx = 0 ;
-	int sizeOfArray = sizeof ( _a ) / sizeof ( double ) ;
+	//int sizeOfArray = sizeof ( _a ) / sizeof ( double ) ;
 
-	for ( int i = 0 ; i < sizeOfArray ; ++ i ) {
+	for ( int i = 0 ; i < n ; ++ i ) {
 		if ( val < _a[i] ) {
 			val = _a[i] ;
 			indx = i ;
@@ -108,4 +108,3 @@ int returnHighestValueIndx ( double * _a ) {
 
 	return indx ;
 }
-

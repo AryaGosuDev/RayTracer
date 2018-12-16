@@ -263,7 +263,7 @@ struct Radiosity {
 	void buildInitialQuadTree();
 	void findFormFactor();
 	double findFormFactorTerm ( QuadTreeNode * , QuadTreeNode * );
-	double findFormFactorTermWithLight ( QuadTreeNode * , QuadTreeNode * );
+	double findFormFactorTermWithLight ( QuadTreeNode * );
 	bool isVisibleXiToXj ( QuadTreeNode * , QuadTreeNode * , const Vec3 &, const Vec3 & ) ;
 	bool castFromElementToElement ( const Ray &, HitInfo &, QuadTreeNode *, QuadTreeNode *, const Vec3 &, const Vec3 & ) ;
 	void progressiveRefinement();

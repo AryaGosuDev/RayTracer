@@ -118,8 +118,9 @@ bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){
 				intersectTreeTraversal ( info , current->right );
 			}
 			else {
-				cout << "error in intersectTreeTraversal, side test result error" << endl ;
-				exit(0);
+				cout << "error in intersectTreeTraversal, side test result error : the ray being shot it co-planar with the plane shooting the ray " << endl << endl ;
+				//exit(0);
+				return false;
 			}
 		}
 		else if ( side == -1 ){
@@ -147,8 +148,10 @@ bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){
 			}
 		}
 		else {
-			cout << "error in intersectTreeTraversal, side test result error" << endl ;
-			exit(0); 
+			
+			throw std::logic_error ( "error in intersectTreeTraversal, side test result error");
+			//exit(0); 
+			
 		}
 	}
 	return false;

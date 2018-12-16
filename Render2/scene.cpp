@@ -450,7 +450,8 @@ bool Scene::BuildBSP () {
 
 	for ( std::vector< Object * >::iterator sceneObjectIterator = sceneObjects.begin() ; sceneObjectIterator != sceneObjects.end() ; ++sceneObjectIterator ) {
 		
-		randomizeTriangles ( (*sceneObjectIterator)->triangles);
+		//TODO : Turned off random triangles for Radiosity debugging
+		//randomizeTriangles ( (*sceneObjectIterator)->triangles);
 		vector < BSP_Node * > tris ;
 
 		for ( unsigned int i = 0 ; i < (*sceneObjectIterator)->triangles.size(); i++ )

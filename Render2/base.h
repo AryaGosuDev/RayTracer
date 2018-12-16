@@ -32,6 +32,7 @@ struct Rasterizer; // The function that casts primary rays & creates an image.
 struct Builder;    // Builds the scene, usually by reading a file (e.g. sdf).
 struct BSP_Node;   // Node of the tree
 struct Radiosity;  // Reconstructs the radiosity of the entire scene.
+struct QuadTreeNode;
 
 // Path constants.
 static const string DefaultScene = "scenes/";
