@@ -125,6 +125,7 @@ bool Rasterizer::Rasterize( string file_name_out, const Camera &cam, const Scene
 					tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Normal_Raster, rasterD, i, j);
 					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Anti_Aliasing, rasterD, i, j);
 					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Depth_Of_Field_Effect, rasterD, i, j);
+					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Radiosity_Raster, rasterD, i, j);
 				}
 			}
 
@@ -299,5 +300,56 @@ void Rasterizer::Depth_Of_Field_Effect(RasterDetails & rasterD , const int idx, 
 	}
 
 	I.Write( rasterD.img_file_name );
+}
+
+
+void Rasterizer::Radiosity_Raster ( RasterDetails & rasterD , const int idx, const int idy ) {
+
+	PPM_Image & I = *rasterD.I ;
+
+	// Initialize all the fields of the first-generation ray except for "direction".
+	Ray ray;
+	ray.origin     = rasterD.cam->eye;     // All initial rays originate from the eye.
+	ray.type       = generic_ray; // These rays are given no special meaning.
+	ray.generation = 1;           // Rays cast from the eye are first-generation.
+
+	// Loop over the entire image, casting a single ray per pixel.
+
+	double workItemsPerThreadX = (double)rasterD.cam->x_res / (double)threadDivisionsInX ;
+	double workItemsPerThreadY = (double)rasterD.cam->y_res / (double)threadDivisionsInY ;
+
+	int endingWorkItemsX = idx * workItemsPerThreadX + workItemsPerThreadX ;
+	int endingWorkItemsY = idy * workItemsPerThreadY + workItemsPerThreadY ;
+	
+	/********* NORMAL CODE **********/
+								 
+	for( unsigned int i = idy * workItemsPerThreadY ; i < endingWorkItemsY; i++ ){
+
+		// Overwrite the line number written to the console.
+		//cout << rubout( i ) << (i+1);
+		//cout << spaceout( idy * threadDivisionsInX  + idx  ) << rubout( i ) << (i+1);
+		//cout.flush();
+
+		Sample::debug_line = i;
+
+		for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
+
+			ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
+
+			//ray.direction = Unit (( O + (j + 0.5) * dR - (i + 0.5) * dU  ) - cam.eye);
+
+			I(i,j) = ToneMap( rasterD.scene->Trace( ray ) );
+		}
+	}
+	
+	// Thus far the image exists only in memory.  Now write it out to a file.
+
+	//cout << "\nWriting image file " << rasterD.img_file_name << "... ";
+	//cout.flush();
+	I.Write( rasterD.img_file_name );
+	cout << "done." << endl;
+	//return true;
+
+
 }
 

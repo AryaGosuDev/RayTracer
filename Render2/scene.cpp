@@ -116,7 +116,6 @@ bool Scene::calculateVertexNormals ( Object & obj, vector<vector<Vec3>> &  adjMa
 		for  ( int Vec3InHash = 0 ; Vec3InHash < (*adjHashIterator).size() ; ++Vec3InHash ) 
 			tempVec += (*adjHashIterator)[Vec3InHash];
 	
-		
 		(*adjHashIterator)[0] = Unit(tempVec);
 	}
 

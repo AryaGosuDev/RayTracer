@@ -1,5 +1,3 @@
-
-
 #ifndef __MAT3X3_INCLUDED__
 #define __MAT3X3_INCLUDED__
 
@@ -15,6 +13,7 @@ struct Mat3x3 {
     inline Vec3 row( int i ) const { return Vec3( m[i][0], m[i][1], m[i][2] ); }
     inline Vec3 col( int j ) const { return Vec3( m[0][j], m[1][j], m[2][j] ); }
     double m[3][3];
+
     };
 
 inline Mat3x3::Mat3x3()

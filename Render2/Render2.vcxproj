@@ -120,6 +120,7 @@
     <ClCompile Include="ppm_image.cpp" />
     <ClCompile Include="quad.cpp" />
     <ClCompile Include="radiosity.cpp" />
+    <ClCompile Include="radiosity_helper.cpp" />
     <ClCompile Include="rasterizer.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="shader.cpp" />
@@ -131,10 +132,12 @@
     <ClInclude Include="base.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="interval.h" />
+    <ClInclude Include="mat3x2.h" />
     <ClInclude Include="mat3x3.h" />
     <ClInclude Include="mat3x4.h" />
     <ClInclude Include="params.h" />
     <ClInclude Include="ppm_image.h" />
+    <ClInclude Include="radiosity_helper.h" />
     <ClInclude Include="ray.h" />
     <ClInclude Include="ray_tracer.h" />
     <ClInclude Include="util.h" />

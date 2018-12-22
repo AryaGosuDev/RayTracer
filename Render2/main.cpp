@@ -19,6 +19,7 @@ int main( int argc, char *argv[] )
 		fnameObject += argv[2];
 		fnameOutput += argv[3];
 	}
+
 	//TODO : Each object's BSP should only be attribted to their respective object, not the entire scene
 	if ( !scene.BuildScene ( fname , fnameObject , camera ))
 		cout << "Build did not work." << endl ;
@@ -34,7 +35,6 @@ int main( int argc, char *argv[] )
 		return error_rasterizing_image;
 	}
 	*/
-
 	//I AM INSTEAD GOING TO CALCULATE RADIOSITY FOR THE WHOLE SCENE
 	scene.radiosity = new Radiosity(&scene);
 
@@ -45,6 +45,7 @@ int main( int argc, char *argv[] )
 	cout <<  "Shading time performance : " << std::chrono::duration_cast<std::chrono::seconds> (diff).count() << " seconds" << endl; 
 
 	delete scene.rasterize;
+	delete scene.radiosity;
 
 	return 0;
 }

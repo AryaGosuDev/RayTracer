@@ -51,6 +51,9 @@
     <ClCompile Include="radiosity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="radiosity_helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -90,6 +93,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="aabb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="radiosity_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mat3x2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
