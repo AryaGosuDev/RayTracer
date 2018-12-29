@@ -10,6 +10,7 @@
 #include "ray.h"          // Defines rays in 3-space: origin, direction, etc.
 #include "interval.h"     // Defines a (min,max) interval of the real line.
 #include "params.h"
+#include "util.h"
 
 struct Radiosity_Helper : public Radiosity { 
 
@@ -17,7 +18,8 @@ struct Radiosity_Helper : public Radiosity {
 	Radiosity_Helper(Scene *) ;
 	virtual ~Radiosity_Helper() ;
 
-	void detectTriangleIntersections ( Object * , Object *) ;
+	
+	void detectTriangleIntersections ( QuadTreeNode * , QuadTreeNode *) ;
 
 	Scene * scene ;
 

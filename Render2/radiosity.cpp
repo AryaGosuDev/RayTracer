@@ -43,6 +43,8 @@ struct ObjectNode {
 	LinkListAdjNode * AdjLL ;
 	LinkListAdjNode * tailAdjLL ;
 
+	QuadTreeNode * qNode ;
+
 	struct LinkListAdjNode {
 
 		LinkListAdjNode () {
@@ -57,55 +59,6 @@ struct ObjectNode {
 	};
 };
 
-// create initial quadtree
-// must sustain the adjacency list of all triangles with other triangles
-struct QuadTreeNode : public BSP_Node {
-	
-	QuadTreeNode () {
-		object = NULL;
-		parentObject = NULL ;
-		visited = false;
-		delVisited = false;
-	}
-
-	QuadTreeNode ( BSP_Node * _BSP_Node ) {
-
-		object = _BSP_Node->parentObject;
-		parentObject = _BSP_Node->parentObject;
-		visited = false;
-		delVisited = false;
-
-		triVert1 = _BSP_Node->triVert1;
-		triVert2 = _BSP_Node->triVert2;
-		triVert3 = _BSP_Node->triVert3;
-		triIndx1 = _BSP_Node->triIndx1;
-		triIndx2 = _BSP_Node->triIndx2;
-		triIndx3 = _BSP_Node->triIndx3;
-		vertNormal1 = _BSP_Node->vertNormal1;
-		vertNormal2 = _BSP_Node->vertNormal2;
-		vertNormal3 = _BSP_Node->vertNormal3;
-		triNormal = _BSP_Node->triNormal;
-		textVert = _BSP_Node->textVert;
-		parentObject = _BSP_Node->parentObject;
-		left = _BSP_Node->left;
-		right = _BSP_Node->right ;
-	}
-
-	vector<QuadTreeNode *> children ;
-	// maintain QuadTreeNode vector of all adjacent nodes
-	vector<QuadTreeNode *> nextAdj;
-
-	Object * object;
-	Object * parentObject;
-
-	double radiosityValue;
-	double reflectivityIndex;
-	double emissitivity;
-	double formFactor ;
-
-	bool visited;
-	bool delVisited;
-};
 
 struct FormFactorStackNode {
 
@@ -188,7 +141,6 @@ inline void setRadiosityForAllElements ( QuadTreeNode * _qR ) {
 	//for every object
 	for ( auto &v : _qR->children ) 
 		returnFilledElementsOfObject ( v, tempQuadVector ) ;
-	
 
 	int i = 0 ;
 
@@ -272,6 +224,7 @@ void Radiosity::buildInitialQuadTree () {
 	for ( auto &v : radObjectNodes ) {
 		quadTreeRoot->children.push_back(new QuadTreeNode() );
 		quadTreeRoot->children.back()->object = v->object ;
+		v->qNode = quadTreeRoot->children.back();
 
 		// add all the triangles in the BSP of an object to a vector to check for adjacent triangles
 		vector<QuadTreeNode * > tempQuadVector ;
@@ -300,28 +253,31 @@ void Radiosity::buildInitialQuadTree () {
 		for ( int i = 0 ; i < currentQuadObject->children.size() ; ++ i ) {
 			for ( int j = 0 ; j < currentQuadObject->children.size() ; ++ j ) {
 				if ( i != j ) {
-					if ( findTriangleAdj ( currentQuadObject->children[i], currentQuadObject->children[j] ) ) 
-						currentQuadObject->children[i]->nextAdj.emplace_back ( currentQuadObject->children[j] ) ;
+					radiosityHelper->detectTriangleIntersections ( currentQuadObject->children[i], currentQuadObject->children[j] );
 				}
 			}
 		}
 	}
 
 	// intersection detection and re-triangulation of overlapping/colliding triangles
-
 	for ( int i = 0 ; i < quadTreeRoot->children.size() ; i++ ) {
 		if ( radObjectNodes[i]->aabbDoesIntersect ) {
-
-
-
-
-			
+			ObjectNode::LinkListAdjNode * curr = radObjectNodes[i]->AdjLL ;
+			while ( curr != NULL ) {
+				QuadTreeNode * otherNode = curr->oN->qNode ;
+				if ( curr->oN->finishedWithIntersections == false ) {
+					for ( int q1 = 0 ; q1 < radObjectNodes[i]->qNode->children.size() ; ++ q1 ) {
+						for ( int q2 = 0 ; q2 < otherNode->children.size() ; ++ q2 ) {
+							radiosityHelper->detectTriangleIntersections ( radObjectNodes[i]->qNode->children[q1] , otherNode->children[q2] ) ;
+						}
+					}
+				}
+				curr = curr->next ;
+			}
+			radObjectNodes[i]->finishedWithIntersections = true ;
 		}
 	} 
 }
-
-
-
 
 bool Radiosity::castFromElementToElement ( const Ray &ray, HitInfo &hitinfo, QuadTreeNode * i, QuadTreeNode * j, const Vec3 &xi, const Vec3 &yi  ) {
 
@@ -374,7 +330,7 @@ bool Radiosity::isVisibleXiToXj ( QuadTreeNode * i, QuadTreeNode * j, const Vec3
 		     //hitinfo.object == j->object &&
 		     Length(hitinfo.point - yi) < Epsilon &&
 			 ray.direction * j->triNormal < 0  ) ?  true :  false);
-			}
+		}
 	}
 	else cout << "isVisibleXitoXj detected no collisions between elements" << endl ; 
 	}
@@ -383,36 +339,6 @@ bool Radiosity::isVisibleXiToXj ( QuadTreeNode * i, QuadTreeNode * j, const Vec3
 		
 	}
 	return false;
-}
-
-inline Vec3 returnRandomPointOnElement( QuadTreeNode * i ) {
-	
-	try {
-		std::random_device rd;
-		std::mt19937 gen(rd());
-
-		double u = 0.0, v = 0.0 ;
-
-		do {
-			std::uniform_real_distribution<> dis (0.0, 1.0 ) ;
-
-			u = dis ( gen ) ;
-			v = dis ( gen ) ;
-
-		} while ( u + v > 1.0 ) ;
-
-		Vec3 P ;
-		P.x = (( 1.0 - u - v ) * i->triVert1.x) + (u * i->triVert2.x) + (v * i->triVert3.x) ;
-		P.y = (( 1.0 - u - v ) * i->triVert1.y) + (u * i->triVert2.y) + (v * i->triVert3.y) ;
-		P.z = (( 1.0 - u - v ) * i->triVert1.z) + (u * i->triVert2.z) + (v * i->triVert3.z) ;
-
-		return P ;
-	}
-	catch ( std::exception ex ) {
-		cout <<"Error in inline Vec3 returnRandomPointOnElement : " << ex.what()  << endl ;
-	}
-
-	return Vec3 ( 0.0, 0.0, 0.0 );
 }
 
 double Radiosity::findFormFactorTermWithLight ( QuadTreeNode * i ) {
@@ -708,7 +634,15 @@ void Radiosity::progressiveRefinement() {
 	free (tempdBArea ) ;
 }
 
-void Radiosity::adapdtiveMeshSubDivision() {
+bool Radiosity::adapdtiveMeshSubDivision() {
+
+	//do {
+
+
+
+	//} while ( ) ;
+
+	return true ;
 
 
 

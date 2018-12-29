@@ -11,7 +11,9 @@
 #include <cassert>
 #include <fstream>
 #include <stdlib.h>
-#include <time.h>     
+#include <time.h>  
+#include <map>
+#include <set>
 
 using std::cout;
 using std::cerr;

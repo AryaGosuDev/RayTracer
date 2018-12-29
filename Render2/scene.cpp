@@ -417,9 +417,6 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 				}
 				else if ( get["f"] ){
 					adjMatrix.resize((*currentIteratorObject)->points.size());
-					//cout << line_num << endl;
-					//if ( line_num == 13784 ) 
-						//int fdgfdg = 34;
 					if ( !get.returnCoordOfFace ( *(*currentIteratorObject), numOfTriangle,adjMatrix  )) //TODO assign each node to it's parent object
 						cout << "Error retrieving face at line " << line_num << endl;
 					numOfTriangle++;

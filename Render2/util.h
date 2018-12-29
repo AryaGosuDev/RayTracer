@@ -59,6 +59,8 @@ extern AABB GetBoxPolygon ( // Construct a bounding box of a polygon
 
 extern int returnHighestValueIndx ( double *, int & ) ;
 
+extern inline Vec3 returnRandomPointOnElement( QuadTreeNode *  ) ;
+
 extern bool operator==(
 	const Material &a,
 	const Material &b

@@ -207,6 +207,60 @@ struct BSP_Node{
 	Object * parentObject ;
 };
 
+// create initial quadtree
+// must sustain the adjacency list of all triangles with other triangles
+struct QuadTreeNode : public BSP_Node {
+	
+	QuadTreeNode () {
+		object = NULL;
+		parentObject = NULL ;
+		visited = false;
+		delVisited = false;
+	}
+
+	~QuadTreeNode() {}
+
+	QuadTreeNode ( BSP_Node * _BSP_Node ) {
+
+		object = _BSP_Node->parentObject;
+		parentObject = _BSP_Node->parentObject;
+		visited = false;
+		delVisited = false;
+
+		triVert1 = _BSP_Node->triVert1;
+		triVert2 = _BSP_Node->triVert2;
+		triVert3 = _BSP_Node->triVert3;
+		triIndx1 = _BSP_Node->triIndx1;
+		triIndx2 = _BSP_Node->triIndx2;
+		triIndx3 = _BSP_Node->triIndx3;
+		vertNormal1 = _BSP_Node->vertNormal1;
+		vertNormal2 = _BSP_Node->vertNormal2;
+		vertNormal3 = _BSP_Node->vertNormal3;
+		triNormal = _BSP_Node->triNormal;
+		textVert = _BSP_Node->textVert;
+		parentObject = _BSP_Node->parentObject;
+		left = _BSP_Node->left;
+		right = _BSP_Node->right ;
+	}
+
+	vector<QuadTreeNode *> children ;
+	// maintain QuadTreeNode vector of all adjacent nodes
+	std::map<QuadTreeNode *, std::set<Vec3>> nextAdj;
+	//vector<QuadTreeNode *> nextAdj;
+	//vector<Vec3> nextAdjV;
+
+	Object * object;
+	Object * parentObject;
+
+	double radiosityValue;
+	double reflectivityIndex;
+	double emissitivity;
+	double formFactor ;
+
+	bool visited;
+	bool delVisited;
+};
+
 struct PrimitiveObject{
 	PrimitiveObject() { material = 0; shader = 0; envmap = 0;  }
 	virtual ~PrimitiveObject() {}
@@ -270,7 +324,7 @@ struct Radiosity {
 	bool castFromElementToElement ( const Ray &, HitInfo &, QuadTreeNode *, QuadTreeNode *, const Vec3 &, const Vec3 & ) ;
 	void progressiveRefinement();
 	bool checkIfConverged ( double *  ) ;
-	void adapdtiveMeshSubDivision() ;
+	bool adapdtiveMeshSubDivision() ;
 
 	void rasterize () ;
 	

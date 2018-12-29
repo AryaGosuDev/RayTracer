@@ -141,6 +141,10 @@ inline double Area ( const Vec3 &A, const Vec3 &B, const Vec3 &C ) {
 	return (Length ( ( B - A ) ^ ( C - A ) ) / 2.0);  
 } 
 
+inline bool operator<( const Vec3 & _A, const Vec3 & _B ) {
+	return _A.x < _B.x ;
+}
+
 #endif
 
 

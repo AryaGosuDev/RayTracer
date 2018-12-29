@@ -1,8 +1,9 @@
 
 // misc. utilities such as predicates on materials & objects.      *
-
+#include <random>
 #include "ray_tracer.h"
 #include "util.h"
+
 
 //static std::list< PrimitiveObject * > * all_light_types = NULL;
 
@@ -107,4 +108,34 @@ int returnHighestValueIndx ( double * _a, int & n ) {
 	}
 
 	return indx ;
+}
+
+inline Vec3 returnRandomPointOnElement( QuadTreeNode * i ) {
+	
+	try {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+
+		double u = 0.0, v = 0.0 ;
+
+		do {
+			std::uniform_real_distribution<> dis (0.0, 1.0 ) ;
+
+			u = dis ( gen ) ;
+			v = dis ( gen ) ;
+
+		} while ( u + v > 1.0 ) ;
+
+		Vec3 P ;
+		P.x = (( 1.0 - u - v ) * i->triVert1.x) + (u * i->triVert2.x) + (v * i->triVert3.x) ;
+		P.y = (( 1.0 - u - v ) * i->triVert1.y) + (u * i->triVert2.y) + (v * i->triVert3.y) ;
+		P.z = (( 1.0 - u - v ) * i->triVert1.z) + (u * i->triVert2.z) + (v * i->triVert3.z) ;
+
+		return P ;
+	}
+	catch ( std::exception ex ) {
+		cout <<"Error in inline Vec3 returnRandomPointOnElement : " << ex.what()  << endl ;
+	}
+
+	return Vec3 ( 0.0, 0.0, 0.0 );
 }

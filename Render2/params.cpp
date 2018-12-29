@@ -199,10 +199,6 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 
 	object.triangles.back().triNormal = calcNormal;
 
-	//adjMatrix[object.triangles.back().triIndx1].push_back(calcNormal);
-	//adjMatrix[object.triangles.back().triIndx2].push_back(calcNormal);
-	//adjMatrix[object.triangles.back().triIndx3].push_back(calcNormal);
-
 	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx1, calcNormal );
 	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx2, calcNormal );
 	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx3, calcNormal );

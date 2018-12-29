@@ -61,9 +61,21 @@ inline int sideTest3d (  Vec3 a,  Vec3 b ,  Vec3 c,  Vec3 x )
 		else return 1;
 		
 		return ERROR_SIDE_NUMBER;
-};
+}
 
-//inline std::tuple<Vec3, Vec3> ray_plane_intersection ( Vec3 planeNormal, Vec3 planePoint, Vec3 triP1, Vec3 triP2, Vec3 triP3 ) { }
+inline int sideOfLine3D (Vec3 & _Point, Vec3 & _LineNormal ) {
+
+	double result = _LineNormal * _Point ;
+
+	if ( result == 0.0 ) return 0;
+	else if ( result > 0.0 ) return 1;
+	else return -1;
+}
+
+inline int sideOfLine3D ( Vec3 & _QLine, Vec3 & _VLine, Vec3 & _Point ) {
+
+	return 0;
+}
 
 
 // Compute the reflected ray given the incident ray (i.e. directed
@@ -98,7 +110,7 @@ inline ostream &operator<<( ostream &out, const Ray &r )
 		<< " gen "  << r.generation
 		<< "]";
 	return out;
-	};
+	}
 
 #endif
 
