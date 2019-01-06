@@ -83,6 +83,8 @@ extern double rand(    // Return a random number uniformly distributed in [a,b].
 	double b
 	);
 
+extern inline std::pair<double, double> returnUVofTriangle(const Vec3 &, QuadTreeNode * _Qnode ) ;
+
 
 #endif
 

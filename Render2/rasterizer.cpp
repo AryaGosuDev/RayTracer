@@ -2,6 +2,7 @@
 #include "ray_tracer.h"
 #include "ppm_image.h"
 #include "params.h"
+#include "radiosity_helper.h"
 
 int Sample::debug_line = 0;
 
@@ -83,6 +84,17 @@ static Pixel ToneMap( const Color &color )
 	int red   = (int)floor( 256 * color.red   );
 	int green = (int)floor( 256 * color.green );
 	int blue  = (int)floor( 256 * color.blue  );
+	channel r = (channel)( red   >= 255 ? 255 : red   ); 
+	channel g = (channel)( green >= 255 ? 255 : green ); 
+	channel b = (channel)( blue  >= 255 ? 255 : blue  );
+	return Pixel( r, g, b );
+}
+
+static Pixel ToneMapRadiosity( const Color &color )
+{
+	int red   = (int)floor( 256 * (color.red / (1370.0 * 2.0 ) ) );
+	int green = (int)floor( 256 * (color.green / (1370.0 * 2.0 ) ) );
+	int blue  = (int)floor( 256 * (color.blue / (1370.0 * 2.0 ) )  );
 	channel r = (channel)( red   >= 255 ? 255 : red   ); 
 	channel g = (channel)( green >= 255 ? 255 : green ); 
 	channel b = (channel)( blue  >= 255 ? 255 : blue  );
@@ -303,53 +315,58 @@ void Rasterizer::Depth_Of_Field_Effect(RasterDetails & rasterD , const int idx, 
 }
 
 
-void Rasterizer::Radiosity_Raster ( RasterDetails & rasterD , const int idx, const int idy ) {
+bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Scene * _scene, Radiosity_Helper * _rad_helper ) {
 
-	PPM_Image & I = *rasterD.I ;
+	try {
 
-	// Initialize all the fields of the first-generation ray except for "direction".
-	Ray ray;
-	ray.origin     = rasterD.cam->eye;     // All initial rays originate from the eye.
-	ray.type       = generic_ray; // These rays are given no special meaning.
-	ray.generation = 1;           // Rays cast from the eye are first-generation.
+			// Find the form factor matrix.
+			// Iterate through all the triangles and find the FF with all other triangles in the scene.
+			// Use the structure of the QuadTree to iterate through all the triangles.
+			vector<QuadTreeNode * > tempQuadVector ;
 
-	// Loop over the entire image, casting a single ray per pixel.
+			//for every object
+			for ( auto &v : _scene->radiosity->quadTreeRoot->children ) {
+				_rad_helper->returnFilledElementsOfObject ( v, tempQuadVector ) ;
+			}
+		    // Create an image of the given resolution.
+		    PPM_Image I( _camera.x_res, _camera.y_res ); 
 
-	double workItemsPerThreadX = (double)rasterD.cam->x_res / (double)threadDivisionsInX ;
-	double workItemsPerThreadY = (double)rasterD.cam->y_res / (double)threadDivisionsInY ;
+			Camera & tempCamera = const_cast<Camera&>(_camera);
+			// Initiate struct of raster ray increments and axes
+			RasterDetails rasterD(*_scene, tempCamera, _fname, I );
 
-	int endingWorkItemsX = idx * workItemsPerThreadX + workItemsPerThreadX ;
-	int endingWorkItemsY = idy * workItemsPerThreadY + workItemsPerThreadY ;
-	
-	/********* NORMAL CODE **********/
-								 
-	for( unsigned int i = idy * workItemsPerThreadY ; i < endingWorkItemsY; i++ ){
+			//PPM_Image & I = *rasterD.I ;
 
-		// Overwrite the line number written to the console.
-		//cout << rubout( i ) << (i+1);
-		//cout << spaceout( idy * threadDivisionsInX  + idx  ) << rubout( i ) << (i+1);
-		//cout.flush();
+			// Initialize all the fields of the first-generation ray except for "direction".
+			Ray ray;
+			ray.origin     = rasterD.cam->eye;     // All initial rays originate from the eye.
+			ray.type       = generic_ray; // These rays are given no special meaning.
+			ray.generation = 1;           // Rays cast from the eye are first-generation.
 
-		Sample::debug_line = i;
+			for ( unsigned int i = 0 ; i < rasterD.cam->y_res ; ++ i ) {
+				    // Overwrite the line number written to the console.
+					cout << rubout( i ) << (i+1);
+					cout.flush();
 
-		for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
+				for ( unsigned int j = 0 ; j < rasterD.cam->x_res ; ++ j ) {
+					
 
-			ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
+					ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
 
-			//ray.direction = Unit (( O + (j + 0.5) * dR - (i + 0.5) * dU  ) - cam.eye);
+					//ray.direction = Unit (( O + (j + 0.5) * dR - (i + 0.5) * dU  ) - cam.eye);
 
-			I(i,j) = ToneMap( rasterD.scene->Trace( ray ) );
-		}
+					I(i,j) = ToneMapRadiosity( _rad_helper->trace_ray( ray, tempQuadVector ) );
+				}
+			}
+
+			cout << "\nWriting image file " << _fname << "... ";
+			cout.flush();
+			I.Write( rasterD.img_file_name );
+			cout << "done." << endl;	
 	}
-	
-	// Thus far the image exists only in memory.  Now write it out to a file.
+	catch ( std::exception ex ) {
+		cout << ex.what() << endl;
+	}
 
-	//cout << "\nWriting image file " << rasterD.img_file_name << "... ";
-	//cout.flush();
-	I.Write( rasterD.img_file_name );
-	cout << "done." << endl;
-	//return true;
-
-
+	return true;
 }
-

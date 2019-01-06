@@ -186,9 +186,9 @@ Radiosity::Radiosity( Scene * _scene ) :
 
 		setRadiosityForAllElements ( this->quadTreeRoot ) ;
 
-		adapdtiveMeshSubDivision () ;
+		
 
-		//scene->rasterize->Rasterize ( "Radiosity.ppm", camera, *scene ) ; 
+		scene->rasterize->Radiosity_Raster ( "Radiosity" ,camera, scene, radiosityHelper ) ; 
 
 	}
 	catch ( std::exception ex ) {
@@ -563,7 +563,8 @@ void Radiosity::progressiveRefinement() {
 	double * E = ( double * ) malloc ( n * sizeof ( double ) ) ;
 
 	for ( int i = 0 ; i < n - 1 ; i ++ )
-		E[i] = SOLAR_RADIANT_FLUX ;
+		//E[i] = SOLAR_RADIANT_FLUX ;
+			E[i] = 0.0 ;
 
 	E[n-1] = SOLAR_RADIOSITY_POWER  * 2.0 ;
 
@@ -634,17 +635,7 @@ void Radiosity::progressiveRefinement() {
 	free (tempdBArea ) ;
 }
 
+/*
 bool Radiosity::adapdtiveMeshSubDivision() {
-
-	//do {
-
-
-
-	//} while ( ) ;
-
-	return true ;
-
-
-
-
 }
+*/

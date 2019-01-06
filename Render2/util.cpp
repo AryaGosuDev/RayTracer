@@ -139,3 +139,26 @@ inline Vec3 returnRandomPointOnElement( QuadTreeNode * i ) {
 
 	return Vec3 ( 0.0, 0.0, 0.0 );
 }
+
+inline std::pair<double, double> returnUVofTriangle( const Vec3 & _p , QuadTreeNode * _Qnode ) {
+
+	Mat3x2 A ;
+	A(0,0) = ( _Qnode->triVert2 - _Qnode->triVert1 ).x ;
+	A(0,1) = ( _Qnode->triVert3 - _Qnode->triVert1 ).x ;
+	A(1,0) = ( _Qnode->triVert2 - _Qnode->triVert1 ).y ;
+	A(1,1) = ( _Qnode->triVert3 - _Qnode->triVert1 ).y ;
+	A(2,0) = ( _Qnode->triVert2 - _Qnode->triVert1 ).z ;
+	A(2,1) = ( _Qnode->triVert3 - _Qnode->triVert1 ).z ;
+
+	Vec3 _A, _B  ;
+
+	if ( calculatePseudoInverse ( A, _A, _B ) ) {
+
+		double u = _A.x * _p.x + _A.y * _p.y + _A.z * _p.z  ;
+		double v = _B.x * _p.x + _B.y * _p.y + _B.z * _p.z  ;
+
+		return std::pair<double, double> ( u, v ) ;
+	}
+
+	return std::pair<double, double> ( 0.0, 0.0 ) ;
+}

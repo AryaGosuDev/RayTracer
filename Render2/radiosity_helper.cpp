@@ -4,6 +4,7 @@
 
 #include "ray_tracer.h"
 #include "radiosity_helper.h"
+#include <stack>
 
 
 struct EdgeList {
@@ -18,6 +19,71 @@ struct EdgeList {
 	EdgeList * next ;
 	EdgeList * prev ;
 };
+
+struct FormFactorStackNode {
+
+	FormFactorStackNode ( QuadTreeNode * _quadTreeNode  ) {
+		quadTreeNode = _quadTreeNode;
+		if ( quadTreeNode->children.size() > 0 ) internal = true ; 
+		else internal = false;
+
+		visited = false;
+	}
+
+	QuadTreeNode * quadTreeNode;
+	bool visited ;
+	bool internal; 
+};
+
+
+inline EdgeList * createEdgeList ( const BSP_Node & _bsp_N ) {
+
+	EdgeList * newEdgeListHead = new EdgeList () ;
+	EdgeList * edgeListCurrent = newEdgeListHead ;
+	EdgeList * edgeListTail = newEdgeListHead ;
+
+	vector<Vec3> triPoints;
+	triPoints.emplace_back( _bsp_N.triVert1 );
+	triPoints.emplace_back( _bsp_N.triVert2 );
+	triPoints.emplace_back( _bsp_N.triVert3 );
+	triPoints.emplace_back( _bsp_N.triVert1 );
+
+	for ( int i = 0 ; i < 3 ; ++ i ) {
+		edgeListCurrent->isVertex = true ;
+		edgeListCurrent->vTx = triPoints[i] ;
+		edgeListCurrent->next = new EdgeList() ;
+
+		edgeListCurrent->next->isEdge = true ;
+		edgeListCurrent->next->LineQ = edgeListCurrent->vTx ;
+		edgeListCurrent->next->LineV = triPoints[i+1] - triPoints[i] ;
+		edgeListCurrent->next->prev = edgeListCurrent ;
+		edgeListCurrent = edgeListCurrent->next ;
+
+		if ( i == 2 ) {
+			edgeListCurrent->next = newEdgeListHead ;
+			newEdgeListHead->prev = edgeListCurrent;
+		}
+		else {
+			edgeListCurrent->next = new EdgeList();
+			edgeListCurrent->next->prev = edgeListCurrent ;
+			edgeListCurrent = edgeListCurrent->next ;
+		}
+	}
+	return newEdgeListHead ;
+}
+
+inline void deleteEdgeList ( EdgeList * e ) {
+	EdgeList * head = e ;
+	EdgeList * current = e ;
+	EdgeList * currentNext = e->next ;
+
+	while ( current != NULL ) {
+		current->next = current->prev = NULL;
+		delete current ;
+		current = currentNext ;
+		currentNext = currentNext->next ;
+	}
+}
 
 // find the intersections of 2 adj triangles. Adds them to the triangle adj list along with intersections.
 inline void findTriangleAdjPoints ( QuadTreeNode * _1 , QuadTreeNode * _2, EdgeList * _EL1, EdgeList * _EL2  ) {
@@ -45,7 +111,8 @@ inline void findTriangleAdjPoints ( QuadTreeNode * _1 , QuadTreeNode * _2, EdgeL
 			A(2,0) = EL1curr->LineV.z ;
 			A(2,1) = -1.0 * EL2curr->LineV.z ;
 
-			Vec3 delQ ( QLine.x - EL2curr->LineQ.x,  QLine.y - EL2curr->LineQ.y,  QLine.z - EL2curr->LineQ.z ) ;
+			//Vec3 delQ ( QLine.x - EL2curr->LineQ.x,  QLine.y - EL2curr->LineQ.y,  QLine.z - EL2curr->LineQ.z ) ;
+			Vec3 delQ ( EL2curr->LineQ.x - QLine.x , EL2curr->LineQ.y - QLine.y, EL2curr->LineQ.z - QLine.z ) ;
 
 			Vec3 _A, _B;
 
@@ -57,9 +124,9 @@ inline void findTriangleAdjPoints ( QuadTreeNode * _1 , QuadTreeNode * _2, EdgeL
 
 				if ( tTriangle >= 0.0 && tTriangle <= 1.0 ) {
 					//_1->nextAdj.insert( _2,  ) ;
-					_1->nextAdj[_2].insert ( Vec3 ( tTriangle * VLine.x + QLine.x ,  tTriangle * VLine.y + QLine.y,  tTriangle * VLine.z + QLine.z ) ) ;
+					_1->nextAdj[_2].insert ( Vec3 ( tTriangle * EL2curr->LineV.x + EL2curr->LineQ.x ,  tTriangle * EL2curr->LineV.y + EL2curr->LineQ.y,  tTriangle * EL2curr->LineV.z + EL2curr->LineQ.z ) ) ;
 					//_2->nextAdj.emplace( _1 );
-					_2->nextAdj[_1].insert ( Vec3 ( tTriangle * VLine.x + QLine.x ,  tTriangle * VLine.y + QLine.y,  tTriangle * VLine.z + QLine.z ) ) ;
+					_2->nextAdj[_1].insert ( Vec3 ( tTriangle * EL2curr->LineV.x + EL2curr->LineQ.x ,  tTriangle * EL2curr->LineV.y + EL2curr->LineQ.y,  tTriangle * EL2curr->LineV.z + EL2curr->LineQ.z ) ) ;
 				}
 			}
 			EL2curr = EL2curr->next;
@@ -150,26 +217,6 @@ inline void linePlaneIntersectionAdj  ( QuadTreeNode * _1 , QuadTreeNode * _2, E
 		} while ( EL2curr != EL2Head );
 }
 
-inline bool doesPointLieOnLine (Vec3 & _P, Vec3 & _Q, Vec3 & _V ) {
-	Vec3 P = _Q - _P ;
-	double tx = ( _V.x == 0.0 ? 0.0 : P.x / _V.x   ) ;
-	double ty = ( _V.y == 0.0 ? 0.0 : P.y / _V.y   ) ;
-	double tz = ( _V.z == 0.0 ? 0.0 : P.z / _V.z   ) ;
-
-	if ( tx != 0.0 ) {
-		if ( tx * _V.y == P.y && tx * _V.z == P.z ) return true;
-		return false;
-	}
-	if ( ty != 0.0 ) {
-		if ( ty * _V.x == P.x && ty * _V.z == P.z ) return true;
-		return false;
-	}
-	if ( tz != 0.0 ) {
-		if ( tz * _V.x == P.x && tz * _V.y == P.y ) return true;
-		return false;
-	}
-	return true;
-}
 
 inline int returnNumOfIntersectionsWithTriangle ( Vec3 & _Q, Vec3 & _V, const BSP_Node & _bsp_N, vector<Vec3> & newIntersections ) {
 	
@@ -198,6 +245,7 @@ inline int returnNumOfIntersectionsWithTriangle ( Vec3 & _Q, Vec3 & _V, const BS
 	Vec3 _B ;
 	calculatePseudoInverse ( A, _A, _B );
 	*/
+	int numOfIntersections = 0;
 
 	vector<Vec3> triPoints;
 	triPoints.emplace_back( _bsp_N.triVert1 );
@@ -232,64 +280,17 @@ inline int returnNumOfIntersectionsWithTriangle ( Vec3 & _Q, Vec3 & _V, const BS
 
 		if ( tTriangle > 1.0 || tTriangle < 0.0 ) return 0;
 
-		if ( tTriangle >= 0.0 && tTriangle <= 1000.0 * Epsilon ) return 1;
-		if ( tTriangle <= 1.0 && tTriangle >= 1000.0 * Epsilon ) return 1;
-	
+		//if ( tTriangle >= 0.0 && tTriangle <= 1000.0 * Epsilon ) return 1;
+		//if ( tTriangle <= 1.0 && tTriangle >= 1000.0 * Epsilon ) return 1;
+
+		if ( tTriangle >= 0.0 && tTriangle <= 1.0 ) numOfIntersections++;
+		
 		Vec3 pointOfIntersection ( tTriangle * VLine.x + QLine.x ,  tTriangle * VLine.y + QLine.y,  tTriangle * VLine.z + QLine.z ); 
 
 		newIntersections.emplace_back( pointOfIntersection );
 	}
-	return 2 ;
-}
-
-inline EdgeList * createEdgeList ( const BSP_Node & _bsp_N ) {
-
-	EdgeList * newEdgeListHead = new EdgeList () ;
-	EdgeList * edgeListCurrent = newEdgeListHead ;
-	EdgeList * edgeListTail = newEdgeListHead ;
-
-	vector<Vec3> triPoints;
-	triPoints.emplace_back( _bsp_N.triVert1 );
-	triPoints.emplace_back( _bsp_N.triVert2 );
-	triPoints.emplace_back( _bsp_N.triVert3 );
-	triPoints.emplace_back( _bsp_N.triVert1 );
-
-	for ( int i = 0 ; i < 3 ; ++ i ) {
-		edgeListCurrent->isVertex = true ;
-		edgeListCurrent->vTx = triPoints[i] ;
-		edgeListCurrent->next = new EdgeList() ;
-
-		edgeListCurrent->next->isEdge = true ;
-		edgeListCurrent->next->LineQ = edgeListCurrent->vTx ;
-		edgeListCurrent->next->LineV = triPoints[i+1] - triPoints[i] ;
-		edgeListCurrent->next->prev = edgeListCurrent ;
-		edgeListCurrent = edgeListCurrent->next ;
-
-		if ( i == 2 ) {
-			edgeListCurrent->next = newEdgeListHead ;
-			newEdgeListHead->prev = edgeListCurrent;
-		}
-		else {
-			edgeListCurrent->next = new EdgeList();
-			edgeListCurrent->next->prev = edgeListCurrent ;
-			edgeListCurrent = edgeListCurrent->next ;
-		}
-	}
-
-	return newEdgeListHead ;
-}
-
-inline void deleteEdgeList ( EdgeList * e ) {
-	EdgeList * head = e ;
-	EdgeList * current = e ;
-	EdgeList * currentNext = e->next ;
-
-	while ( current != NULL ) {
-		current->next = current->prev = NULL;
-		delete current ;
-		current = currentNext ;
-		currentNext = currentNext->next ;
-	}
+	//return 2 ;
+	return numOfIntersections ;
 }
 
 Radiosity_Helper::Radiosity_Helper() {
@@ -302,20 +303,7 @@ Radiosity_Helper::Radiosity_Helper( Scene * _scene) : scene ( _scene ) {
 Radiosity_Helper::~Radiosity_Helper() {
 }
 
-inline bool isInView ( QuadTreeNode * _A, QuadTreeNode * _B, Radiosity * _this ) {
-	int hits = 0 ;
-	int formFactorLoopIterations = 30 ;
 
-	//shoot formFactorLoopIterations # of rays from element i to element j
-	for ( int k = 0 ; k < formFactorLoopIterations ; ++k ) {
-		Vec3 xi = returnRandomPointOnElement ( _A ) ;
-		Vec3 xj = returnRandomPointOnElement ( _B ) ;
-
-		if ( _this->isVisibleXiToXj ( _A, _B, xi, xj ) ) hits++; 
-	}
-	if ( hits >= formFactorLoopIterations * 0.95 ) return true ;
-	return false;
-}
 
 // Discovered that these two objects' AABB interesect. Now find which triangles intersect and re-triangulate the triangles.
 // Avoid mesh discontinuities. Make sure all appropriate adjacent triangles are detected that span different objects.
@@ -401,7 +389,6 @@ void Radiosity_Helper::detectTriangleIntersections ( QuadTreeNode * _1 , QuadTre
 		else if ( numOfIntersections_1 == 2 && numOfIntersections_2 == 2 ) {
 			linePlaneIntersectionAdj  ( _1 , _2,edgeL_1, edgeL_2  ) ;
 		}  
-
 
 		/*
 	for ( int i = 0 ; i < _1->object->triangles.size() ; ++ i) {
@@ -516,4 +503,90 @@ void Radiosity_Helper::detectTriangleIntersections ( QuadTreeNode * _1 , QuadTre
 	}
 	*/		
      }
+}
+
+void Radiosity_Helper::returnFilledElementsOfObject ( QuadTreeNode * _v , vector<QuadTreeNode * > & _a ) {
+
+	std::stack<FormFactorStackNode> stackFormFactor ;
+
+	//for all the initial elements of the object node
+	//for ( auto &elements : _v->children ) {
+		
+		for ( vector<QuadTreeNode *>::const_reverse_iterator iterQuads = _v->children.crbegin() ; iterQuads != _v->children.crend() ; ++iterQuads )
+			stackFormFactor.push ( FormFactorStackNode(*iterQuads));
+	//}
+
+	while ( !stackFormFactor.empty() ) {
+		FormFactorStackNode temp = stackFormFactor.top();
+		stackFormFactor.pop();
+		if ( temp.quadTreeNode->children.size() > 0 ) 
+			for ( vector<QuadTreeNode *>::const_reverse_iterator iterQuads = temp.quadTreeNode->children.crbegin() ;
+				iterQuads != temp.quadTreeNode->children.crend() ; 
+				++iterQuads ) 
+
+					stackFormFactor.push ( FormFactorStackNode(*iterQuads));
+		else {
+			_a.emplace_back ( temp.quadTreeNode ) ;
+			//_a.emplace_back ( stackFormFactor.top().quadTreeNode ) ;
+			//stackFormFactor.pop() ;
+		}
+	}
+}
+
+
+
+Color Radiosity_Helper::trace_ray ( Ray & _ray , vector<QuadTreeNode *> & _a  ) {
+
+	Color c ;
+	double t ;
+	 
+	double dist = 0.0 ;
+	QuadTreeNode * hitNode = NULL ;
+	Vec3 pointOfIntersection;
+
+	// check for the intersection of rays with planes extended by the respective triangle
+	for ( int i = 0 ; i < _a.size(); ++ i ) {
+
+		double denom = _a[i]->triNormal * _ray.direction ;
+
+		if ( denom != 0 ) {
+			t = -1.0 * ( (_a[i]->triNormal * _ray.origin ) + ( (-1.0 * _a[i]->triNormal) * _a[i]->triVert1 ) ) / denom ;
+
+			pointOfIntersection = t * _ray.direction + _ray.origin ;
+
+			std::pair<double, double> thisUV = returnUVofTriangle( pointOfIntersection , _a[i] ) ;
+			/*
+			Mat3x2 A ;
+			A(0,0) = (_a[i]->triVert2 - _a[i]->triVert1 ).x ;
+			A(0,1) = (_a[i]->triVert3 - _a[i]->triVert1 ).x ;
+			A(1,0) = (_a[i]->triVert2 - _a[i]->triVert1 ).y ;
+			A(1,1) = (_a[i]->triVert3 - _a[i]->triVert1 ).y ;
+			A(2,0) = (_a[i]->triVert2 - _a[i]->triVert1 ).z ;
+			A(2,1) = (_a[i]->triVert3 - _a[i]->triVert1 ).z ;
+
+			Vec3 _A, _B ;
+
+			if ( calculatePseudoInverse ( A, _A, _B ) ) {
+			
+				double u = _A.x * pointOfIntersection.x + _A.y * pointOfIntersection.y + _A.z * pointOfIntersection.z  ;
+				double v = _B.x * pointOfIntersection.x + _B.y * pointOfIntersection.y + _B.z * pointOfIntersection.z  ;
+				*/
+			double u = thisUV.first ;
+			double v = thisUV.second ;
+				// this ray hit the triangle
+				if ( u + v <= 1.0 ) {
+					hitNode = _a[i] ;
+					if ( dist == 0.0 )
+						dist = Length ( pointOfIntersection - _ray.origin ) ;
+					else if ( dist > Length ( pointOfIntersection - _ray.origin ) ) 
+						dist = Length ( pointOfIntersection - _ray.origin ) ;
+				}
+			//}
+		}
+	}
+
+	// nothing was hit
+	if ( hitNode == NULL ) return Green ;
+
+	return returnQuadTreeColor ( pointOfIntersection, hitNode )  ;
 }

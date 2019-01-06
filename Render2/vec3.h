@@ -145,6 +145,10 @@ inline bool operator<( const Vec3 & _A, const Vec3 & _B ) {
 	return _A.x < _B.x ;
 }
 
+inline double coTangent ( const Vec3 &A, const Vec3 &B, const Vec3 &C ) {
+	return ((( A - B ) * ( C - B )) / (Length ( (A - B ) ^ ( C - B ) ))) ;
+}
+
 #endif
 
 

@@ -159,7 +159,7 @@ struct Rasterizer  {  // The rasterizer creates all the primary rays.
 	void Normal_Raster(RasterDetails & , const int, const int);
 	void Anti_Aliasing(RasterDetails & , const int, const int);
 	void Depth_Of_Field_Effect(RasterDetails & , const int, const int);
-	void Radiosity_Raster ( RasterDetails &, const int, const int ) ;
+	bool Radiosity_Raster ( string , const Camera &camera, Scene *, Radiosity_Helper *  ) ;
 };
 
 struct Object{
@@ -246,8 +246,7 @@ struct QuadTreeNode : public BSP_Node {
 	vector<QuadTreeNode *> children ;
 	// maintain QuadTreeNode vector of all adjacent nodes
 	std::map<QuadTreeNode *, std::set<Vec3>> nextAdj;
-	//vector<QuadTreeNode *> nextAdj;
-	//vector<Vec3> nextAdjV;
+	
 
 	Object * object;
 	Object * parentObject;
@@ -324,10 +323,8 @@ struct Radiosity {
 	bool castFromElementToElement ( const Ray &, HitInfo &, QuadTreeNode *, QuadTreeNode *, const Vec3 &, const Vec3 & ) ;
 	void progressiveRefinement();
 	bool checkIfConverged ( double *  ) ;
-	bool adapdtiveMeshSubDivision() ;
+	//bool adapdtiveMeshSubDivision() ;
 
-	void rasterize () ;
-	
 	Scene * scene ;
 	int numOfElements;
 	QuadTreeNode * quadTreeRoot ;
