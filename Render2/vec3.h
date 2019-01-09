@@ -12,6 +12,7 @@ struct Vec3 {
 	double z;
 };
 
+
 inline double LengthSquared( const Vec3 &A ){
 	return A.x * A.x + A.y * A.y + A.z * A.z;
 }
@@ -108,6 +109,10 @@ inline bool operator ==( const Vec3 & _a , const Vec3 & _b ) {
 	return ( _a.x == _b.x && _a.y == _b.y && _a.z == _b.z ) ;
 }
 
+inline bool operator !=( const Vec3 & _a, const Vec3 & _b ) {
+	return ( _a.x != _b.x && _a.y != _b.y && _a.z != _b.z ) ;
+}
+
 inline bool relativeClose ( const Vec3 & _a , const Vec3 & _b ) {
 	return ( abs( _a.x - _b.x ) < Epsilon && abs( _a.y - _b.y ) < Epsilon && abs( _a.z - _b.z ) < Epsilon ) ;
 }
@@ -142,7 +147,7 @@ inline double Area ( const Vec3 &A, const Vec3 &B, const Vec3 &C ) {
 } 
 
 inline bool operator<( const Vec3 & _A, const Vec3 & _B ) {
-	return _A.x < _B.x ;
+	return (Length ( _A ) < Length ( _B )) && (_A != _B)  ;
 }
 
 inline double coTangent ( const Vec3 &A, const Vec3 &B, const Vec3 &C ) {

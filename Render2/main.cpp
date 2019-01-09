@@ -36,7 +36,7 @@ int main( int argc, char *argv[] )
 	}
 	*/
 	//I AM INSTEAD GOING TO CALCULATE RADIOSITY FOR THE WHOLE SCENE
-	scene.radiosity = new Radiosity(&scene);
+	scene.radiosity = new Radiosity(&scene, &camera);
 
 	auto end = std::chrono::steady_clock::now();
 

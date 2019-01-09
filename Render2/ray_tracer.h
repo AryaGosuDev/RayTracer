@@ -159,7 +159,7 @@ struct Rasterizer  {  // The rasterizer creates all the primary rays.
 	void Normal_Raster(RasterDetails & , const int, const int);
 	void Anti_Aliasing(RasterDetails & , const int, const int);
 	void Depth_Of_Field_Effect(RasterDetails & , const int, const int);
-	bool Radiosity_Raster ( string , const Camera &camera, Scene *, Radiosity_Helper *  ) ;
+	bool Radiosity_Raster ( string , const Camera &camera, Radiosity *, Radiosity_Helper *  ) ;
 };
 
 struct Object{
@@ -207,6 +207,9 @@ struct BSP_Node{
 	Object * parentObject ;
 };
 
+
+	
+
 // create initial quadtree
 // must sustain the adjacency list of all triangles with other triangles
 struct QuadTreeNode : public BSP_Node {
@@ -243,9 +246,12 @@ struct QuadTreeNode : public BSP_Node {
 		right = _BSP_Node->right ;
 	}
 
+	
+
 	vector<QuadTreeNode *> children ;
 	// maintain QuadTreeNode vector of all adjacent nodes
-	std::map<QuadTreeNode *, std::set<Vec3>> nextAdj;
+	//std::map<QuadTreeNode *, std::set<Vec3>> nextAdj;
+	std::map<QuadTreeNode *, std::unordered_set<Vec3>> nextAdj;
 	
 
 	Object * object;
@@ -312,10 +318,10 @@ struct QuadLight : public Light {
 
 struct Radiosity {
 	Radiosity() {}
-	Radiosity(  Scene * _scene ) ;
+	Radiosity(  Scene * _scene, Camera * ) ;
 	virtual ~Radiosity() ;
 
-	void buildInitialQuadTree();
+	virtual void buildInitialQuadTree();
 	void findFormFactor();
 	double findFormFactorTerm ( QuadTreeNode * , QuadTreeNode * );
 	double findFormFactorTermWithLight ( QuadTreeNode * );
@@ -326,10 +332,25 @@ struct Radiosity {
 	//bool adapdtiveMeshSubDivision() ;
 
 	Scene * scene ;
+	Camera * cam;
 	int numOfElements;
 	QuadTreeNode * quadTreeRoot ;
 	Radiosity_Helper * radiosityHelper ;
 
 };
+
+// include template specialization for std::set<Vec3> in the Radiosity class
+namespace std {
+		template<>
+		struct hash<Vec3> {
+			typedef size_t result_type;
+			typedef Vec3 argument_type ;
+			size_t operator() ( const Vec3 & v ) const ;
+		};
+		
+		inline size_t hash<Vec3>::operator()(const Vec3 & v ) const {
+			return hash<double>()( v.x ) ^ hash<double>() ( v.y ) ^ hash<double>() ( v.z ) ;
+		}
+	}
 
 #endif

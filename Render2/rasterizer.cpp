@@ -92,13 +92,45 @@ static Pixel ToneMap( const Color &color )
 
 static Pixel ToneMapRadiosity( const Color &color )
 {
-	int red   = (int)floor( 256 * (color.red / (1370.0 * 2.0 ) ) );
-	int green = (int)floor( 256 * (color.green / (1370.0 * 2.0 ) ) );
-	int blue  = (int)floor( 256 * (color.blue / (1370.0 * 2.0 ) )  );
+    /*
+    int red   = (int)floor( 256 * color.red   );
+	int green = (int)floor( 256 * color.green  );
+	int blue  = (int)floor( 256 * color.blue    );
 	channel r = (channel)( red   >= 255 ? 255 : red   ); 
 	channel g = (channel)( green >= 255 ? 255 : green ); 
 	channel b = (channel)( blue  >= 255 ? 255 : blue  );
 	return Pixel( r, g, b );
+	*/
+
+    if ( color == Green ) return Pixel ( 0, 255, 0 );
+
+	//constants
+	static const double LUMINANCE_DISPLAY = 200.0 ;
+	static const double CONTRAST_RATIO = 400.0;
+	static const double GAMMA_FACTOR = 2.4 ;
+
+	double a_rw = .41 * log10 (color.red) + 2.92;
+	double a_disp = .41 * log10 (LUMINANCE_DISPLAY ) + 2.92 ;
+	double b_rw = -.41 * pow ( log10 ( color.red ) , 2 ) + ( -2.584 * log10 ( color.red ) ) ;
+	double b_disp = -.41 * pow ( log10 ( LUMINANCE_DISPLAY ) , 2 ) + ( -2.584 * log10 ( LUMINANCE_DISPLAY ) ) ;
+
+	double inverseContrast = 1.0 / CONTRAST_RATIO ;
+
+	double enumerator = pow ( color.red , a_rw / a_disp ) ;
+	enumerator *= pow ( 10.0 , ( b_rw - b_disp) / a_disp ) ;
+	enumerator /= LUMINANCE_DISPLAY ;
+	enumerator -= inverseContrast ;
+	enumerator = pow ( enumerator , 1.0 / GAMMA_FACTOR ) ;
+
+	int col   = (int)floor( 256 * enumerator );
+	channel finalRGB = (channel)( col  >= 255 ? 255 : col  );
+
+	if ( finalRGB < 5 ){
+		int g = 45;
+	}
+	return Pixel( finalRGB, finalRGB, finalRGB );
+
+
 }
 
 void _thread_function_to_call_ ( const Rasterizer * _this ,
@@ -315,7 +347,7 @@ void Rasterizer::Depth_Of_Field_Effect(RasterDetails & rasterD , const int idx, 
 }
 
 
-bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Scene * _scene, Radiosity_Helper * _rad_helper ) {
+bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Radiosity * _rad, Radiosity_Helper * _rad_helper ) {
 
 	try {
 
@@ -325,7 +357,7 @@ bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Scen
 			vector<QuadTreeNode * > tempQuadVector ;
 
 			//for every object
-			for ( auto &v : _scene->radiosity->quadTreeRoot->children ) {
+			for ( auto &v : _rad->quadTreeRoot->children ) {
 				_rad_helper->returnFilledElementsOfObject ( v, tempQuadVector ) ;
 			}
 		    // Create an image of the given resolution.
@@ -333,7 +365,7 @@ bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Scen
 
 			Camera & tempCamera = const_cast<Camera&>(_camera);
 			// Initiate struct of raster ray increments and axes
-			RasterDetails rasterD(*_scene, tempCamera, _fname, I );
+			RasterDetails rasterD(*_rad->scene, tempCamera, _fname, I );
 
 			//PPM_Image & I = *rasterD.I ;
 
@@ -350,6 +382,11 @@ bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Scen
 
 				for ( unsigned int j = 0 ; j < rasterD.cam->x_res ; ++ j ) {
 					
+					if ( i == 142 && j == 85 ) {
+						int fdgfdg = 4 ;
+					}
+
+					//cout << " : " << j << endl ; 
 
 					ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
 

@@ -154,8 +154,8 @@ inline std::pair<double, double> returnUVofTriangle( const Vec3 & _p , QuadTreeN
 
 	if ( calculatePseudoInverse ( A, _A, _B ) ) {
 
-		double u = _A.x * _p.x + _A.y * _p.y + _A.z * _p.z  ;
-		double v = _B.x * _p.x + _B.y * _p.y + _B.z * _p.z  ;
+		double u = _A.x * (_p - _Qnode->triVert1 ).x + _A.y * (_p - _Qnode->triVert1 ).y + _A.z * (_p - _Qnode->triVert1 ).z  ;
+		double v = _B.x * (_p - _Qnode->triVert1 ).x + _B.y * (_p - _Qnode->triVert1 ).y + _B.z * (_p - _Qnode->triVert1 ).z  ;
 
 		return std::pair<double, double> ( u, v ) ;
 	}

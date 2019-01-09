@@ -204,7 +204,22 @@ inline bool calculatePseudoInverse ( Mat3x2 & _M, Vec3 & _row1, Vec3 & _row2  ) 
 	double eigenV_2 = ( x + w ) - sqrt ( pow(( x + w ), 2) - ( 4.0 * ( ( x * w ) - ( y * z ) ) ) ) ;
 	eigenV_2 /= 2.0;
 
+	// not an invertable matrix
 	if ( eigenV_1 == 0.0 || eigenV_2 == 0.0 ) return false;
+
+	// if both roots are the same then these are already the SVD
+	if ( eigenV_1 == eigenV_2 ) {
+
+		_row1.x =  _M(0,0) / eigenV_1 ;
+		_row1.y =  _M(1,0) / eigenV_1 ;
+		_row1.z =  _M(2,0) / eigenV_1 ;
+
+		_row2.x =  _M(0,1) / eigenV_1;
+		_row2.y =  _M(1,1) / eigenV_1;
+		_row2.z =  _M(2,1) / eigenV_1;
+
+		return true ;
+	}
 
 	// calc V
 	double lambda_1_x2 = abs ( AtACol_1.x - eigenV_1) ;

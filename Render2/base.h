@@ -14,6 +14,8 @@
 #include <time.h>  
 #include <map>
 #include <set>
+#include <unordered_set>
+#include <unordered_map>
 
 using std::cout;
 using std::cerr;
@@ -36,6 +38,11 @@ struct BSP_Node;   // Node of the tree
 struct Radiosity;  // Reconstructs the radiosity of the entire scene.
 struct QuadTreeNode;
 struct Radiosity_Helper ;
+
+#define REFLECTIVITY_INDEX 0.70
+#define SOLAR_RADIANT_FLUX 293.144 // W/m^2
+#define SOLAR_RADIOSITY_POWER 1370.0 // W/m^2
+#define SOLAR_ABSOLUTE_POWER_ON_EARTH 180000000000000000.0 // Watts of solar power shining on the earth
 
 // Path constants.
 static const string DefaultScene = "scenes/";

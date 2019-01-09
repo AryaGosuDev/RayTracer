@@ -4,10 +4,6 @@
 #include <stack>
 #include "radiosity_helper.h"
 
-#define REFLECTIVITY_INDEX 0.70
-#define SOLAR_RADIANT_FLUX 293.144 // W/m^2
-#define SOLAR_RADIOSITY_POWER 1370.0 // W/m^2
-#define SOLAR_ABSOLUTE_POWER_ON_EARTH 180000000000000000.0 // Watts of solar power shining on the earth
 
 struct ObjectNode {
 
@@ -148,8 +144,8 @@ inline void setRadiosityForAllElements ( QuadTreeNode * _qR ) {
 		v->radiosityValue = B[i++];
 }
 
-Radiosity::Radiosity( Scene * _scene ) :
-	scene ( _scene ), numOfElements ( 0 ), quadTreeRoot ( NULL ) {
+Radiosity::Radiosity( Scene * _scene, Camera * _cam ) :
+	scene ( _scene ), cam ( _cam ),  numOfElements ( 0 ), quadTreeRoot ( NULL ) {
 
 	try {
 
@@ -182,13 +178,13 @@ Radiosity::Radiosity( Scene * _scene ) :
 		// find the solution to the linear equation and remesh if needed
 		progressiveRefinement () ;
 
-		Camera camera;
+		//Camera camera;
 
 		setRadiosityForAllElements ( this->quadTreeRoot ) ;
 
 		
 
-		scene->rasterize->Radiosity_Raster ( "Radiosity" ,camera, scene, radiosityHelper ) ; 
+		scene->rasterize->Radiosity_Raster ( "Radiosity" ,*cam, this, radiosityHelper ) ; 
 
 	}
 	catch ( std::exception ex ) {
@@ -268,6 +264,8 @@ void Radiosity::buildInitialQuadTree () {
 				if ( curr->oN->finishedWithIntersections == false ) {
 					for ( int q1 = 0 ; q1 < radObjectNodes[i]->qNode->children.size() ; ++ q1 ) {
 						for ( int q2 = 0 ; q2 < otherNode->children.size() ; ++ q2 ) {
+
+
 							radiosityHelper->detectTriangleIntersections ( radObjectNodes[i]->qNode->children[q1] , otherNode->children[q2] ) ;
 						}
 					}
@@ -566,7 +564,7 @@ void Radiosity::progressiveRefinement() {
 		//E[i] = SOLAR_RADIANT_FLUX ;
 			E[i] = 0.0 ;
 
-	E[n-1] = SOLAR_RADIOSITY_POWER  * 2.0 ;
+	E[n-1] = SOLAR_RADIOSITY_POWER  ;
 
 	// radiosities 
 	B = ( double * ) malloc ( n * sizeof ( double ) ) ;
