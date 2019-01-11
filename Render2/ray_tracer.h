@@ -253,7 +253,6 @@ struct QuadTreeNode : public BSP_Node {
 	//std::map<QuadTreeNode *, std::set<Vec3>> nextAdj;
 	std::map<QuadTreeNode *, std::unordered_set<Vec3>> nextAdj;
 	
-
 	Object * object;
 	Object * parentObject;
 
@@ -351,6 +350,14 @@ namespace std {
 		inline size_t hash<Vec3>::operator()(const Vec3 & v ) const {
 			return hash<double>()( v.x ) ^ hash<double>() ( v.y ) ^ hash<double>() ( v.z ) ;
 		}
-	}
+		/*
+		template<>
+		struct equal_to<Vec3> {
+			typedef bool result_type ;
+first_argument_type(deprecated in C++17)	T
+second_argument_type(deprecated in C++17)	T
 
+		} */
+}
+	
 #endif

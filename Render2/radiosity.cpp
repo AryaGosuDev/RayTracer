@@ -4,7 +4,6 @@
 #include <stack>
 #include "radiosity_helper.h"
 
-
 struct ObjectNode {
 
 	struct LinkListAdjNode ;
@@ -54,7 +53,6 @@ struct ObjectNode {
 		LinkListAdjNode * next ;
 	};
 };
-
 
 struct FormFactorStackNode {
 
@@ -153,8 +151,6 @@ Radiosity::Radiosity( Scene * _scene, Camera * _cam ) :
 		vector<Object *>::const_iterator sceneObjIter = scene->sceneObjects.cbegin ();
 
 		//radiosityHelper
-
-
 		// find AABB for all objects in the scene to check for poly-poly intersection.
 		// in which case, we must allow meshing of objects that are not part of the same polygon
 		// aka correcting mesh disontinuity, for example if there is a column that is attached to the floor
@@ -179,13 +175,9 @@ Radiosity::Radiosity( Scene * _scene, Camera * _cam ) :
 		progressiveRefinement () ;
 
 		//Camera camera;
-
 		setRadiosityForAllElements ( this->quadTreeRoot ) ;
 
-		
-
 		scene->rasterize->Radiosity_Raster ( "Radiosity" ,*cam, this, radiosityHelper ) ; 
-
 	}
 	catch ( std::exception ex ) {
 		cout << "Error in Radiosity::Radiosity( Scene * _scene ) : "  << ex.what() << endl;
@@ -264,8 +256,6 @@ void Radiosity::buildInitialQuadTree () {
 				if ( curr->oN->finishedWithIntersections == false ) {
 					for ( int q1 = 0 ; q1 < radObjectNodes[i]->qNode->children.size() ; ++ q1 ) {
 						for ( int q2 = 0 ; q2 < otherNode->children.size() ; ++ q2 ) {
-
-
 							radiosityHelper->detectTriangleIntersections ( radObjectNodes[i]->qNode->children[q1] , otherNode->children[q2] ) ;
 						}
 					}
@@ -309,28 +299,28 @@ bool Radiosity::castFromElementToElement ( const Ray &ray, HitInfo &hitinfo, Qua
 bool Radiosity::isVisibleXiToXj ( QuadTreeNode * i, QuadTreeNode * j, const Vec3 &xi, const Vec3 &yi ) {
 
 	try {
-	Ray ray;
-	ray.direction = Unit (yi - xi ) ;
-	ray.origin     = xi + ( Epsilon * ray.direction ) ; // cast from above the element surface
-	ray.type       = generic_ray; // These rays are given no special meaning.
-	ray.generation = 1;           // Rays cast from the element are first-generation.
+		Ray ray;
+		ray.direction = Unit (yi - xi ) ;
+		ray.origin     = xi + ( Epsilon * ray.direction ) ; // cast from above the element surface
+		ray.type       = generic_ray; // These rays are given no special meaning.
+		ray.generation = 1;           // Rays cast from the element are first-generation.
 
-	HitInfo hitinfo;             
-	hitinfo.ignore = NULL;       // Don't ignore any objects.
-	hitinfo.distance = Infinity; // Follow the full ray.
+		HitInfo hitinfo;             
+		hitinfo.ignore = NULL;       // Don't ignore any objects.
+		hitinfo.distance = Infinity; // Follow the full ray.
 
-	if ( castFromElementToElement ( ray, hitinfo, i, j, xi, yi ) ){
-		if( hitinfo.object == NULL ) cout << "Error : hitinfo in isVisibleXitoXj  did not return an collision with object" << endl ; 
+		if ( castFromElementToElement ( ray, hitinfo, i, j, xi, yi ) ){
+			if( hitinfo.object == NULL ){ /* cout << "Error : hitinfo in isVisibleXitoXj  did not return an collision with object" << endl ;*/ }
 
-		else {
+			else {
 
-			return ((hitinfo.object != 0 &&
-		     //hitinfo.object == j->object &&
-		     Length(hitinfo.point - yi) < Epsilon &&
-			 ray.direction * j->triNormal < 0  ) ?  true :  false);
+				return ((hitinfo.object != 0 &&
+				 //hitinfo.object == j->object &&
+				 Length(hitinfo.point - yi) < Epsilon &&
+				 ray.direction * j->triNormal < 0  ) ?  true :  false);
+			}
 		}
-	}
-	else cout << "isVisibleXitoXj detected no collisions between elements" << endl ; 
+		//else cout << "isVisibleXitoXj detected no collisions between elements" << endl ; 
 	}
 	catch ( std::exception ex ) {
 		cout << "Error in Radiosity::isVisibleXiToXj " << ex.what() << endl ;
@@ -445,7 +435,7 @@ void Radiosity::findFormFactor() {
 
 	for ( int i = 0 ; i < numOfElements ; ++i ) {
 		for (  int j = 0 ; j < numOfElements  ; ++j ) {
-			cout << "j : " << j << endl ;
+			//cout << "j : " << j << endl ;
 			if ( i == j ) FF [i][j] = 0.0 ; 
 			else FF[i][j] = findFormFactorTerm ( tempQuadVector[i], tempQuadVector[j] ) ;
 		}

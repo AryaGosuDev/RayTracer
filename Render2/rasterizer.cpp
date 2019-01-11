@@ -46,20 +46,18 @@ const struct RasterDetails {
 
 			// compute increments based on camera geometry. Will be used to define the ray direction at each pixel.
 
-			G =  Unit( _cam.lookat - _cam.eye ) ;                    // Gaze direction.
+			G =  Unit( _cam.lookat - _cam.eye ) ;           // Gaze direction.
 			U =  Unit( _cam.up / G ) ;                      // Up vector.
-			R =  Unit( G ^ U ) ;                   // Right vector.
+			R =  Unit( G ^ U ) ;                            // Right vector.
 			O =  _cam.vpdist * G + 
 						 xmin * R + 
-						 ymax * U ;                        // "Origin" of the 3D raster.
+						 ymax * U ;                 // "Origin" of the 3D raster.
 			dR = width * R / _cam.x_res ;           // Right increments.
 			dU =  height * U / _cam.y_res ;         // Up increments.
 
 			DistLensDim = 7 ;
 			XGradation = Lwidth * R / DistLensDim;
 			YGradation = Lheight * U / DistLensDim ;
-			//const Vec3 XGradation( Lwidth * R /cam.x_res);
-			//const Vec3 YGradation ( Lheight * U / cam.y_res) ;
 			DistLensGradations = DistLensDim /2 ;
 
 			scene = &_scene;
@@ -106,8 +104,8 @@ static Pixel ToneMapRadiosity( const Color &color )
 
 	//constants
 	static const double LUMINANCE_DISPLAY = 200.0 ;
-	static const double CONTRAST_RATIO = 400.0;
-	static const double GAMMA_FACTOR = 2.4 ;
+	static const double CONTRAST_RATIO = 1000000.0;
+	static const double GAMMA_FACTOR = 2.1 ;
 
 	double a_rw = .41 * log10 (color.red) + 2.92;
 	double a_disp = .41 * log10 (LUMINANCE_DISPLAY ) + 2.92 ;
@@ -125,11 +123,11 @@ static Pixel ToneMapRadiosity( const Color &color )
 	int col   = (int)floor( 256 * enumerator );
 	channel finalRGB = (channel)( col  >= 255 ? 255 : col  );
 
-	if ( finalRGB < 5 ){
+	if ( finalRGB == 255 ){
 		int g = 45;
 	}
-	return Pixel( finalRGB, finalRGB, finalRGB );
 
+	return Pixel( finalRGB, finalRGB, finalRGB );
 
 }
 
@@ -142,7 +140,7 @@ void _thread_function_to_call_ ( const Rasterizer * _this ,
 
 			  ((const_cast<Rasterizer*>(_this))->*fptr) ( rasterD, idx, idy ) ;
 			  // ^ pointer to member function
-	}
+}
 								 
 // Rasterize casts all the initial rays starting from the eye.
 // casts one ray per pixel, in raster order, then writes the pixels out to a file.
@@ -346,7 +344,6 @@ void Rasterizer::Depth_Of_Field_Effect(RasterDetails & rasterD , const int idx, 
 	I.Write( rasterD.img_file_name );
 }
 
-
 bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Radiosity * _rad, Radiosity_Helper * _rad_helper ) {
 
 	try {
@@ -382,16 +379,16 @@ bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Radi
 
 				for ( unsigned int j = 0 ; j < rasterD.cam->x_res ; ++ j ) {
 					
-					if ( i == 142 && j == 85 ) {
+					// on irfanview, j = X and i = Y
+					if ( i == 232 && j == 357 ) {
 						int fdgfdg = 4 ;
+						//ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
+						//I(i,j) = ToneMapRadiosity( _rad_helper->trace_ray( ray, tempQuadVector ) );
 					}
 
-					//cout << " : " << j << endl ; 
+					//cout << i << " : " << j << endl ; 
 
 					ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
-
-					//ray.direction = Unit (( O + (j + 0.5) * dR - (i + 0.5) * dU  ) - cam.eye);
-
 					I(i,j) = ToneMapRadiosity( _rad_helper->trace_ray( ray, tempQuadVector ) );
 				}
 			}

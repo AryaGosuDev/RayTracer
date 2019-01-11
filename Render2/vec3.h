@@ -106,15 +106,21 @@ inline ostream &operator<<( ostream &out, const Vec3 &A )
 }
 
 inline bool operator ==( const Vec3 & _a , const Vec3 & _b ) {
-	return ( _a.x == _b.x && _a.y == _b.y && _a.z == _b.z ) ;
+	//return ( _a.x == _b.x && _a.y == _b.y && _a.z == _b.z ) ;
+	//return ( abs(_a.x - _b.x) <= Epsilon && abs (_a.y - _b.y ) <= Epsilon && abs(_a.z - _b.z) <= Epsilon ) ;
+	bool here = ( abs(_a.x - _b.x) <= Epsilon && abs (_a.y - _b.y ) <= Epsilon && abs(_a.z - _b.z) <= Epsilon ) ;
+	if ( here == false ){
+		int fddf = 4 ;
+	}
+	return here ;
 }
 
 inline bool operator !=( const Vec3 & _a, const Vec3 & _b ) {
 	return ( _a.x != _b.x && _a.y != _b.y && _a.z != _b.z ) ;
 }
 
-inline bool relativeClose ( const Vec3 & _a , const Vec3 & _b ) {
-	return ( abs( _a.x - _b.x ) < Epsilon && abs( _a.y - _b.y ) < Epsilon && abs( _a.z - _b.z ) < Epsilon ) ;
+inline bool relativeClose ( const Vec3 & _a , const Vec3 & _b, double threshhold = Epsilon ) {
+	return ( abs( _a.x - _b.x ) <= threshhold && abs( _a.y - _b.y ) <= threshhold && abs( _a.z - _b.z ) <= threshhold ) ;
 }
 
 inline Vec3 Unit( const Vec3 &A )

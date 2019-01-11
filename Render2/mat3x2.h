@@ -208,7 +208,7 @@ inline bool calculatePseudoInverse ( Mat3x2 & _M, Vec3 & _row1, Vec3 & _row2  ) 
 	if ( eigenV_1 == 0.0 || eigenV_2 == 0.0 ) return false;
 
 	// if both roots are the same then these are already the SVD
-	if ( eigenV_1 == eigenV_2 ) {
+	if ( eigenV_1 == eigenV_2  ) {
 
 		_row1.x =  _M(0,0) / eigenV_1 ;
 		_row1.y =  _M(1,0) / eigenV_1 ;
@@ -217,6 +217,31 @@ inline bool calculatePseudoInverse ( Mat3x2 & _M, Vec3 & _row1, Vec3 & _row2  ) 
 		_row2.x =  _M(0,1) / eigenV_1;
 		_row2.y =  _M(1,1) / eigenV_1;
 		_row2.z =  _M(2,1) / eigenV_1;
+
+		return true ;
+	}
+
+	if (  z == 0.0 && y == 0.0 ) {
+
+		_row1.x =  _M(0,0) / eigenV_1 ;
+		_row1.y =  _M(1,0) / eigenV_1 ;
+		_row1.z =  _M(2,0) / eigenV_1 ;
+
+		if ( abs(( _row1.x * _M(0,0) + _row1.y * _M(1,0) + _row1.z * _M(2,0) ) - 1.0 ) > Epsilon ) {
+			_row1.x =  _M(0,0) / eigenV_2 ;
+			_row1.y =  _M(1,0) / eigenV_2 ;
+			_row1.z =  _M(2,0) / eigenV_2 ;
+
+			_row2.x =  _M(0,1) / eigenV_1;
+			_row2.y =  _M(1,1) / eigenV_1;
+			_row2.z =  _M(2,1) / eigenV_1;
+
+			return true;
+		}
+
+		_row2.x =  _M(0,1) / eigenV_2;
+		_row2.y =  _M(1,1) / eigenV_2;
+		_row2.z =  _M(2,1) / eigenV_2;
 
 		return true ;
 	}

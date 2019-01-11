@@ -1,6 +1,3 @@
-
-
-
 #ifndef __BASE_INCLUDED__    // Include this file only once.
 #define __BASE_INCLUDED__
 
@@ -16,6 +13,8 @@
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
+
+#include <math.h>
 
 using std::cout;
 using std::cerr;
@@ -41,7 +40,7 @@ struct Radiosity_Helper ;
 
 #define REFLECTIVITY_INDEX 0.70
 #define SOLAR_RADIANT_FLUX 293.144 // W/m^2
-#define SOLAR_RADIOSITY_POWER 1370.0 // W/m^2
+#define SOLAR_RADIOSITY_POWER 1370.0 * 50.0 // W/m^2
 #define SOLAR_ABSOLUTE_POWER_ON_EARTH 180000000000000000.0 // Watts of solar power shining on the earth
 
 // Path constants.
@@ -76,7 +75,6 @@ enum raytracer_error {
 	error_rasterizing_image
 	};
 
-
 static inline const char *rubout( int i )
 {
 	if( i < 0 ) i = -10 * i; // Add a backspace for the negative sign.
@@ -92,10 +90,11 @@ static inline const char *spaceout( int lines )
 		return "\b";
 		
 	for ( int i = 0 ; i < lines ; ++ i ) 
-		return "\n";
-		
+		return "\n";	
 }
 
+static inline double round (double value) { 
+	return ((value < 0.0) ? -std::floor(0.5 - value) : std::floor(0.5 + value)); 
+}
 
 #endif
-

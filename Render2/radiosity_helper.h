@@ -42,6 +42,7 @@ struct EdgeList {
 	int nodeNumber;
 };
 
+
 inline EdgeList * createEdgeList ( const BSP_Node & _bsp_N ) {
 
 	EdgeList * newEdgeListHead = new EdgeList () ;
@@ -108,28 +109,25 @@ inline bool isInView ( QuadTreeNode * _A, QuadTreeNode * _B, Radiosity * _this )
 	return false;
 }
 
-
 inline bool doesPointLieOnLine (const Vec3 & _P, Vec3 & _Q, Vec3 & _V ) {
-	Vec3 P = _Q - _P ;
+	Vec3 P = _P - _Q ;
 	double tx = ( _V.x == 0.0 ? 0.0 : P.x / _V.x   ) ;
 	double ty = ( _V.y == 0.0 ? 0.0 : P.y / _V.y   ) ;
 	double tz = ( _V.z == 0.0 ? 0.0 : P.z / _V.z   ) ;
 
-	if ( tx != 0.0 ) {
-		if ( tx * _V.y == P.y && tx * _V.z == P.z ) return true;
-		return false;
-	}
-	if ( ty != 0.0 ) {
-		if ( ty * _V.x == P.x && ty * _V.z == P.z ) return true;
-		return false;
-	}
-	if ( tz != 0.0 ) {
-		if ( tz * _V.x == P.x && tz * _V.y == P.y ) return true;
-		return false;
-	}
-	return true;
+	return (tx * _V.x == P.x && ty * _V.y == P.y && tz * _V.z == P.z) ;
 }
 
+inline bool isPointNearLine (const Vec3 & _P, Vec3 & _Q, Vec3 & _V ) {
+	Vec3 P = _P - _Q ;
+	double tx = ( _V.x == 0.0 ? 0.0 : P.x / _V.x   ) ;
+	double ty = ( _V.y == 0.0 ? 0.0 : P.y / _V.y   ) ;
+	double tz = ( _V.z == 0.0 ? 0.0 : P.z / _V.z   ) ;
+
+	double threshold = Epsilon * 100.0 ;
+
+	return (abs (tx * _V.x - P.x) <= threshold && abs(ty * _V.y - P.y) <= threshold && abs(tz * _V.z - P.z) <= threshold) ;
+}
 
 inline Vec3 centerOfTriangle (QuadTreeNode * _Qnode ) {
 
@@ -148,7 +146,7 @@ inline Vec3 centerOfTriangle (QuadTreeNode * _Qnode ) {
 	A(1,0) = VLine1.y ;
 	A(1,1) = -VLine2.y ;
 	A(2,0) = VLine1.z ;
-	A(2,1) = VLine2.z ;
+	A(2,1) = -VLine2.z ;
 
 	Vec3 _A, _B  ;
 
@@ -161,6 +159,16 @@ inline Vec3 centerOfTriangle (QuadTreeNode * _Qnode ) {
 	return (t * VLine1) + QLine1 ;
 }
 
+// check to make sure that the vec3 we are adding to a quadnode's adj list doesn't already exist.
+inline bool isAlreadyInAdjList ( Vec3 & _P, QuadTreeNode * _A, QuadTreeNode * _B  )  {
+
+	for ( auto & unordered_set_vector : _A->nextAdj[_B] ) {
+		if ( relativeClose ( unordered_set_vector, _P, 0.5 )) 
+			return true;
+	}
+	return false;
+
+}
 
 inline Color returnQuadTreeColor ( Vec3 & _p , QuadTreeNode * _Qnode ) {
 
@@ -176,7 +184,7 @@ inline Color returnQuadTreeColor ( Vec3 & _p , QuadTreeNode * _Qnode ) {
 	//std::map<Vec3, double> interpolationPoints ;
 	std::unordered_map<Vec3, double> interpolationPoints ;
 	// UNUSED FOR NOW
-	std::map<Vec3, int> numberOfSamples;
+	std::unordered_map<Vec3, int> numberOfSamples;
 
 	for ( const auto & i : _Qnode->nextAdj ) {
 		for ( const auto &j : i.second ) {
@@ -185,8 +193,13 @@ inline Color returnQuadTreeColor ( Vec3 & _p , QuadTreeNode * _Qnode ) {
 				 doesPointLieOnLine ( j, _Qnode->triVert2, _Qnode->triVert3 - _Qnode->triVert2 ) ||
 				 doesPointLieOnLine ( j, _Qnode->triVert3, _Qnode->triVert1 - _Qnode->triVert3 ) ) {
 					 interpolationPoints.insert ( std::pair<Vec3, double> (j, 0.0) );
+					 //cout << "Added vec3 to interpolationPoints : " << j << endl;
 			}
-			else pointsInsideTriangle.emplace_back ( std::pair<Vec3, double> ( j , 0.0 ) ) ;
+			else{
+				//pointsInsideTriangle.emplace_back ( std::pair<Vec3, double> ( j , 0.0 ) ) ;
+				//cout << "Didnt add vec3 to interpolationPoints : " << j << endl; 
+				}
+
 		}
 	}
 	pointsInsideTriangle.emplace_back ( std::pair<Vec3, double> ( centerPointOfTriangle, _Qnode->radiosityValue )) ;
@@ -211,13 +224,36 @@ inline Color returnQuadTreeColor ( Vec3 & _p , QuadTreeNode * _Qnode ) {
 			}
 		}
 	}
-	
-	double w1 = (coTangent( _p, _Qnode->triVert1, _Qnode->triVert2 ) + coTangent( _p, _Qnode->triVert1, _Qnode->triVert3 )) / (pow(Length( _p - _Qnode->triVert1 ), 2 ));
-	w1 /= 3.0 ;
-	double w2 = (coTangent( _p, _Qnode->triVert2, _Qnode->triVert1 ) + coTangent( _p, _Qnode->triVert2, _Qnode->triVert3 )) / (pow(Length( _p - _Qnode->triVert2 ), 2 ));
-	w2 /= 3.0 ;
-	double w3 = (coTangent( _p, _Qnode->triVert3, _Qnode->triVert1 ) + coTangent( _p, _Qnode->triVert3, _Qnode->triVert2 )) / (pow(Length( _p - _Qnode->triVert3 ), 2 ));
-	w3 /= 3.0 ;
+
+	for ( auto & v : interpolationPoints ) {
+		v.second /= numberOfSamples[v.first];
+	}
+
+	double w1, w2, w3;
+
+	//boundary case : is the point near the side of the triangle
+	if ( isPointNearLine ( _p, _Qnode->triVert1, _Qnode->triVert2 - _Qnode->triVert1 ) || 
+		 isPointNearLine ( _p, _Qnode->triVert2, _Qnode->triVert3 - _Qnode->triVert2 ) ||
+	     isPointNearLine ( _p, _Qnode->triVert3, _Qnode->triVert1 - _Qnode->triVert3 ) ) {
+			 double areaOfQuadNode = Area ( _Qnode->triVert1, _Qnode->triVert2, _Qnode->triVert3 );
+			 w1 = Area ( _p, _Qnode->triVert2, _Qnode->triVert3 ) / areaOfQuadNode ;
+			 w2 = Area ( _p, _Qnode->triVert1, _Qnode->triVert3 ) / areaOfQuadNode ;
+			 w3 = Area ( _p, _Qnode->triVert1, _Qnode->triVert2 ) / areaOfQuadNode ;
+	}
+	else {
+			w1 = (coTangent( _p, _Qnode->triVert1, _Qnode->triVert2 ) + coTangent( _p, _Qnode->triVert1, _Qnode->triVert3 )) / (pow(Length( _p - _Qnode->triVert1 ), 2 ));
+			w1 /= 3.0 ;
+			w2 = (coTangent( _p, _Qnode->triVert2, _Qnode->triVert1 ) + coTangent( _p, _Qnode->triVert2, _Qnode->triVert3 )) / (pow(Length( _p - _Qnode->triVert2 ), 2 ));
+			w2 /= 3.0 ;
+			w3 = (coTangent( _p, _Qnode->triVert3, _Qnode->triVert1 ) + coTangent( _p, _Qnode->triVert3, _Qnode->triVert2 )) / (pow(Length( _p - _Qnode->triVert3 ), 2 ));
+			w3 /= 3.0 ;
+	}
+
+	double areaOfQuadNode = Area ( _Qnode->triVert1, _Qnode->triVert2, _Qnode->triVert3 );
+	w1 = Area ( _p, _Qnode->triVert2, _Qnode->triVert3 ) / areaOfQuadNode ;
+	w2 = Area ( _p, _Qnode->triVert1, _Qnode->triVert3 ) / areaOfQuadNode ;
+	w3 = Area ( _p, _Qnode->triVert1, _Qnode->triVert2 ) / areaOfQuadNode ;
+
 	double triWeights[3] = { w1, w2, w3 };
 
 	double finalRadiosityValue = 0.0 ; 
@@ -228,10 +264,8 @@ inline Color returnQuadTreeColor ( Vec3 & _p , QuadTreeNode * _Qnode ) {
 
 		for ( const auto &v : interpolationPoints ) {
 
-			if ( Length(v.first - currentEdgeListNode->vTx) <= Epsilon ) { finalRadiosityValue += (w1 * v.second) ; found = true ; }
-			else if ( Length(v.first - currentEdgeListNode->vTx) <= Epsilon ) { finalRadiosityValue += (w2 * v.second) ; found = true ;}
-			else if ( Length(v.first - currentEdgeListNode->vTx) <= Epsilon ) { finalRadiosityValue += (w3 * v.second) ; found = true ;}
-
+			if ( Length(v.first - currentEdgeListNode->vTx) <= Epsilon ) { finalRadiosityValue += (triWeights[currentEdgeListNode->nodeNumber] * v.second) ; found = true ; break; }
+			
 			//else cout << "error in Color returnQuadTreeColor " << endl;
 		}
 
@@ -249,5 +283,7 @@ inline Color returnQuadTreeColor ( Vec3 & _p , QuadTreeNode * _Qnode ) {
 
 	return Color ( finalRadiosityValue, finalRadiosityValue, finalRadiosityValue );
 }
+
+
 
 #endif

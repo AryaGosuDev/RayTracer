@@ -6,6 +6,7 @@
 #include "radiosity_helper.h"
 #include <stack>
 
+
 struct FormFactorStackNode {
 
 	FormFactorStackNode ( QuadTreeNode * _quadTreeNode  ) {
@@ -20,6 +21,7 @@ struct FormFactorStackNode {
 	bool visited ;
 	bool internal; 
 };
+
 
 // find the intersections of 2 adj triangles. Adds them to the triangle adj list along with intersections.
 inline void findTriangleAdjPoints ( QuadTreeNode * _1 , QuadTreeNode * _2, EdgeList * _EL1, EdgeList * _EL2  ) {
@@ -59,8 +61,13 @@ inline void findTriangleAdjPoints ( QuadTreeNode * _1 , QuadTreeNode * _2, EdgeL
 				double tTriangle = _B.x * delQ.x + _B.y * delQ.y + _B.z * delQ.z  ;
 
 				if ( ( tTriangle >= 0.0 || abs(tTriangle) <= Epsilon) && (tTriangle <= 1.0 || abs( tTriangle - 1.0 ) <= Epsilon ) ) {
-					_1->nextAdj[_2].insert ( Vec3 ( (tTriangle * EL2curr->LineV.x) + EL2curr->LineQ.x ,  (tTriangle * EL2curr->LineV.y) + EL2curr->LineQ.y,  (tTriangle * EL2curr->LineV.z) + EL2curr->LineQ.z ) ) ;
-					_2->nextAdj[_1].insert ( Vec3 ( (tTriangle * EL2curr->LineV.x) + EL2curr->LineQ.x ,  (tTriangle * EL2curr->LineV.y) + EL2curr->LineQ.y,  (tTriangle * EL2curr->LineV.z) + EL2curr->LineQ.z ) ) ;
+					Vec3 vec3ToAdd = Vec3 ( (tTriangle * EL2curr->LineV.x) + EL2curr->LineQ.x ,  (tTriangle * EL2curr->LineV.y) + EL2curr->LineQ.y,  (tTriangle * EL2curr->LineV.z) + EL2curr->LineQ.z ) ;
+					vec3ToAdd.x = round ( vec3ToAdd.x );
+					vec3ToAdd.y = round ( vec3ToAdd.y );
+					vec3ToAdd.z = round ( vec3ToAdd.z );
+
+					if ( !isAlreadyInAdjList ( vec3ToAdd, _1, _2 )) _1->nextAdj[_2].insert ( vec3ToAdd ) ;
+					if ( !isAlreadyInAdjList ( vec3ToAdd, _2, _1 )) _2->nextAdj[_1].insert ( vec3ToAdd ) ;
 				}
 			}
 			EL2curr = EL2curr->next;
@@ -151,7 +158,6 @@ inline void linePlaneIntersectionAdj  ( QuadTreeNode * _1 , QuadTreeNode * _2, E
 		} while ( EL2curr != EL2Head );
 }
 
-
 inline int returnNumOfIntersectionsWithTriangle ( Vec3 & _Q, Vec3 & _V, const BSP_Node & _bsp_N, vector<Vec3> & newIntersections ) {
 	int numOfIntersections = 0;
 
@@ -163,8 +169,6 @@ inline int returnNumOfIntersectionsWithTriangle ( Vec3 & _Q, Vec3 & _V, const BS
 
 	for ( int i = 0 ; i < 3 ; i ++ ) {
 
-		//Vec3 QLine = _bsp_N.triVert1 ;
-		//Vec3 VLine = _bsp_N.triVert2 - _bsp_N.triVert1 ;
 		Vec3 QLine = triPoints[i];
 		Vec3 VLine = triPoints[i+1] - triPoints[i] ;
 
@@ -186,9 +190,11 @@ inline int returnNumOfIntersectionsWithTriangle ( Vec3 & _Q, Vec3 & _V, const BS
 		double tP = _A.x * delQ.x + _A.y * delQ.y + _A.z * delQ.z  ;
 		double tTriangle = _B.x * delQ.x + _B.y * delQ.y + _B.z * delQ.z  ;
 
-		if ( tTriangle > 1.0 || tTriangle < 0.0 ) return 0;
+		if ( ( tTriangle >= 0.0 || abs(tTriangle) <= Epsilon) && (tTriangle <= 1.0 || abs( tTriangle - 1.0 ) <= Epsilon ) ) numOfIntersections++;
+		else return 0 ;
 
-		if ( tTriangle >= 0.0 && tTriangle <= 1.0 ) numOfIntersections++;
+		//if ( tTriangle > 1.0 || tTriangle < 0.0 ) return 0;
+		//if ( tTriangle >= 0.0 && tTriangle <= 1.0 ) numOfIntersections++;
 		
 		Vec3 pointOfIntersection ( tTriangle * VLine.x + QLine.x ,  tTriangle * VLine.y + QLine.y,  tTriangle * VLine.z + QLine.z ); 
 
@@ -327,8 +333,6 @@ void Radiosity_Helper::returnFilledElementsOfObject ( QuadTreeNode * _v , vector
 	}
 }
 
-
-
 Color Radiosity_Helper::trace_ray ( Ray & _ray , vector<QuadTreeNode *> & _a  ) {
 
 	Color c ;
@@ -337,6 +341,7 @@ Color Radiosity_Helper::trace_ray ( Ray & _ray , vector<QuadTreeNode *> & _a  ) 
 	double dist = 0.0 ;
 	QuadTreeNode * hitNode = NULL ;
 	Vec3 pointOfIntersection;
+	Vec3 finalPointOfIntersection ;
 
 	// check for the intersection of rays with planes extended by the respective triangle
 	for ( int i = 0 ; i < _a.size(); ++ i ) {
@@ -347,6 +352,7 @@ Color Radiosity_Helper::trace_ray ( Ray & _ray , vector<QuadTreeNode *> & _a  ) 
 			t = -1.0 * (( (_a[i]->triNormal * _ray.origin ) + ( (-1.0 * _a[i]->triNormal) * _a[i]->triVert1 ) ) / denom) ;
 
 			pointOfIntersection = (t * _ray.direction) + _ray.origin ;
+			//finalPointOfIntersection = pointOfIntersection;
 
 			std::pair<double, double> thisUV = returnUVofTriangle( pointOfIntersection , _a[i] ) ;
 			
@@ -354,11 +360,16 @@ Color Radiosity_Helper::trace_ray ( Ray & _ray , vector<QuadTreeNode *> & _a  ) 
 			double v = thisUV.second ;
 				// this ray hit the triangle
 				if ( u >= 0.0 && v >= 0.0 && u + v <= 1.0 ) {
-					hitNode = _a[i] ;
-					if ( dist == 0.0 )
+					if ( dist == 0.0 ) {
+						finalPointOfIntersection = pointOfIntersection;
+						hitNode = _a[i] ;
 						dist = Length ( pointOfIntersection - _ray.origin ) ;
-					else if ( dist > Length ( pointOfIntersection - _ray.origin ) ) 
+					}
+					else if ( dist > Length ( pointOfIntersection - _ray.origin ) ) {
+						finalPointOfIntersection = pointOfIntersection;
+						hitNode = _a[i] ;
 						dist = Length ( pointOfIntersection - _ray.origin ) ;
+					}
 				}
 			//}
 		}
@@ -366,6 +377,7 @@ Color Radiosity_Helper::trace_ray ( Ray & _ray , vector<QuadTreeNode *> & _a  ) 
 
 	// nothing was hit
 	if ( hitNode == NULL ) return Green ;
+	if ( hitNode->triNormal * _ray.direction > 0.0 ) return Black ;
 
-	return returnQuadTreeColor ( pointOfIntersection, hitNode )  ;
+	return returnQuadTreeColor ( finalPointOfIntersection, hitNode )  ;
 }
