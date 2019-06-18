@@ -203,8 +203,6 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx2, calcNormal );
 	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx3, calcNormal );
 
-	// TODO interpolation
-	// TODO Trapezoidal decomp
 	if ( vecOut.size() == 4 ) { //the face is a quad, or of order n. Triangulate
 	
 		object.triangles.push_back ( BSP_Node(++numOfTriangle) ); //make a new triangle for the fourth point

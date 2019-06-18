@@ -27,22 +27,21 @@ int main( int argc, char *argv[] )
 	if ( !scene.BuildBSP ())
 		cout << "Could not build BSP." << endl;
 
-	auto start = std::chrono::steady_clock::now();
+	//auto start = std::chrono::steady_clock::now();
 
-	/*
 	if( !scene.rasterize->Rasterize( fnameOutput, camera, scene)){
 		cerr << "Error encountered while rasterizing." << endl;
 		return error_rasterizing_image;
 	}
-	*/
+	
 	//I AM INSTEAD GOING TO CALCULATE RADIOSITY FOR THE WHOLE SCENE
-	scene.radiosity = new Radiosity(&scene, &camera);
+	//scene.radiosity = new Radiosity(&scene, &camera);
 
-	auto end = std::chrono::steady_clock::now();
+	//auto end = std::chrono::steady_clock::now();
 
-	auto diff = end - start;
+	//auto diff = end - start;
 
-	cout <<  "Shading time performance : " << std::chrono::duration_cast<std::chrono::seconds> (diff).count() << " seconds" << endl; 
+	//cout <<  "Shading time performance : " << std::chrono::duration_cast<std::chrono::seconds> (diff).count() << " seconds" << endl; 
 
 	delete scene.rasterize;
 	delete scene.radiosity;

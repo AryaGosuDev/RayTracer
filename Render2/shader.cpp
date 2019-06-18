@@ -409,7 +409,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 		// AMBIET + DIFFUSE
 		L = Unit ( LightPos - P) ;
 
-		color += emission * ( (occlusion*   ambient) + ( diffuse * max ( 0, N * L) ) ) ;
+		color += emission * ( (  (.85 *occlusion) * ambient) + ( diffuse * max ( 0, N * L) ) ) ;
 		//color += emission * ( ( ambient) + ( diffuse * max ( 0, N * L) ) ) ;
 
 		//SPECULATIVE

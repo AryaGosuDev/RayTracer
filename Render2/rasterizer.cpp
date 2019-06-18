@@ -58,7 +58,7 @@ const struct RasterDetails {
 			DistLensDim = 7 ;
 			XGradation = Lwidth * R / DistLensDim;
 			YGradation = Lheight * U / DistLensDim ;
-			DistLensGradations = DistLensDim /2 ;
+			DistLensGradations = DistLensDim / 2 ;
 
 			scene = &_scene;
 			cam = &_cam;
@@ -70,9 +70,8 @@ const struct RasterDetails {
 
 const double RasterDetails::Lwidth = 0.375;
 const double RasterDetails::Lheight = 0.3;
-const int threadDivisionsInX = 5 ;
-const int threadDivisionsInY = 4 ;
-
+const int threadDivisionsInX = 8 ;
+const int threadDivisionsInY = 6 ;
 
 // Maps values that are in [0,1] and maps them to integers between 0 and 255.  Values above 1 are truncated.
 // Doesn't implement HDR
@@ -260,7 +259,7 @@ void Rasterizer::Anti_Aliasing (RasterDetails & rasterD , const int idx, const i
 
 		for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
 
-			Color contributedColor ( 0, 0, 0 );
+			Color contributedColor ( 0.0, 0.0, 0.0 );
 
 			for(float fragmenty = 1; fragmenty < 4; fragmenty += 2)
 			{
@@ -278,7 +277,7 @@ void Rasterizer::Anti_Aliasing (RasterDetails & rasterD , const int idx, const i
 				}
 			}
 
-			contributedColor = contributedColor / 4;
+			contributedColor = contributedColor / 4.0;
 
 			I(i,j) = ToneMap( contributedColor ); 
 		}
@@ -315,10 +314,10 @@ void Rasterizer::Depth_Of_Field_Effect(RasterDetails & rasterD , const int idx, 
 		 for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
 
 			 for ( int yLens = rasterD.DistLensGradations ; yLens >= -rasterD.DistLensGradations ; yLens--){
-
+				 
 				 for ( int xLens = -rasterD.DistLensGradations ; xLens <= rasterD.DistLensGradations  ; xLens ++ ){
 
-					 //cout << "here" << endl;
+					 
 					 Vec3 LensOrigin (  rasterD.cam->eye + ( xLens  * rasterD.XGradation) + ( yLens * rasterD.YGradation));
 					 Vec3 GLens ( Unit( rasterD.cam->lookat - LensOrigin ) );
 					 Vec3 O ( rasterD.cam->vpdist * GLens + rasterD.xmin * rasterD.R + rasterD.ymax * rasterD.U );
@@ -333,15 +332,15 @@ void Rasterizer::Depth_Of_Field_Effect(RasterDetails & rasterD , const int idx, 
 					 contributedDOF += rasterD.scene->Trace( ray );
 				 }
 			 }
-			 contributedDOF = contributedDOF / ( rasterD.DistLensDim * rasterD.DistLensDim );
+			 //cout << "here" << endl;
+			 contributedDOF /= ( rasterD.DistLensDim * rasterD.DistLensDim );
 			 I(i,j) = ToneMap( contributedDOF );
-			 contributedDOF.red = 0;
-			 contributedDOF.green = 0;
-			 contributedDOF.blue = 0;
+			 contributedDOF.red = contributedDOF.green = contributedDOF.blue = 0.0;
 		 }
 	}
-
+	cout << "done." << endl;
 	I.Write( rasterD.img_file_name );
+	
 }
 
 bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Radiosity * _rad, Radiosity_Helper * _rad_helper ) {

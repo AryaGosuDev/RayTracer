@@ -12,21 +12,22 @@ y_win   ( -1, 1 )
 
 # Set the image resolution.
 
-x_res 500
-y_res 400
+x_res 800
+y_res 600
 
 # Set constants that will apply to all objects, until reset.
 
 emission     	[1, 1, 1]
 spherelight     (6.0, 4.0, 10.0) 1
 
-#emission 		[0, 0, 0]
-#diffuse  		[0.84, 0.67, 0.28]
-#ambient  		[.1,   .1,   .1]
-#specular		[1.0, .85,  .75]
-#Phong_exp		25.0
+emission 		[0, 0, 0]
+diffuse  		[0.84, 0.67, 0.28]
+ambient  		[.1,   .1,   .1]
+specular		[1.0, .85,  .75]
+Phong_exp		25.0
 #flipYZ			1
-#object		    gourd
+translate		(4.0, 0.0, 1.0 )
+object		    gourd
 
 #emission 		[0, 0, 0]
 #diffuse  		[0.34, 0.88, 0.38]
@@ -47,25 +48,40 @@ reflectivity	[0.1, 0.1, 0.1 ]
 #flipYZ			1
 object 			cube
 
+emission 		[0, 0, 0]
+diffuse  		[0.84, 0.37, 0.38]
+ambient  		[.1,   .1,   .1]
+specular		[0.0, 0.0,  0.0]
+Phong_exp		2.0
+translate		(1.0, 0.0, 3.0)
+reflectivity	[0.0, 0.0, 0.0 ]
+#flipYZ			1
+object 			cube
 
 emission 		[0, 0, 0]
 diffuse  		[0.84, 0.37, 0.38]
 ambient  		[.1,   .1,   .1]
-#specular		[0.0, 0.0,  0.0]
-#Phong_exp		2.0
-translate		(3.0, 0.0, 0.0)
-#reflectivity	[0.1, 0.1, 0.1 ]
+specular		[0.0, 0.0,  0.0]
+Phong_exp		2.0
+translate		(-3.0, 3.0, 0.0)
+reflectivity	[0.0, 0.0, 0.0 ]
 #flipYZ			1
-translucency	[0.5, 0.5, 0.5]
-ref_index		2.0
-object 			RefractingSheet
+object 			cube
+
+#emission 		[0, 0, 0]
+#diffuse  		[0.84, 0.37, 0.38]
+#ambient  		[.1,   .1,   .1]
+#translate		(3.0, 0.0, 0.0)
+#translucency	[0.5, 0.5, 0.5]
+#ref_index		2.0
+#object 			RefractingSheet
 
 emission 		[0, 0, 0]
 diffuse  		[0.34, 0.37, 0.88]
 ambient  		[.1,   .1,   .1]
 specular		[0.0, 0.0,  0.0]
 Phong_exp		0.0
-translate		(0.0, 0.0, 0.5)
+translate		(0.0, 0.0, 0.0)
 object			ground
 
 emission 		[0, 0, 0]
@@ -73,7 +89,7 @@ diffuse  		[0.34, 0.37, 0.88]
 ambient  		[.1,   .1,   .1]
 specular		[1.0, .85,  .75]
 Phong_exp		25.0
-#flipYZ			1
+flipYZ			1
 #translate		(6.0, -1.0, .5)
 reflectivity	[0.3, 0.3, 0.3 ]
 object			Golden_Buddha_low
