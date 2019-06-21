@@ -122,12 +122,7 @@ static Pixel ToneMapRadiosity( const Color &color )
 	int col   = (int)floor( 256 * enumerator );
 	channel finalRGB = (channel)( col  >= 255 ? 255 : col  );
 
-	if ( finalRGB == 255 ){
-		int g = 45;
-	}
-
 	return Pixel( finalRGB, finalRGB, finalRGB );
-
 }
 
 void _thread_function_to_call_ ( const Rasterizer * _this ,
@@ -213,6 +208,11 @@ void Rasterizer::Normal_Raster (RasterDetails & rasterD , const int idx, const i
 
 		for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
 
+			// on irfanview, j = X and i = Y
+			//if ( j == 693 && i == 363 ) {
+				//int gggggg = 4 ;
+			//}
+
 			ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
 
 			//ray.direction = Unit (( O + (j + 0.5) * dR - (i + 0.5) * dU  ) - cam.eye);
@@ -283,7 +283,6 @@ void Rasterizer::Anti_Aliasing (RasterDetails & rasterD , const int idx, const i
 		}
 	}
 	I.Write( rasterD.img_file_name );
-
 }
 
 void Rasterizer::Depth_Of_Field_Effect(RasterDetails & rasterD , const int idx, const int idy)
@@ -350,11 +349,11 @@ bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Radi
 			// Find the form factor matrix.
 			// Iterate through all the triangles and find the FF with all other triangles in the scene.
 			// Use the structure of the QuadTree to iterate through all the triangles.
-			vector<QuadTreeNode * > tempQuadVector ;
+			//vector<QuadTreeNode * > tempQuadVector ;
 
 			//for every object
 			for ( auto &v : _rad->quadTreeRoot->children ) {
-				_rad_helper->returnFilledElementsOfObject ( v, tempQuadVector ) ;
+				_rad_helper->returnFilledElementsOfObject ( v, *_rad->tempQuadVector ) ;
 			}
 		    // Create an image of the given resolution.
 		    PPM_Image I( _camera.x_res, _camera.y_res ); 
@@ -388,12 +387,10 @@ bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Radi
 					//cout << i << " : " << j << endl ; 
 
 					ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
-					I(i,j) = ToneMapRadiosity( _rad_helper->trace_ray( ray, tempQuadVector ) );
+					I(i,j) = ToneMapRadiosity( _rad_helper->trace_ray( ray, *_rad->tempQuadVector ) );
 				}
 			}
 
-			cout << "\nWriting image file " << _fname << "... ";
-			cout.flush();
 			I.Write( rasterD.img_file_name );
 			cout << "done." << endl;	
 	}

@@ -149,6 +149,7 @@ Radiosity::Radiosity( Scene * _scene, Camera * _cam ) :
 
 		radiosityHelper = new Radiosity_Helper( scene ) ;
 		vector<Object *>::const_iterator sceneObjIter = scene->sceneObjects.cbegin ();
+		tempQuadVector = new vector<QuadTreeNode * >(0);
 
 		//radiosityHelper
 		// find AABB for all objects in the scene to check for poly-poly intersection.
@@ -333,7 +334,7 @@ double Radiosity::findFormFactorTermWithLight ( QuadTreeNode * i ) {
 	
 	double formFactorij ;
 	Vec3 xi;
-	int formFactorLoopIterations = 30 ;
+	int formFactorLoopIterations = 500 ;
 
 	const PrimitiveObject *light = scene->GetLight(0);
 	AABB box = GetBox( *light );
@@ -373,7 +374,7 @@ double Radiosity::findFormFactorTermWithLight ( QuadTreeNode * i ) {
 double Radiosity::findFormFactorTerm ( QuadTreeNode * i , QuadTreeNode * j ) {
 	
 	double formFactorij = 0 ;
-	int formFactorLoopIterations = 30 ;
+	int formFactorLoopIterations = 500 ;
 
 	//shoot formFactorLoopIterations # of rays from element i to element j
 	for ( int k = 0 ; k < formFactorLoopIterations ; ++k ) {

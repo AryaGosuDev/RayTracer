@@ -333,7 +333,7 @@ void Radiosity_Helper::returnFilledElementsOfObject ( QuadTreeNode * _v , vector
 	}
 }
 
-Color Radiosity_Helper::trace_ray ( Ray & _ray , vector<QuadTreeNode *> & _a  ) {
+Color Radiosity_Helper::trace_ray ( const Ray & _ray , vector<QuadTreeNode *> & _a  ) {
 
 	Color c ;
 	double t ;

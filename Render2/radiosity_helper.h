@@ -20,7 +20,7 @@ struct Radiosity_Helper : public Radiosity {
 
 	void detectTriangleIntersections ( QuadTreeNode * , QuadTreeNode *) ;
 	void returnFilledElementsOfObject ( QuadTreeNode * _v , vector<QuadTreeNode * > & _a ) ;
-	Color trace_ray ( Ray & , vector<QuadTreeNode *> & );
+	Color trace_ray ( const Ray & , vector<QuadTreeNode *> & );
 
 	//Scene * scene ;
 

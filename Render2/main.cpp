@@ -7,6 +7,7 @@ int main( int argc, char *argv[] )
 	Camera camera;
 	scene.rasterize = new Rasterizer();
 	
+	
 
 	cout << "Tracer Begin" << endl ;
 
@@ -19,15 +20,17 @@ int main( int argc, char *argv[] )
 		fnameObject += argv[2];
 		fnameOutput += argv[3];
 	}
-
+	
 	//TODO : Each object's BSP should only be attribted to their respective object, not the entire scene
 	if ( !scene.BuildScene ( fname , fnameObject , camera ))
 		cout << "Build did not work." << endl ;
-
+	
 	if ( !scene.BuildBSP ())
 		cout << "Could not build BSP." << endl;
-
+	
 	//auto start = std::chrono::steady_clock::now();
+
+	//scene.radiosity = new Radiosity(&scene, &camera);
 
 	if( !scene.rasterize->Rasterize( fnameOutput, camera, scene)){
 		cerr << "Error encountered while rasterizing." << endl;
@@ -35,7 +38,7 @@ int main( int argc, char *argv[] )
 	}
 	
 	//I AM INSTEAD GOING TO CALCULATE RADIOSITY FOR THE WHOLE SCENE
-	//scene.radiosity = new Radiosity(&scene, &camera);
+	
 
 	//auto end = std::chrono::steady_clock::now();
 

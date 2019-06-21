@@ -8,13 +8,13 @@ y_win   ( -1.25, 1.25 )
 
 # Set the image resolution.
 
-x_res 500
-y_res 400
+x_res 800
+y_res 600
 
 # Set constants that will apply to all objects, until reset.
 
 emission     	[1, 1, 1]
-spherelight     (0.0, 4.0, 5.0) 1
+spherelight     (0.0, 5.0, 4.5) 1
 
 emission 		[0, 0, 0]
 diffuse  		[0.84, 0.37, 0.38]

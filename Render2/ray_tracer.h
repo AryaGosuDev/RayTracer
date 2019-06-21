@@ -335,7 +335,7 @@ struct Radiosity {
 	int numOfElements;
 	QuadTreeNode * quadTreeRoot ;
 	Radiosity_Helper * radiosityHelper ;
-
+	vector<QuadTreeNode * > * tempQuadVector ;
 };
 
 // include template specialization for std::set<Vec3> in the Radiosity class

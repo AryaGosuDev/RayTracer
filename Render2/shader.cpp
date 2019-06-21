@@ -1,6 +1,7 @@
 
 #include <vector>
 #include "ray_tracer.h"
+#include "radiosity_helper.h"
 #include "util.h"
 #include "params.h"
 #include <random>
@@ -91,18 +92,22 @@ Color Shader::generateNormalShadows( const Scene &scene, const HitInfo &hit, Col
 	const PrimitiveObject *light = scene.GetLight(0);
 	AABB box = GetBox( *light );
 	shadowray.direction = Unit (Center(box) - P);
+
 	Vec3 centerEx = Center(box);
 	
-	shadowray.origin = P + (shadowray.direction * 0.001) ;
+	//shadowray.origin = P + (shadowray.direction * 0.001) ;
+	shadowray.origin = P + (hit.normal * 0.001) ;
 
 	// Determine whether the ray cast to the light has intersected with a face facing the ray.
 	 //if ( scene.Cast ( shadowray, hitinfoshadow ) && shadowray.direction * hitinfoshadow.normal <= 0 ) // && hit.object != hitinfoshadow.object ) //&& !hit.object->Inside(shadowray.origin))// && hit.object != hitinfoshadow.object ) 
-	 if ( scene.Cast ( shadowray, hitinfoshadow ) && hit.object != hitinfoshadow.object )
+	 if ( scene.Cast ( shadowray, hitinfoshadow ) ) //&& hit.object != hitinfoshadow.object )
      {
 		//color.blue = 0;
 		//color.red = 0 ;
 		//color.green = .9;
-		 color = color / colorDivisor ;
+		 //color = color / colorDivisor ;
+	    color *= 0.1;
+
 	 }
 	 return color;
 }
@@ -396,34 +401,80 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 	color.red = 0;
 	color.green = 0;
 
-	double occlusion = findOcclusionNew ( scene, hit, color, 2.0, 0 ) ;
-	
-	//return color;
+	if ( scene.radiosity != NULL ) {
 
-	for( unsigned i = 0; i < scene.NumLights(); i++ ){
-		const PrimitiveObject *light = scene.GetLight(i);
-		Color emission = light->material->emission;
-		AABB box = GetBox( *light ); //3d box
-		Vec3 LightPos( Center( box ) ); 
+		Color radiosityAmbient = scene.radiosity->radiosityHelper->trace_ray( hit.ray, *scene.radiosity->tempQuadVector ) ;
+		double occlusion = findOcclusionNew ( scene, hit, color, 2.0, 100 ) ;
 
-		// AMBIET + DIFFUSE
-		L = Unit ( LightPos - P) ;
+		HitInfo hitinfoOcclusion;             // Holds info to pass to shader.
+		hitinfoOcclusion.ignore = NULL;       // Don't ignore any objects.
+		hitinfoOcclusion.distance = Infinity; // Follow the full ray.e point on the object back to the light source
 
-		color += emission * ( (  (.85 *occlusion) * ambient) + ( diffuse * max ( 0, N * L) ) ) ;
-		//color += emission * ( ( ambient) + ( diffuse * max ( 0, N * L) ) ) ;
+		// If we hit an object along the way to the light, this should be a shadow
+		Ray Occlusionray;
+		Occlusionray.origin     = P;     // All shadow rays originate from the point on the shape.
+		Occlusionray.type       = shadow_ray; // Shadow ray
+		Occlusionray.from = hit.object;
+		
+		for( unsigned i = 0; i < scene.NumLights(); i++ ){
+			const PrimitiveObject *light = scene.GetLight(i);
+			Color emission = light->material->emission;
+			AABB box = GetBox( *light ); //3d box
+			Vec3 LightPos( Center( box ) ); 
 
-		//SPECULATIVE
-		RR = (-1.0 * L) + (2.0 * ( L * N ) * N);
+			// AMBIET + DIFFUSE
+			L = Unit ( LightPos - P) ;
 
-		double temp1 = max ( 0, E * RR ) ;
-		double temp2 = pow ( max ( 0, E * RR ) , e);
+			Occlusionray.direction = L;
+			Occlusionray.origin = P + (N * 0.001) ;
+			if ( scene.Cast ( Occlusionray, hitinfoOcclusion ) )
+				color += emission * ((.85 * occlusion) * ( diffuse * .1 * radiosityAmbient ) ) ;
+			else 
+				color += emission * ((.85 * occlusion) * ( diffuse * radiosityAmbient ) ) ;
 
-		color += emission * ( specular * ( pow ( max ( 0.0, E * RR ) , e) ) ) ;
+			//SPECULATIVE
+			RR = (-1.0 * L) + (2.0 * ( L * N ) * N);
+
+			double temp1 = max ( 0, E * RR ) ;
+			double temp2 = pow ( max ( 0, E * RR ) , e);
+
+			color += emission * ( specular * ( pow ( max ( 0.0, E * RR ) , e) ) ) ;
+		}
+
+		//generateSoftShadows ( scene, hit, color );
+		//generateNormalShadows ( scene, hit, color );
 	}
+	else {
 
-	//generateSoftShadows ( scene, hit, color );
-	generateNormalShadows ( scene, hit, color );
-	//return color;
+		double occlusion = findOcclusionNew ( scene, hit, color, 2.0, 0 ) ;
+	
+		//return color;
+
+		for( unsigned i = 0; i < scene.NumLights(); i++ ){
+			const PrimitiveObject *light = scene.GetLight(i);
+			Color emission = light->material->emission;
+			AABB box = GetBox( *light ); //3d box
+			Vec3 LightPos( Center( box ) ); 
+
+			// AMBIET + DIFFUSE
+			L = Unit ( LightPos - P) ;
+
+			color += emission * ( (  (.85 *occlusion) * ambient) + ( diffuse * max ( 0, N * L) ) ) ;
+			//color += emission * ( ( ambient) + ( diffuse * max ( 0, N * L) ) ) ;
+
+			//SPECULATIVE
+			RR = (-1.0 * L) + (2.0 * ( L * N ) * N);
+
+			double temp1 = max ( 0, E * RR ) ;
+			double temp2 = pow ( max ( 0, E * RR ) , e);
+
+			color += emission * ( specular * ( pow ( max ( 0.0, E * RR ) , e) ) ) ;
+		}
+
+		//generateSoftShadows ( scene, hit, color );
+		generateNormalShadows ( scene, hit, color );
+		//return color;
+	}
 	
 	/*****************  REFLECTION CODE ***********/
 	Ray reflectiveRay;

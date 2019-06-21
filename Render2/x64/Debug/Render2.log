@@ -1,8 +1,49 @@
-﻿Build started 6/17/2019 2:25:31 PM.
+﻿Build started 6/20/2019 11:59:39 PM.
      1>Project "C:\Projects\RayTracer\Render2\Render2.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt shader.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W4 /WX- /Od /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt shader.cpp
          shader.cpp
+     1>c:\projects\raytracer\render2\ray.h(75): warning C4100: '_Point' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray.h(75): warning C4100: '_VLine' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray.h(75): warning C4100: '_QLine' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray.h(97): warning C4100: 'eta1_over_eta2' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray_tracer.h(273): warning C4100: 'n' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray_tracer.h(273): warning C4100: 'samples' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray_tracer.h(273): warning C4100: 'N' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray_tracer.h(273): warning C4100: 'P' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\util.h(42): warning C4100: 'obj' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\util.h(47): warning C4100: 'obj' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\radiosity_helper.h(50): warning C4189: 'edgeListTail' : local variable is initialized but not referenced
+     1>c:\projects\raytracer\render2\radiosity_helper.h(192): warning C4239: nonstandard extension used : 'argument' : conversion from 'Vec3' to 'Vec3 &'
+                 A non-const reference may only be bound to an lvalue
+     1>c:\projects\raytracer\render2\radiosity_helper.h(193): warning C4239: nonstandard extension used : 'argument' : conversion from 'Vec3' to 'Vec3 &'
+                 A non-const reference may only be bound to an lvalue
+     1>c:\projects\raytracer\render2\radiosity_helper.h(194): warning C4239: nonstandard extension used : 'argument' : conversion from 'Vec3' to 'Vec3 &'
+                 A non-const reference may only be bound to an lvalue
+     1>c:\projects\raytracer\render2\radiosity_helper.h(214): warning C4239: nonstandard extension used : 'argument' : conversion from 'Vec3' to 'Vec3 &'
+                 A non-const reference may only be bound to an lvalue
+     1>c:\projects\raytracer\render2\radiosity_helper.h(215): warning C4239: nonstandard extension used : 'argument' : conversion from 'Vec3' to 'Vec3 &'
+                 A non-const reference may only be bound to an lvalue
+     1>c:\projects\raytracer\render2\radiosity_helper.h(216): warning C4239: nonstandard extension used : 'argument' : conversion from 'Vec3' to 'Vec3 &'
+                 A non-const reference may only be bound to an lvalue
+     1>c:\projects\raytracer\render2\radiosity_helper.h(235): warning C4239: nonstandard extension used : 'argument' : conversion from 'Vec3' to 'Vec3 &'
+                 A non-const reference may only be bound to an lvalue
+     1>c:\projects\raytracer\render2\radiosity_helper.h(236): warning C4239: nonstandard extension used : 'argument' : conversion from 'Vec3' to 'Vec3 &'
+                 A non-const reference may only be bound to an lvalue
+     1>c:\projects\raytracer\render2\radiosity_helper.h(237): warning C4239: nonstandard extension used : 'argument' : conversion from 'Vec3' to 'Vec3 &'
+                 A non-const reference may only be bound to an lvalue
+     1>c:\projects\raytracer\render2\radiosity_helper.h(180): warning C4189: 'numberOfPolygonPoints' : local variable is initialized but not referenced
+     1>c:\projects\raytracer\render2\radiosity_helper.h(208): warning C4189: 'v' : local variable is initialized but not referenced
+     1>shader.cpp(16): warning C4189: 'Sobj' : local variable is initialized but not referenced
+     1>shader.cpp(80): warning C4189: 'colorDivisor' : local variable is initialized but not referenced
+     1>shader.cpp(115): warning C4100: 'color' : unreferenced formal parameter
+     1>shader.cpp(209): warning C4100: 'color' : unreferenced formal parameter
+     1>shader.cpp(396): warning C4189: 'diffuse_intensity' : local variable is initialized but not referenced
+     1>shader.cpp(438): warning C4189: 'temp1' : local variable is initialized but not referenced
+     1>shader.cpp(439): warning C4189: 'temp2' : local variable is initialized but not referenced
+     1>shader.cpp(468): warning C4189: 'temp1' : local variable is initialized but not referenced
+     1>shader.cpp(469): warning C4189: 'temp2' : local variable is initialized but not referenced
+     1>shader.cpp(499): warning C4189: 'invK' : local variable is initialized but not referenced
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.lib" /MACHINE:X64 x64\Debug\aabb.obj
          x64\Debug\main.obj
@@ -22,4 +63,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.04
+Time Elapsed 00:00:00.92
