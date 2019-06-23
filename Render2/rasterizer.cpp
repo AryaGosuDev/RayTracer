@@ -209,11 +209,12 @@ void Rasterizer::Normal_Raster (RasterDetails & rasterD , const int idx, const i
 		for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
 
 			// on irfanview, j = X and i = Y
-			//if ( j == 693 && i == 363 ) {
-				//int gggggg = 4 ;
-			//}
+			if ( j == 693 && i == 363 ) {
+				ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
+			}
+			else ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
 
-			ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
+			
 
 			//ray.direction = Unit (( O + (j + 0.5) * dR - (i + 0.5) * dU  ) - cam.eye);
 
@@ -352,9 +353,9 @@ bool Rasterizer::Radiosity_Raster ( string _fname , const Camera & _camera, Radi
 			//vector<QuadTreeNode * > tempQuadVector ;
 
 			//for every object
-			for ( auto &v : _rad->quadTreeRoot->children ) {
-				_rad_helper->returnFilledElementsOfObject ( v, *_rad->tempQuadVector ) ;
-			}
+			//for ( auto &v : _rad->quadTreeRoot->children ) {
+				//_rad_helper->returnFilledElementsOfObject ( v, *_rad->tempQuadVector ) ;
+			//}
 		    // Create an image of the given resolution.
 		    PPM_Image I( _camera.x_res, _camera.y_res ); 
 

@@ -10,6 +10,34 @@ inline Vec3 getInterpolatedNormal ( const HitInfo & hitinfo ) {
 	return hitinfo.BayCentricU * hitinfo.tri->vertNormal2 + hitinfo.BayCentricV * hitinfo.tri->vertNormal3 + ( 1 - hitinfo.BayCentricU - hitinfo.BayCentricV ) * hitinfo.tri->vertNormal1 ;
 }
 
+double ToneMapRadiosity( const Color &color )
+{
+    if ( color == Green ) return 1.0;
+
+	//constants
+	static const double LUMINANCE_DISPLAY = 400.0 ;
+	static const double CONTRAST_RATIO = 1000000.0;
+	static const double GAMMA_FACTOR = 2.1 ;
+
+	double a_rw = .41 * log10 (color.red) + 2.92;
+	double a_disp = .41 * log10 (LUMINANCE_DISPLAY ) + 2.92 ;
+	double b_rw = -.41 * pow ( log10 ( color.red ) , 2 ) + ( -2.584 * log10 ( color.red ) ) ;
+	double b_disp = -.41 * pow ( log10 ( LUMINANCE_DISPLAY ) , 2 ) + ( -2.584 * log10 ( LUMINANCE_DISPLAY ) ) ;
+
+	double inverseContrast = 1.0 / CONTRAST_RATIO ;
+
+	double enumerator = pow ( color.red , a_rw / a_disp ) ;
+	enumerator *= pow ( 10.0 , ( b_rw - b_disp) / a_disp ) ;
+	enumerator /= LUMINANCE_DISPLAY ;
+	enumerator -= inverseContrast ;
+	enumerator = pow ( enumerator , 1.0 / GAMMA_FACTOR ) ;
+
+	int col   = (int)floor( 256 * enumerator );
+	//channel finalRGB = (channel)( col  >= 255 ? 255 : col  );
+
+	return enumerator;
+}
+
 Color Shader::generateSoftShadows( const Scene &scene, const HitInfo &hit, Color &color ) const
 {
 	const PrimitiveObject *obj = scene.GetLight(0);
@@ -102,11 +130,9 @@ Color Shader::generateNormalShadows( const Scene &scene, const HitInfo &hit, Col
 	 //if ( scene.Cast ( shadowray, hitinfoshadow ) && shadowray.direction * hitinfoshadow.normal <= 0 ) // && hit.object != hitinfoshadow.object ) //&& !hit.object->Inside(shadowray.origin))// && hit.object != hitinfoshadow.object ) 
 	 if ( scene.Cast ( shadowray, hitinfoshadow ) ) //&& hit.object != hitinfoshadow.object )
      {
-		//color.blue = 0;
-		//color.red = 0 ;
-		//color.green = .9;
 		 //color = color / colorDivisor ;
-	    color *= 0.1;
+	    //color *= 0.1;
+	     color = Black ;
 
 	 }
 	 return color;
@@ -380,7 +406,8 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 	Color  diffuse  = mat->diffuse;
 	Color  specular = mat->specular;
 	Color  ambient  = mat->ambient;
-	Color  color    = mat->ambient * diffuse; 
+	//Color  color    = mat->ambient * diffuse; 
+	Color  color    = diffuse;
 	Color  reflective = mat->reflectivity;
 	Color  transl   = mat->translucency ;
 	Vec3   O = hit.ray.origin; //ray origin
@@ -403,7 +430,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 
 	if ( scene.radiosity != NULL ) {
 
-		Color radiosityAmbient = scene.radiosity->radiosityHelper->trace_ray( hit.ray, *scene.radiosity->tempQuadVector ) ;
+		double radiosityAmbient = ToneMapRadiosity (scene.radiosity->radiosityHelper->trace_ray( hit.ray, *scene.radiosity->tempQuadVector ));
 		double occlusion = findOcclusionNew ( scene, hit, color, 2.0, 100 ) ;
 
 		HitInfo hitinfoOcclusion;             // Holds info to pass to shader.
@@ -427,10 +454,13 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 
 			Occlusionray.direction = L;
 			Occlusionray.origin = P + (N * 0.001) ;
-			if ( scene.Cast ( Occlusionray, hitinfoOcclusion ) )
-				color += emission * ((.85 * occlusion) * ( diffuse * .1 * radiosityAmbient ) ) ;
-			else 
-				color += emission * ((.85 * occlusion) * ( diffuse * radiosityAmbient ) ) ;
+			if ( scene.Cast ( Occlusionray, hitinfoOcclusion ) ) {
+				color += emission * ( occlusion * ( diffuse * .3 * radiosityAmbient ) ) ;
+				//color += emission * ( ( diffuse * .3 * radiosityAmbient ) ) ;
+			}
+			else { 
+				color += emission * ( occlusion * ( diffuse * radiosityAmbient ) ) ;
+			}
 
 			//SPECULATIVE
 			RR = (-1.0 * L) + (2.0 * ( L * N ) * N);
@@ -443,10 +473,11 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 
 		//generateSoftShadows ( scene, hit, color );
 		//generateNormalShadows ( scene, hit, color );
+		return color ;
 	}
 	else {
 
-		double occlusion = findOcclusionNew ( scene, hit, color, 2.0, 0 ) ;
+		double occlusion = findOcclusionNew ( scene, hit, color, 2.0, 10 ) ;
 	
 		//return color;
 

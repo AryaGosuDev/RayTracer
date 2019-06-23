@@ -178,7 +178,11 @@ Radiosity::Radiosity( Scene * _scene, Camera * _cam ) :
 		//Camera camera;
 		setRadiosityForAllElements ( this->quadTreeRoot ) ;
 
-		scene->rasterize->Radiosity_Raster ( "Radiosity" ,*cam, this, radiosityHelper ) ; 
+		for ( auto &v : this->quadTreeRoot->children ) {
+				this->radiosityHelper->returnFilledElementsOfObject ( v, *this->tempQuadVector ) ;
+			}
+
+		//scene->rasterize->Radiosity_Raster ( "Radiosity" ,*cam, this, radiosityHelper ) ; 
 	}
 	catch ( std::exception ex ) {
 		cout << "Error in Radiosity::Radiosity( Scene * _scene ) : "  << ex.what() << endl;
@@ -334,7 +338,7 @@ double Radiosity::findFormFactorTermWithLight ( QuadTreeNode * i ) {
 	
 	double formFactorij ;
 	Vec3 xi;
-	int formFactorLoopIterations = 500 ;
+	int formFactorLoopIterations = 30 ;
 
 	const PrimitiveObject *light = scene->GetLight(0);
 	AABB box = GetBox( *light );
