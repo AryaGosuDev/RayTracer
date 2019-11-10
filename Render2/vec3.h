@@ -11,7 +11,6 @@ struct Vec3 {
 	double z;
 };
 
-
 inline double LengthSquared( const Vec3 &A ){
 	return A.x * A.x + A.y * A.y + A.z * A.z;
 }
@@ -40,58 +39,35 @@ inline Vec3 operator*( const Vec3 &A, double a ){
 	return Vec3( a * A.x, a * A.y, a * A.z );
 }
 
-inline double operator*( const Vec3 &A, const Vec3 &B )  // Inner product.
-	{
+inline double operator*( const Vec3 &A, const Vec3 &B ) {  // Inner product.
 	return (A.x * B.x) + (A.y * B.y) + (A.z * B.z);
-	}
+}
 
-inline Vec3 operator/( const Vec3 &A, double c )
-	{
+inline Vec3 operator/( const Vec3 &A, double c ){
 	return Vec3( A.x / c, A.y / c, A.z / c );
-	}
+}
 
-inline Vec3 operator^( const Vec3 &A, const Vec3 &B ) // Cross product.
-	{
-	return Vec3( 
-		A.y * B.z - A.z * B.y,
-		A.z * B.x - A.x * B.z,
-		A.x * B.y - A.y * B.x
-		);
-	}
+inline Vec3 operator^( const Vec3 &A, const Vec3 &B ) { // Cross product.
+	return Vec3( A.y * B.z - A.z * B.y,A.z * B.x - A.x * B.z,A.x * B.y - A.y * B.x);
+}
 
-inline Vec3& operator+=( Vec3 &A, const Vec3 &B )
-	{
-	A.x += B.x;
-	A.y += B.y;
-	A.z += B.z;
-	return A;
-	}
+inline Vec3& operator+=( Vec3 &A, const Vec3 &B ){
+	A.x += B.x ;A.y += B.y; A.z += B.z; return A;
+}
 
-inline Vec3& operator-=( Vec3 &A, const Vec3 &B )
-	{
-	A.x -= B.x;
-	A.y -= B.y;
-	A.z -= B.z;
-	return A;
-	}
+inline Vec3& operator-=( Vec3 &A, const Vec3 &B ){
+	A.x -= B.x; A.y -= B.y; A.z -= B.z; return A;
+}
 
-inline Vec3 &operator*=( Vec3 &A, double a )
-	{
-	A.x *= a;
-	A.y *= a;
-	A.z *= a;
-	return A;
-	}
+inline Vec3 &operator*=( Vec3 &A, double a ) {
+	A.x *= a; A.y *= a; A.z *= a; return A;
+}
 
-inline Vec3& operator/=( Vec3 &A, double a )
-	{
-	A.x /= a;
-	A.y /= a;
-	A.z /= a;
-	return A;
-	}
+inline Vec3& operator/=( Vec3 &A, double a ){
+	A.x /= a;A.y /= a;A.z /= a;return A;
+}
 
-inline Vec3 operator/( const Vec3 &A, const Vec3 &B )  // Remove component parallel to B.
+inline Vec3 operator/( const Vec3 &A, const Vec3 &B )  // remove component parallel to B.
 	{
 	double x = LengthSquared( B );
 	if( x > 0.0 ) return A - (( A * B ) / x) * B;
@@ -119,29 +95,22 @@ inline bool relativeClose ( const Vec3 & _a , const Vec3 & _b, double threshhold
 	return ( abs( _a.x - _b.x ) <= threshhold && abs( _a.y - _b.y ) <= threshhold && abs( _a.z - _b.z ) <= threshhold ) ;
 }
 
-inline Vec3 Unit( const Vec3 &A )
-	{
-	double d = LengthSquared( A );
-	return d > 0.0 ? A / sqrt(d) : Vec3(0,0,0);
-	}
+inline Vec3 Unit( const Vec3 &A ){
+	double d = LengthSquared( A ); return d > 0.0 ? A / sqrt(d) : Vec3(0,0,0);
+}
 
-inline Vec3 Unit( double x, double y, double z )
-	{
-	double d = (x * x) + (y * y) + (z * z);
-	return d > 0.0 ? Vec3(x,y,z) / sqrt(d) : Vec3(0,0,0);
-	}
+inline Vec3 Unit( double x, double y, double z ) {
+	double d = (x * x) + (y * y) + (z * z); return d > 0.0 ? Vec3(x,y,z) / sqrt(d) : Vec3(0,0,0);
+}
 
-inline Vec3 OrthogonalTo( const Vec3 &A )  // Return a non-zero vector orthogonal to A.
-	{
-	if( A.x == 0 ) return Vec3( 1, 0, 0 );
-	return Vec3( A.y, -A.x, 0 );
-	}
+inline Vec3 OrthogonalTo( const Vec3 &A ) {  // Return a non-zero vector orthogonal to A.
+	if( A.x == 0 ) return Vec3( 1, 0, 0 );return Vec3( A.y, -A.x, 0 );
+}
 
 // Euclidean distance from A to B.
-inline double dist( const Vec3 &A, const Vec3 &B ) 
-	{ 
+inline double dist( const Vec3 &A, const Vec3 &B ) { 
 	return Length( A - B ); 
-	}
+}
 
 // find the area of a triangle given the 3 vertices of the triangle
 inline double Area ( const Vec3 &A, const Vec3 &B, const Vec3 &C ) {

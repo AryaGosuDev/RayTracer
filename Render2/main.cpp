@@ -30,7 +30,7 @@ int main( int argc, char *argv[] )
 	
 	//auto start = std::chrono::steady_clock::now();
 
-	scene.radiosity = new Radiosity(&scene, &camera);
+	//scene.radiosity = new Radiosity(&scene, &camera);
 
 	if( !scene.rasterize->Rasterize( fnameOutput, camera, scene)){
 		cerr << "Error encountered while rasterizing." << endl;
@@ -47,7 +47,7 @@ int main( int argc, char *argv[] )
 	//cout <<  "Shading time performance : " << std::chrono::duration_cast<std::chrono::seconds> (diff).count() << " seconds" << endl; 
 
 	delete scene.rasterize;
-	delete scene.radiosity;
+	//delete scene.radiosity;
 
 	return 0;
 }

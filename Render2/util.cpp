@@ -4,22 +4,13 @@
 #include "ray_tracer.h"
 #include "util.h"
 
+double min( double x, double y, double z ){
+	if( x <= y && x <= z ) return x;if( y <= z ) return y;return z;
+}
 
-//static std::list< PrimitiveObject * > * all_light_types = NULL;
-
-double min( double x, double y, double z )
-	{
-	if( x <= y && x <= z ) return x;
-	if( y <= z ) return y;
-	return z;
-	}
-
-double max( double x, double y, double z )
-	{
-	if( x >= y && x >= z ) return x;
-	if( y >= z ) return y;
-	return z;
-	}
+double max( double x, double y, double z ){
+	if( x >= y && x >= z ) return x;if( y >= z ) return y;return z;
+}
 
 AABB GetBox( const PrimitiveObject &obj ){
 	AABB box;
@@ -45,7 +36,6 @@ AABB GetBoxPolygon ( const Object * _object ) {
 			HiY = LowY = pointsIter->y ;
 			HiZ = LowZ = pointsIter->z ;
 			isFirst = !isFirst ;
-
 		}
 		else {
 			if ( pointsIter->x > HiX )  HiX = pointsIter->x ;
@@ -65,7 +55,6 @@ AABB GetBoxPolygon ( const Object * _object ) {
 }
 
 bool AABBIntersect ( const AABB & _a, const AABB & _b ){
-
 	double diff1 = ((_a.X.max - _a.X.min) / 2.0) + ((_b.X.max - _b.X.min ) / 2.0 ) ;
 	if ( diff1 < abs( ( (_a.X.max + _a.X.min) / 2.0 ) - ( (_b.X.max + _b.X.min ) / 2.0 ) ) ) return false;
 	double diff2 = ((_a.Y.max - _a.Y.min) / 2.0) + ((_b.Y.max - _b.Y.min ) / 2.0 ) ;
@@ -76,13 +65,10 @@ bool AABBIntersect ( const AABB & _a, const AABB & _b ){
 }
 
 double rand( double a, double b ){
-	double x = float(rand()) / RAND_MAX;
-	if( x < 0.0 ) x = -x;
-	return a + x * ( b - a );
-	}
+	double x = float(rand()) / RAND_MAX; if( x < 0.0 ) x = -x; return a + x * ( b - a );
+}
 
-bool operator==( const Material &a, const Material &b )
-	{
+bool operator==( const Material &a, const Material &b ){
 	return
 		a.diffuse      == b.diffuse      &&
 		a.specular     == b.specular     &&
@@ -93,20 +79,17 @@ bool operator==( const Material &a, const Material &b )
 		a.Phong_exp    == b.Phong_exp    &&
 		a.ref_index    == b.ref_index    &&
 		a.type         == b.type; 
-	}
+}
 
 int returnHighestValueIndx ( double * _a, int & n ) {
 	double val = 0.0 ;
 	int indx = 0 ;
-	//int sizeOfArray = sizeof ( _a ) / sizeof ( double ) ;
-
 	for ( int i = 0 ; i < n ; ++ i ) {
 		if ( val < _a[i] ) {
 			val = _a[i] ;
 			indx = i ;
 		}
 	}
-
 	return indx ;
 }
 

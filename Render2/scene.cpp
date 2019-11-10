@@ -88,8 +88,6 @@ Scene::Scene() {
 	shader = new Shader();
 }
 
-
-
 /*
 //Will return true if the point that is passed is already inside some object
 bool Scene::IsAlreadyInside ( const Vec3 &p, HitInfo &hitinfo ) const
@@ -229,6 +227,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 	material.translucency = Black;
 	material.ref_index    = 0.0;
 	material.Phong_exp    = 0.0;
+	material.microFacetsRoughness = 0.0;
 
 	bool objectFlipYZFlip = false;
 	bool objectScale	  = false;
@@ -283,6 +282,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 		if( get["translucency"] && get[material.translucency] ) continue;
 		if( get["Phong_exp"]    && get[material.Phong_exp]    ) continue;
 		if( get["ref_index"]    && get[material.ref_index]    ) continue;
+		if( get["roughness"]    && get[material.microFacetsRoughness] ) continue;
 
 		if( get["flipYZ"]		&& get.getString ( tempObjectString ) ) {
 			if ( tempObjectString == "0" ||  tempObjectString == "1" )
@@ -327,6 +327,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 			material.translucency = Black;
 			material.ref_index    = 0.0;
 			material.Phong_exp    = 0.0;
+			material.microFacetsRoughness = 0.0 ;
 			objectFlipYZFlip	  = false; 
 			objectTranslate		  = false;
 			objectRotate		  = false;
@@ -380,7 +381,7 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 
 			// Make sure the first line of the object file has the same name as the object name in the scene file.
 			if ( line_num == 0 ) {
-				if ( get["o"] && get.getString(tempObjectName) && tempObjectName ==  (*currentIteratorObject)->nameOfObject ) {
+				if ( get["o"] && get.getString(tempObjectName) && tempObjectName == (*currentIteratorObject)->nameOfObject ) {
 					numOfObj ++ ;
 					line_num++;
 				}
@@ -461,7 +462,7 @@ bool Scene::BuildBSP () {
 		std::ofstream myfile;
 		myfile.open (outFileString.c_str());
 
-		makeDotFile ( (*sceneObjectIterator)->root , _1, _2 );
+		//makeDotFile ( (*sceneObjectIterator)->root , _1, _2 );
 
 		myfile << _1;
 		myfile << _2;

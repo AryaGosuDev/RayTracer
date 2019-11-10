@@ -1,9 +1,5 @@
 
-
-#eye     (7.0,-2.0, 2.8)
 eye     (10.0, -2.0, 2.8)
-#eye     (5.0,-3.0, 2.8)
-#eye		 (-7.0,-2.0, 2.8)
 lookat  (0.0, 1.1, 0.25)
 up      (0.0, 0.0, 1.0)
 vpdist  2.75
@@ -36,7 +32,7 @@ object		    gourd
 #Phong_exp		2.0
 #translate		(0.0, 3.0, -0.5 )
 #flipYZ			1
-#object 			cube
+#object 		cube
 
 emission 		[0, 0, 0]
 diffuse  		[0.84, 0.37, 0.38]

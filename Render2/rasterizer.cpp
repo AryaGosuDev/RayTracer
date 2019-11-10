@@ -141,40 +141,98 @@ void _thread_function_to_call_ ( const Rasterizer * _this ,
 bool Rasterizer::Rasterize( string file_name_out, const Camera &cam, const Scene &scene ) const
 {
     try {
-		    // Create an image of the given resolution.
-		    PPM_Image I( cam.x_res, cam.y_res );
+		// Create an image of the given resolution.
+		PPM_Image I( cam.x_res, cam.y_res );
 			
-			//const Vec3 OLens ( cam.vpdist * G + xmin * LLens + ymax * ULens  
+		//const Vec3 OLens ( cam.vpdist * G + xmin * LLens + ymax * ULens  
 
-			Scene & tempScene = const_cast<Scene&>(scene);
-			Camera & tempCamera = const_cast<Camera&>(cam);
-			// Initiate struct of raster ray increments and axes
-			RasterDetails rasterD(tempScene, tempCamera, file_name_out, I );
+		Scene & tempScene = const_cast<Scene&>(scene);
+		Camera & tempCamera = const_cast<Camera&>(cam);
+		// Initiate struct of raster ray increments and axes
+		RasterDetails rasterD(tempScene, tempCamera, file_name_out, I );
+		
+		std::thread * tt = new std::thread[threadDivisionsInX * threadDivisionsInY];
 
-			std::thread * tt = new std::thread[threadDivisionsInX * threadDivisionsInY];
+		int totalThreads = 0;
 
-			int totalThreads = 0;
-
-			for (int i = 0; i < threadDivisionsInX ; ++i) {
-				for ( int j = 0 ; j < threadDivisionsInY ; ++j ) {
+		for (int i = 0; i < threadDivisionsInX ; ++i) {
+			for ( int j = 0 ; j < threadDivisionsInY ; ++j ) {
 					 
-					tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Normal_Raster, rasterD, i, j);
-					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Anti_Aliasing, rasterD, i, j);
-					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Depth_Of_Field_Effect, rasterD, i, j);
-					//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Radiosity_Raster, rasterD, i, j);
-				}
+				tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Normal_Raster, rasterD, i, j);
+				//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Anti_Aliasing, rasterD, i, j);
+				//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Depth_Of_Field_Effect, rasterD, i, j);
+				//tt[totalThreads++] = std::thread(_thread_function_to_call_, this, &Rasterizer::Radiosity_Raster, rasterD, i, j);
 			}
+		}
 
-			for (int i = 0; i < threadDivisionsInX * threadDivisionsInY ; ++i) {
-				tt[i].join();
-			}
-			cout << "Total threads started : " << totalThreads << endl ;
+		for (int i = 0; i < threadDivisionsInX * threadDivisionsInY ; ++i) {
+			tt[i].join();
+		}
+		delete [] tt ;
+		cout << "Total threads started : " << totalThreads << endl ;
+		
+			 
+		//Serial_Normal_Raster( rasterD ) ;
 	}
 	catch ( std::exception ex ) {
 		cout << ex.what() << endl;
 	}
 
 	return true;
+}
+
+void Rasterizer::Serial_Normal_Raster ( RasterDetails & rasterD ) const {
+
+	try {
+		    PPM_Image & I = *rasterD.I ;
+			// Find the form factor matrix.
+			// Iterate through all the triangles and find the FF with all other triangles in the scene.
+			// Use the structure of the QuadTree to iterate through all the triangles.
+			//vector<QuadTreeNode * > tempQuadVector ;
+
+			//for every object
+			//for ( auto &v : _rad->quadTreeRoot->children ) {
+				//_rad_helper->returnFilledElementsOfObject ( v, *_rad->tempQuadVector ) ;
+			//}
+		    // Create an image of the given resolution.
+		    //PPM_Image I( rasterD.cam->x_res, rasterD.cam->y_res ); 
+			
+			//Camera & tempCamera = const_cast<Camera&>(rasterD.cam);
+			// Initiate struct of raster ray increments and axes
+			//RasterDetails rasterD(*_rad->scene, tempCamera, _fname, I );
+
+			//PPM_Image & I = *rasterD.I ;
+
+			// Initialize all the fields of the first-generation ray except for "direction".
+			Ray ray;
+			ray.origin     = rasterD.cam->eye;     // All initial rays originate from the eye.
+			ray.type       = generic_ray; // These rays are given no special meaning.
+			ray.generation = 1;           // Rays cast from the eye are first-generation.
+
+			for ( unsigned int i = 0 ; i < rasterD.cam->y_res ; ++ i ) {
+				    // Overwrite the line number written to the console.
+					cout << rubout( i ) << (i+1);
+					cout.flush();
+
+				for ( unsigned int j = 0 ; j < rasterD.cam->x_res ; ++ j ) {
+					
+					// on irfanview, j = X and i = Y
+					if ( i == 90 && j == 391 ) {
+						int fdgfdg = 4 ;
+						//ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
+						//I(i,j) = ToneMapRadiosity( _rad_helper->trace_ray( ray, tempQuadVector ) );
+					}
+					ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
+					I(i,j) = ToneMap( rasterD.scene->Trace ( ray ) );
+				}
+			}
+
+			I.Write( rasterD.img_file_name );
+			cout << "done." << endl;	
+	}
+	catch ( std::exception ex ) {
+		cout << ex.what() << endl;
+	}
 }
 
 void Rasterizer::Normal_Raster (RasterDetails & rasterD , const int idx, const int idy   ) {
@@ -209,12 +267,11 @@ void Rasterizer::Normal_Raster (RasterDetails & rasterD , const int idx, const i
 		for( unsigned int j = idx * workItemsPerThreadX ; j < endingWorkItemsX ; j++ ){
 
 			// on irfanview, j = X and i = Y
-			if ( j == 693 && i == 363 ) {
+			if ( j == 250 && i == 300 ) {
+				//cout << " now -> " << endl ;
 				ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
 			}
 			else ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
-
-			
 
 			//ray.direction = Unit (( O + (j + 0.5) * dR - (i + 0.5) * dU  ) - cam.eye);
 

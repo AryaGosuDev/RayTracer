@@ -79,7 +79,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
@@ -124,12 +124,14 @@
     <ClCompile Include="params.cpp" />
     <ClCompile Include="ppm_image.cpp" />
     <ClCompile Include="quad.cpp" />
+    <ClCompile Include="quadlight.cpp" />
     <ClCompile Include="radiosity.cpp" />
     <ClCompile Include="radiosity_helper.cpp" />
     <ClCompile Include="rasterizer.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="sphere.cpp" />
+    <ClCompile Include="spherelight.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>

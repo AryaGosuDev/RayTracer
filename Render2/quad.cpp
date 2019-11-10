@@ -4,18 +4,16 @@
 #include "util.h"
 #include "params.h"
 
-REGISTER_PLUGIN ( QuadLight );
-
-PrimitiveObject *QuadLight::ReadString( const string &params ) // Read params from string.
+PrimitiveObject *Quad::ReadString( const string &params ) // Read params from string.
 {
     Vec3 v1, v2, v3, v4;
     ParamReader get( params );
-    if( get[MyName()] && get[v1] && get[v2] && get[v3] && get[v4] )
-        return new QuadLight( v1, v2, v3, v4 );
+    //if( get[MyName()] && get[v1] && get[v2] && get[v3] && get[v4] )
+        //return new QuadLight( v1, v2, v3, v4 );
     return NULL;
 }
 
-QuadLight::QuadLight( const Vec3 &A_, const Vec3 &B_, const Vec3 &C_, const Vec3 &D_ ){
+Quad::Quad( const Vec3 &A_, const Vec3 &B_, const Vec3 &C_, const Vec3 &D_ ){
     A = A_; // Store the vertices.
     B = B_;
     C = C_;
@@ -39,7 +37,7 @@ QuadLight::QuadLight( const Vec3 &A_, const Vec3 &B_, const Vec3 &C_, const Vec3
     Eda = Unit( A - D ); 
 }
 
-Interval QuadLight::GetSlab( const Vec3 &v ) const
+Interval Quad::GetSlab( const Vec3 &v ) const
 {
     const double a = v * A;
     const double b = v * B;
@@ -50,7 +48,7 @@ Interval QuadLight::GetSlab( const Vec3 &v ) const
     else return Interval( min( a, b, d ), max( a, b, c ) ) / ( v * v );
 }
 
-bool QuadLight::Intersect( const Ray &ray, HitInfo &hitinfo ) const
+bool Quad::Intersect( const Ray &ray, HitInfo &hitinfo ) const
 {
     // Compute the point of intersection with the plane containing the quad.
     // Report a miss if the ray does not hit this plane.
@@ -77,38 +75,4 @@ bool QuadLight::Intersect( const Ray &ray, HitInfo &hitinfo ) const
     hitinfo.normal   = N;
     //hitinfo.object   = this;
     return true;
-}
-
-// This function generates nxn stratified samples over the surface of the quad.
-// The weight of each sample is the quad area / n^2, times the area-to-solid-angle
-// conversion factor of cos(theta)/r^2, where theta is the incident angle on the
-// quad, and r is the distance between the point O and the given sample P.
-// (NOTE: currently this is only correct for parallelograms.  To handle arbitrary
-// quads correctly, we must also compute the Jacobian for each sample point.)
-
-int QuadLight::GetSamples( const Vec3 &O, const Vec3 &N1, Sample *samples, int n ) const{
-    int k = 0;
-    double darea = area / ( n * n );  // differential area.
-    double delta = 1.0 / n;
-
-    // Compute an n by n grid of stratified (i.e. jittered) samples over the quad.
-    // Use bilinear interpolation to parametrize the quad.  Fill in the array of
-    // samples as we loop over them, weighting each sample by the correct conversion factor.
-
-    for( int i = 0; i < n; i++ )
-    for( int j = 0; j < n; j++ )
-        {
-        double s = ( i + rand( 0.0, 0.999 ) ) * delta;
-        double t = ( j + rand( 0.0, 0.999 ) ) * delta;
-        Vec3 P = (1.0 - s) * ( (1.0 - t) * A + t * B ) + s * ( (1.0 - t) * D + t * C );
-        Vec3 U = Unit( P - O );
-        samples[k].P = P;
-        samples[k].w = darea * fabs( N * U ) / LengthSquared( P - O );
-        k++;
-        }
-
-    // Return the number of samples generated.  For quads, this will always be the
-    // square of the number requested.
-
-    return n * n;
 }

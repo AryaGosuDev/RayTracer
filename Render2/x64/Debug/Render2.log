@@ -1,16 +1,16 @@
-﻿Build started 6/21/2019 11:32:14 AM.
+﻿Build started 11/8/2019 7:12:51 PM.
      1>Project "C:\Projects\RayTracer\Render2\Render2.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W4 /WX- /Ox /Ot /GT /GL /D _MBCS /Gm /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt shader.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W4 /WX- /Od /Ot /GT /GL /D _MBCS /Gm /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt shader.cpp
          shader.cpp
      1>c:\projects\raytracer\render2\ray.h(75): warning C4100: '_Point' : unreferenced formal parameter
      1>c:\projects\raytracer\render2\ray.h(75): warning C4100: '_VLine' : unreferenced formal parameter
      1>c:\projects\raytracer\render2\ray.h(75): warning C4100: '_QLine' : unreferenced formal parameter
      1>c:\projects\raytracer\render2\ray.h(97): warning C4100: 'eta1_over_eta2' : unreferenced formal parameter
-     1>c:\projects\raytracer\render2\ray_tracer.h(273): warning C4100: 'n' : unreferenced formal parameter
-     1>c:\projects\raytracer\render2\ray_tracer.h(273): warning C4100: 'samples' : unreferenced formal parameter
-     1>c:\projects\raytracer\render2\ray_tracer.h(273): warning C4100: 'N' : unreferenced formal parameter
-     1>c:\projects\raytracer\render2\ray_tracer.h(273): warning C4100: 'P' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray_tracer.h(269): warning C4100: 'n' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray_tracer.h(269): warning C4100: 'samples' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray_tracer.h(269): warning C4100: 'N' : unreferenced formal parameter
+     1>c:\projects\raytracer\render2\ray_tracer.h(269): warning C4100: 'P' : unreferenced formal parameter
      1>c:\projects\raytracer\render2\util.h(42): warning C4100: 'obj' : unreferenced formal parameter
      1>c:\projects\raytracer\render2\util.h(47): warning C4100: 'obj' : unreferenced formal parameter
      1>c:\projects\raytracer\render2\radiosity_helper.h(50): warning C4189: 'edgeListTail' : local variable is initialized but not referenced
@@ -37,14 +37,16 @@
      1>shader.cpp(35): warning C4189: 'col' : local variable is initialized but not referenced
      1>shader.cpp(44): warning C4189: 'Sobj' : local variable is initialized but not referenced
      1>shader.cpp(108): warning C4189: 'colorDivisor' : local variable is initialized but not referenced
-     1>shader.cpp(141): warning C4100: 'color' : unreferenced formal parameter
-     1>shader.cpp(235): warning C4100: 'color' : unreferenced formal parameter
-     1>shader.cpp(423): warning C4189: 'diffuse_intensity' : local variable is initialized but not referenced
+     1>shader.cpp(140): warning C4100: 'color' : unreferenced formal parameter
+     1>shader.cpp(234): warning C4100: 'color' : unreferenced formal parameter
+     1>shader.cpp(422): warning C4189: 'diffuse_intensity' : local variable is initialized but not referenced
+     1>shader.cpp(432): warning C4189: 'radiosityAmbient' : local variable is initialized but not referenced
+     1>shader.cpp(433): warning C4189: 'occlusion' : local variable is initialized but not referenced
      1>shader.cpp(468): warning C4189: 'temp1' : local variable is initialized but not referenced
      1>shader.cpp(469): warning C4189: 'temp2' : local variable is initialized but not referenced
-     1>shader.cpp(499): warning C4189: 'temp1' : local variable is initialized but not referenced
-     1>shader.cpp(500): warning C4189: 'temp2' : local variable is initialized but not referenced
-     1>shader.cpp(530): warning C4189: 'invK' : local variable is initialized but not referenced
+     1>shader.cpp(513): warning C4189: 'temp1' : local variable is initialized but not referenced
+     1>shader.cpp(514): warning C4189: 'temp2' : local variable is initialized but not referenced
+     1>shader.cpp(545): warning C4189: 'invK' : local variable is initialized but not referenced
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Projects\RayTracer\x64\Debug\RayTracerProject.lib" /MACHINE:X64 x64\Debug\aabb.obj
          x64\Debug\main.obj
@@ -52,25 +54,27 @@
          x64\Debug\params.obj
          x64\Debug\ppm_image.obj
          x64\Debug\quad.obj
+         x64\Debug\quadlight.obj
          x64\Debug\radiosity.obj
          x64\Debug\radiosity_helper.obj
          x64\Debug\rasterizer.obj
          x64\Debug\scene.obj
          x64\Debug\shader.obj
          x64\Debug\sphere.obj
+         x64\Debug\spherelight.obj
          x64\Debug\util.obj
          aabb.obj : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
      1>LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
          Generating code
      1>c:\projects\raytracer\render2\ray.h(63): warning C4702: unreachable code
-     1>c:\projects\raytracer\render2\util.cpp(51): warning C4701: potentially uninitialized local variable 'HiX' used
-     1>c:\projects\raytracer\render2\util.cpp(54): warning C4701: potentially uninitialized local variable 'HiY' used
-     1>c:\projects\raytracer\render2\util.cpp(57): warning C4701: potentially uninitialized local variable 'HiZ' used
-     1>c:\projects\raytracer\render2\radiosity.cpp(375): warning C4701: potentially uninitialized local variable 'formFactorij' used
+     1>c:\projects\raytracer\render2\util.cpp(41): warning C4701: potentially uninitialized local variable 'HiX' used
+     1>c:\projects\raytracer\render2\util.cpp(44): warning C4701: potentially uninitialized local variable 'HiY' used
+     1>c:\projects\raytracer\render2\util.cpp(47): warning C4701: potentially uninitialized local variable 'HiZ' used
+     1>c:\projects\raytracer\render2\scene.cpp(442): warning C4702: unreachable code
          Finished generating code
          Render2.vcxproj -> C:\Projects\RayTracer\x64\Debug\RayTracerProject.exe
      1>Done Building Project "C:\Projects\RayTracer\Render2\Render2.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:03.00
+Time Elapsed 00:00:02.92

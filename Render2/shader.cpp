@@ -124,16 +124,15 @@ Color Shader::generateNormalShadows( const Scene &scene, const HitInfo &hit, Col
 	Vec3 centerEx = Center(box);
 	
 	//shadowray.origin = P + (shadowray.direction * 0.001) ;
-	shadowray.origin = P + (hit.normal * 0.001) ;
+	shadowray.origin = P + (hit.normal * 0.01) ;
 
 	// Determine whether the ray cast to the light has intersected with a face facing the ray.
 	 //if ( scene.Cast ( shadowray, hitinfoshadow ) && shadowray.direction * hitinfoshadow.normal <= 0 ) // && hit.object != hitinfoshadow.object ) //&& !hit.object->Inside(shadowray.origin))// && hit.object != hitinfoshadow.object ) 
-	 if ( scene.Cast ( shadowray, hitinfoshadow ) ) //&& hit.object != hitinfoshadow.object )
-     {
+	 if ( scene.Cast ( shadowray, hitinfoshadow )){ //&& hit.object != hitinfoshadow.object ){
 		 //color = color / colorDivisor ;
 	    //color *= 0.1;
-	     color = Black ;
-
+	    // color = Black ;
+		 color = hit.object->material->ambient * 0.7 ;
 	 }
 	 return color;
 }
@@ -454,6 +453,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 
 			Occlusionray.direction = L;
 			Occlusionray.origin = P + (N * 0.001) ;
+			/*
 			if ( scene.Cast ( Occlusionray, hitinfoOcclusion ) ) {
 				color += emission * ( occlusion * ( diffuse * .3 * radiosityAmbient ) ) ;
 				//color += emission * ( ( diffuse * .3 * radiosityAmbient ) ) ;
@@ -461,7 +461,7 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 			else { 
 				color += emission * ( occlusion * ( diffuse * radiosityAmbient ) ) ;
 			}
-
+			*/
 			//SPECULATIVE
 			RR = (-1.0 * L) + (2.0 * ( L * N ) * N);
 
@@ -489,17 +489,32 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 
 			// AMBIET + DIFFUSE
 			L = Unit ( LightPos - P) ;
-
+			//cout  << N << " " << L << endl ;
 			color += emission * ( (  (.85 *occlusion) * ambient) + ( diffuse * max ( 0, N * L) ) ) ;
 			//color += emission * ( ( ambient) + ( diffuse * max ( 0, N * L) ) ) ;
+			if (mat->microFacetsRoughness != 0.0 ) {
+				Vec3 H = Unit (L + E) ;
+				double g = sqrt((30.0 * 3016.0) - 1.0 + (( L * H) * ( L * H )));
+				double Fresnel = 0.5 * pow( g - ( L * H ) , 2 ) / pow ( g + ( L * H ) , 2 ) ;
+				Fresnel *= pow(( L * H ) * ( g + ( L * H ) ) - 1.0 , 2 ) / pow(( L * H ) * ( g - ( L * H ) ) + 1.0 , 2 ) + 1.0 ;
+				double m = 0.4 ;
+				double D = 1.0 / (4.0 * m * m * pow(( N * H ),4 )) ; double DPow = (pow (( N * H ),2) - 1.0) / ((m*m) * pow ( ( N * H ) , 2 )) ;  D = pow ( D, DPow ) ;
+				//cout<< D << endl;
+				double GFactor = min ( 1.0, (2.0 * ( N * H ) * ( N * H )) / ( L * H ) , ( 2.0 * ( N * H ) * ( N * L ) ) / ( L * H ) ) ;
+				double kk = .7 ;
+				color +=  ( kk * specular * ((Fresnel * D * GFactor) / (Pi * ( N * E ) * ( N * L ))) ) ;
 
-			//SPECULATIVE
-			RR = (-1.0 * L) + (2.0 * ( L * N ) * N);
+			}
 
-			double temp1 = max ( 0, E * RR ) ;
-			double temp2 = pow ( max ( 0, E * RR ) , e);
+			else {
+				//SPECULATIVE
+				RR = (-1.0 * L) + (2.0 * ( L * N ) * N);
 
-			color += emission * ( specular * ( pow ( max ( 0.0, E * RR ) , e) ) ) ;
+				double temp1 = max ( 0, E * RR ) ;
+				double temp2 = pow ( max ( 0, E * RR ) , e);
+
+				color += emission * ( specular * ( pow ( max ( 0.0, E * RR ) , e) ) ) ;
+			}
 		}
 
 		//generateSoftShadows ( scene, hit, color );

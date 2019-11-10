@@ -1,0 +1,30 @@
+
+eye     (15.0, -2.0, 7.0)
+lookat  (0.0, 0.0, 0.0)
+up      (0.0, 0.0, 1.0)
+vpdist  2.75
+x_win   ( -1.25, 1.25 )
+y_win   ( -1, 1 )
+
+# Set the image resolution.
+
+x_res 800
+y_res 600
+
+# Set constants that will apply to all objects, until reset.
+
+emission     	[1, 1, 1]
+spherelight     (6.0, 4.0, 10.0) 1
+
+
+emission 		[0, 0, 0]
+diffuse  		[0.84, 0.67, 0.28]
+ambient  		[.1,   .1,   .1]
+specular		[1.0, 1.0, 1.0]
+Phong_exp		25.0
+#flipYZ			1
+translate		(-20.0, 12.0, -25.0 )
+roughness		0.2
+object		    vase
+
+end

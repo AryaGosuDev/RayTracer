@@ -27,6 +27,7 @@ struct Material {         // Surface material for shading.
 	Color  ambient;       // Ambient light (from all directions).
 	Color  reflectivity;  // Weights for refleced light, between 0 and 1.
 	Color  translucency;  // Weights for refracted light, between 0 and 1.
+	double microFacetsRoughness ;
 	double Phong_exp;     // Phong exponent for specular highlights.
 	double ref_index;     // Refractive index.
 	long   type;          // Reserved for future use.
@@ -155,7 +156,7 @@ struct Rasterizer  {  // The rasterizer creates all the primary rays.
 		const Camera &camera, // Defines the view.
 		const Scene &scene    // Global scene description: object, envmap, etc.
 		) const;
-
+	void Serial_Normal_Raster ( RasterDetails &  ) const ;
 	void Normal_Raster(RasterDetails & , const int, const int);
 	void Anti_Aliasing(RasterDetails & , const int, const int);
 	void Depth_Of_Field_Effect(RasterDetails & , const int, const int);
@@ -207,9 +208,6 @@ struct BSP_Node{
 	Object * parentObject ;
 };
 
-
-	
-
 // create initial quadtree
 // must sustain the adjacency list of all triangles with other triangles
 struct QuadTreeNode : public BSP_Node {
@@ -246,8 +244,6 @@ struct QuadTreeNode : public BSP_Node {
 		right = _BSP_Node->right ;
 	}
 
-	
-
 	vector<QuadTreeNode *> children ;
 	// maintain QuadTreeNode vector of all adjacent nodes
 	//std::map<QuadTreeNode *, std::set<Vec3>> nextAdj;
@@ -268,7 +264,7 @@ struct QuadTreeNode : public BSP_Node {
 struct PrimitiveObject{
 	PrimitiveObject() { material = 0; shader = 0; envmap = 0;  }
 	virtual ~PrimitiveObject() {}
-	virtual PrimitiveObject *ReadString( const string & ) = NULL; // Instance from string.
+	virtual PrimitiveObject * ReadString( const string & ) = 0; // Instance from string.
 	virtual bool Intersect( const Ray &ray, HitInfo & ) const = 0;
 	virtual unsigned GetSamples( const Vec3 &P, const Vec3 &N, Sample *samples, unsigned n ) const { return 0; }
 	virtual bool Inside( const Vec3 & ) const = 0;
@@ -277,6 +273,34 @@ struct PrimitiveObject{
 	Material  *material;
 	Shader    *shader;
 	Envmap    *envmap;
+};
+
+struct Sphere : public PrimitiveObject {
+	Sphere() {}
+	Sphere( const Vec3 &center, double radius );
+	virtual ~Sphere () {} 
+	virtual PrimitiveObject *ReadString( const string &params ) override ;
+	virtual bool Inside( const Vec3 &P ) const { return dist( P, center ) <= radius; }
+	virtual bool Intersect( const Ray &ray, HitInfo & ) const override;
+	virtual Interval GetSlab( const Vec3 & ) const override;
+	Vec3   center;
+	double radius;
+	double radius2;
+};
+
+struct Quad : public PrimitiveObject {
+	Quad() {}
+	Quad( const Vec3 &A, const Vec3 &B, const Vec3 &C, const Vec3 &D );
+	virtual ~Quad() {}
+	virtual bool Intersect( const Ray &ray, HitInfo & ) const;
+	virtual bool Inside( const Vec3 & ) const { return false; }
+	virtual Interval GetSlab( const Vec3 & ) const;
+	virtual PrimitiveObject *ReadString( const string &params );
+	Vec3   N;    // Normal to plane of quad;
+	double d;    // Distance from origin to plane of quad.
+	double area; // Area of the quad.
+	Vec3   Eab, Ebc, Ecd, Eda;
+	Vec3   A, B, C, D;  
 };
 
 struct Light : public PrimitiveObject {
