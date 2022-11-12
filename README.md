@@ -22,4 +22,6 @@ This is a custom coded c++ project that is an Offline Photo Realistic Ray Tracer
 
 9: Tone Mapping
 
+10: Linear algebra techniques : Gauss–Seidel solver, inverse matrix solver, SVD ( singular value decomp )...
+
 Rendering examples of this project can be found in the RayTracingSamples Repository
