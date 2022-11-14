@@ -18,7 +18,7 @@ This is a custom coded c++ project that is an Offline Photo Realistic Ray Tracer
 
 7: Photo-Realistic rendering techniques - Smooth / Rough Surface for BRDF micro faceted surfaces, reflectivity of surfaces, glass / water Snell’s refraction…
 
-8: Global illumination - Implemented a radiosity global illumination model based on a n^2 form factor of the scene geometry along with a Gauss–Seidel matrix problem solver.
+8: Global illumination - Implemented a radiosity global illumination model based on a n^2 form factor of the scene geometry along with a Gauss–Seidel matrix problem solver, taking into consideration the physical based characteristics of models by inputting their emissivity/absorptivity values in the scene description file.
 
 9: Tone Mapping
 
