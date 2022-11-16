@@ -6,7 +6,7 @@ This is a custom coded c++ project that is an Offline Photo Realistic Ray Tracer
 
 1: Custom scene description file reader - Must build a scene using a custom scene description format that will define the universal scene lighting and other important global effects. Each item must also be input as a row input into the file along with its custom attributes inc...color, reflectivity, transparency, softness / roughness for BRDF, refraction, emissivity for physically based rendering.
 
-2: N-order OBJ file reader - able to read objects as an OBJ taking into consideration that the order of faces might be > 3. In fact, they can be faces of > 3 up to any N-order faces.
+2: N-order OBJ file reader - able to read objects as a .OBJ taking into consideration that the order of faces might be > 3. In fact, they can be faces of > 3 up to any N-order faces.
 
 3: Phong interpolation
 
