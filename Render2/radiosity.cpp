@@ -105,21 +105,18 @@ inline void returnFilledElementsOfObject ( QuadTreeNode * _v , vector<QuadTreeNo
 	std::stack<FormFactorStackNode> stackFormFactor ;
 
 	//for all the initial elements of the object node
-	//for ( auto &elements : _v->children ) {
-		
-		for ( vector<QuadTreeNode *>::const_reverse_iterator iterQuads = _v->children.crbegin() ; iterQuads != _v->children.crend() ; ++iterQuads )
-			stackFormFactor.push ( FormFactorStackNode(*iterQuads));
-	//}
+	for ( vector<QuadTreeNode *>::const_reverse_iterator iterQuads = _v->children.crbegin() ; iterQuads != _v->children.crend() ; ++iterQuads )
+		stackFormFactor.push ( FormFactorStackNode(*iterQuads));
 
 	while ( !stackFormFactor.empty() ) {
 		FormFactorStackNode temp = stackFormFactor.top();
 		stackFormFactor.pop();
-		if ( temp.quadTreeNode->children.size() > 0 ) 
-			for ( vector<QuadTreeNode *>::const_reverse_iterator iterQuads = temp.quadTreeNode->children.crbegin() ;
-				iterQuads != temp.quadTreeNode->children.crend() ; 
-				++iterQuads ) 
-
-					stackFormFactor.push ( FormFactorStackNode(*iterQuads));
+		if (temp.quadTreeNode->children.size() > 0) {
+			for (vector<QuadTreeNode*>::const_reverse_iterator iterQuads = temp.quadTreeNode->children.crbegin();
+				iterQuads != temp.quadTreeNode->children.crend();
+				++iterQuads)
+					stackFormFactor.push(FormFactorStackNode(*iterQuads));
+		}
 		else {
 			_a.emplace_back ( temp.quadTreeNode ) ;
 			//_a.emplace_back ( stackFormFactor.top().quadTreeNode ) ;
@@ -178,11 +175,10 @@ Radiosity::Radiosity( Scene * _scene, Camera * _cam ) :
 		//Camera camera;
 		setRadiosityForAllElements ( this->quadTreeRoot ) ;
 
-		for ( auto &v : this->quadTreeRoot->children ) {
-				this->radiosityHelper->returnFilledElementsOfObject ( v, *this->tempQuadVector ) ;
-			}
-
-		//scene->rasterize->Radiosity_Raster ( "Radiosity" ,*cam, this, radiosityHelper ) ; 
+		for ( auto &v : this->quadTreeRoot->children )
+			this->radiosityHelper->returnFilledElementsOfObject ( v, *this->tempQuadVector ) ;
+			
+		scene->rasterize->Radiosity_Raster ( "Radiosity" ,*cam, this, radiosityHelper ) ; 
 	}
 	catch ( std::exception ex ) {
 		cout << "Error in Radiosity::Radiosity( Scene * _scene ) : "  << ex.what() << endl;

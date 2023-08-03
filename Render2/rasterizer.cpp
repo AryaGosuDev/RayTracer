@@ -87,8 +87,7 @@ static Pixel ToneMap( const Color &color )
 	return Pixel( r, g, b );
 }
 
-static Pixel ToneMapRadiosity( const Color &color )
-{
+static Pixel ToneMapRadiosity( const Color &color ) {
     /*
     int red   = (int)floor( 256 * color.red   );
 	int green = (int)floor( 256 * color.green  );
@@ -100,6 +99,13 @@ static Pixel ToneMapRadiosity( const Color &color )
 	*/
 
     if ( color == Green ) return Pixel ( 0, 255, 0 );
+
+	// or we can evade the bottom code and do a more simpler tone mapping sampling
+	Color mappedColor;
+	channel finalRGBAlt = 255;
+	//if (finalRGBAlt == 255) return Pixel(finalRGBAlt, finalRGBAlt, finalRGBAlt);
+	finalRGBAlt = (channel)((double)finalRGBAlt * (color.red / (color.red + 1.0)));
+	return Pixel(finalRGBAlt, finalRGBAlt, finalRGBAlt);
 
 	//constants
 	static const double LUMINANCE_DISPLAY = 200.0 ;
