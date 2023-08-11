@@ -26,22 +26,6 @@ struct Radiosity_Helper : public Radiosity {
 
 };
 
-struct EdgeList {
-
-	bool isEdge ;
-	bool isVertex ;
-
-	Vec3 vTx ;
-	Vec3 LineQ;
-	Vec3 LineV;
-
-	EdgeList * next ;
-	EdgeList * prev ;
-
-	double pointRadiosity ;
-	int nodeNumber;
-};
-
 
 inline EdgeList * createEdgeList ( const BSP_Node & _bsp_N ) {
 

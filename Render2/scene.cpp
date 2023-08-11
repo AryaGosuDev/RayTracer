@@ -80,12 +80,15 @@ void makeDotFile ( BSP_Node * v, string &nodeString, string &connectionString ) 
 	}
 }
 
-Scene::Scene() {
-	rasterize = NULL;
-	radiosity = NULL ;
-	max_tree_depth = default_max_tree_depth;
+bool IntersectEdgeWithPlane( const Vec3 & triVert2, const Vec3 & N, EdgeList & e, Vec3 & intersection) {
 
-	shader = new Shader();
+	const double denom = e.LineV * N;
+	if (fabs(denom) < Epsilon) return false;
+	const double d = N * triVert2;
+	const double t = (d - (e.LineQ * N) )/ denom;
+	if (t < Epsilon || t > OneMinusEps) return false;
+	intersection = e.LineQ + (t * e.LineV);
+	return true;
 }
 
 /*
@@ -101,26 +104,25 @@ bool Scene::IsAlreadyInside ( const Vec3 &p, HitInfo &hitinfo ) const
 		return true;
 	}
 	return false;
-
 }
 */
+
 
 bool Scene::calculateVertexNormals ( Object & obj, vector<vector<Vec3>> &  adjMatrix ) {
 
 	if ( adjMatrix.size() == 0 ) return false;
 
-	for ( std::vector<vector<Vec3>>::iterator adjHashIterator = adjMatrix.begin() ; adjHashIterator != adjMatrix.end() ; ++ adjHashIterator ) {
+	for ( auto adjHashIterator = adjMatrix.begin() ; adjHashIterator != adjMatrix.end() ; ++ adjHashIterator ) {
 		Vec3 tempVec ( 0.0, 0.0, 0.0);
 		for  ( int Vec3InHash = 0 ; Vec3InHash < (*adjHashIterator).size() ; ++Vec3InHash ) 
 			tempVec += (*adjHashIterator)[Vec3InHash];
-	
 		(*adjHashIterator)[0] = Unit(tempVec);
 	}
 
-	for ( std::vector<BSP_Node>::iterator triangleIterator = obj.triangles.begin() ; triangleIterator != obj.triangles.end() ; ++triangleIterator ) {
-		(*triangleIterator).vertNormal1 = adjMatrix[(*triangleIterator).triIndx1][0];
-		(*triangleIterator).vertNormal2 = adjMatrix[(*triangleIterator).triIndx2][0];
-		(*triangleIterator).vertNormal3 = adjMatrix[(*triangleIterator).triIndx3][0];
+	for ( auto triangleIterator = obj.triangles.begin() ; triangleIterator != obj.triangles.end() ; ++triangleIterator ) {
+		(*triangleIterator).vertNormal1 = adjMatrix[(*triangleIterator).triVertIndx1][0];
+		(*triangleIterator).vertNormal2 = adjMatrix[(*triangleIterator).triVertIndx2][0];
+		(*triangleIterator).vertNormal3 = adjMatrix[(*triangleIterator).triVertIndx3][0];
 	}
 	return true;
 }
@@ -142,7 +144,6 @@ Color Scene::Trace( const Ray &ray ) const {
 	}
 	else if( Cast( ray, hitinfo ) ) {
 		if( hitinfo.object == NULL ) return Green;
-		
 		if( this->shader != NULL )
 			 color = this->shader->Shade( *this, hitinfo ); // Shade the scene with the scene's shader and parameters. TODO : add shading params
 		else 
@@ -347,7 +348,9 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 	cout << "Done with reading Scene File(s)." << endl;
 
 	/************ Object file input ************ */
-	for ( std::vector<Object *>::iterator currentIteratorObject = this->sceneObjects.begin() ; currentIteratorObject != this->sceneObjects.end() ; ++currentIteratorObject ) {
+	for ( auto currentIteratorObject = this->sceneObjects.begin() ; 
+		  currentIteratorObject != this->sceneObjects.end() ; 
+		  ++currentIteratorObject ) {
 
 		cout << "Reading Object file(s). " << endl ;
 
@@ -445,17 +448,17 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 // Build each objects BSP that occupies the scene
 bool Scene::BuildBSP () {
 
-	for ( std::vector< Object * >::iterator sceneObjectIterator = sceneObjects.begin() ; sceneObjectIterator != sceneObjects.end() ; ++sceneObjectIterator ) {
+	for ( auto sceneObjectIterator = sceneObjects.begin() ; sceneObjectIterator != sceneObjects.end() ; ++sceneObjectIterator ) {
 		
 		//TODO : Turned off random triangles for Radiosity debugging
-		//randomizeTriangles ( (*sceneObjectIterator)->triangles);
+		randomizeTriangles ( (*sceneObjectIterator)->triangles);
 		vector < BSP_Node * > tris ;
 
 		for ( unsigned int i = 0 ; i < (*sceneObjectIterator)->triangles.size(); i++ )
 			tris.push_back( &(*sceneObjectIterator)->triangles[i] ) ;
 
 		(*sceneObjectIterator)->root = buildBSPTree ( tris );
-		
+		/*
 		string _1 = "", _2 = "" ;
 
 		string outFileString = (*sceneObjectIterator)->nameOfObject + "outGraph.dot" ;
@@ -467,35 +470,55 @@ bool Scene::BuildBSP () {
 		myfile << _1;
 		myfile << _2;
 		myfile.close();
+		*/
 	}	
 	return true;
 }
 
 //Fisher–Yates shuffle
 void  Scene::randomizeTriangles ( vector <BSP_Node> & triangles) {
-
-	//srand ((unsigned int ) time(NULL));
 	try {
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	//std::uniform_real_distribution<int> dis(0.0, 2.0);
+		std::random_device rd;
+		std::mt19937 gen(rd());
 
-	for ( int i = (int) triangles.size()  ; i >=2 ; i-- ){
-		//int k = rand () % i + 1 ;
-		std::uniform_real_distribution<> dis(1, i);
-		int k = dis ( gen ) ;
-
-		if ( i != k ){
-			BSP_Node temp; 
-
-			temp = triangles[ i - 1 ];
-			triangles[ i - 1 ] = triangles[ k - 1 ];
-			triangles[ k - 1 ] = temp;
-		} 
-		} }
-	catch ( std::exception ex ) {
-		cout << ex.what()  << endl ;
+		for (int i = (int)triangles.size(); i >= 2; i--) {
+			std::uniform_real_distribution<> dis(0, i - 1);
+			int k = dis(gen);
+			if (i - 1 != k) std::swap(triangles[i - 1], triangles[k]);
 		}
+	}
+	catch ( std::exception ex ) {
+		cerr << ex.what()  << endl ;
+	}
+}
+
+int TestbuildBSPTree(BSP_Node * hyperPlane , vector<BSP_Node*>& v) {
+	int result = 0;
+	if (v.size() == 0)
+		return result;
+	else {
+		
+		for (unsigned int i = 0; i < v.size(); i++) {
+
+			// Get the signs for all vertices of the triangle with respect to the plane
+			int sign1 = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, v[i]->triVert1);
+			int sign2 = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, v[i]->triVert2);
+			int sign3 = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, v[i]->triVert3);
+
+			// Count how many vertices are on the positive side, negative side, and on the plane
+			int positiveCount = (sign1 > 0) + (sign2 > 0) + (sign3 > 0);
+			int negativeCount = (sign1 < 0) + (sign2 < 0) + (sign3 < 0);
+			int onPlaneCount = (sign1 == 0) + (sign2 == 0) + (sign3 == 0);
+
+			if (onPlaneCount == 1 && positiveCount == 1 && negativeCount == 1) {
+				result++;
+			}
+			else if ((positiveCount == 1 && negativeCount == 2) || (negativeCount == 1 && positiveCount == 2)) {
+				result++;
+			}
+		}
+		return result;
+	}
 }
 
 // Build the Binary space partition tree recursivly using auto partitioning.
@@ -504,39 +527,149 @@ void  Scene::randomizeTriangles ( vector <BSP_Node> & triangles) {
 // Otherwise the triangle is coplaner with the Hyperplane. In which case, randomly add to the right or left side.
 // Base case : the left or right items in the list is either 0 or 1
 BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
+	BSP_Node* hyperPlane = NULL;
+	if (v.size() > 0) hyperPlane = v[0];
+	cout << "iter " << endl;
 	if ( v.size() == 0 )		
 		return NULL;
 	if ( v.size() <= 1){ //leaf node
-		return v[0] ; //return the node that is by itself.
+		return hyperPlane; //return the node that is by itself.
 	}
 	else{
 		vector<BSP_Node *> vRight ;
 		vector<BSP_Node *> vLeft;
+		vector<BSP_Node*> newTriangle;
+		
 		for ( unsigned int i = 1  ; i < v.size() ; i ++ ){
 			
-			int result = sideTest3d(v[0]->triVert1, v[0]->triVert2, v[0]->triVert3, v[i]->triVert1 );
-			result += sideTest3d(v[0]->triVert1, v[0]->triVert2, v[0]->triVert3, v[i]->triVert2 );
-			result += sideTest3d(v[0]->triVert1, v[0]->triVert2, v[0]->triVert3, v[i]->triVert3 );
+			// Get the signs for all vertices of the triangle with respect to the plane
+			int sign1 = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, v[i]->triVert1 );
+			int sign2 = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, v[i]->triVert2 );
+			int sign3 = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, v[i]->triVert3 );
 
-			if ( result == 0 ){
-				if ( rand() % 2 == 0 ) vLeft.push_back( v[i] ); //the point is on the plane, randomly choose a side to place the triangle. It will eventually be visited in the painters algorithm.
-				else vRight.push_back( v[i] );
+			// Count how many vertices are on the positive side, negative side, and on the plane
+			int positiveCount = (sign1 > 0) + (sign2 > 0) + (sign3 > 0);
+			int negativeCount = (sign1 < 0) + (sign2 < 0) + (sign3 < 0);
+			int onPlaneCount = (sign1 == 0) + (sign2 == 0) + (sign3 == 0);
+
+			// Handle different cases based on the counts
+			// All vertices are on the same side of the plane; no need to split 
+			if (positiveCount == 3 ) 
+				vLeft.push_back(v[i]);
+			else if (negativeCount == 3)
+				vRight.push_back(v[i]);
+			else if (onPlaneCount == 3) {
+				//coplanar
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::uniform_int_distribution<> dis(0, 1);
+				//the point is on the plane, randomly choose a side to place the triangle. 
+				//It will eventually be visited in the painters algorithm.
+				if (dis(gen) == 0) vLeft.push_back(v[i]);
+				else vRight.push_back(v[i]);
 			}
-			else if ( result <= 3 && result > 0 ){ //TODO : CHECK FOR TRIANGLE SPLIT
-				vLeft.push_back( v[i] );
+			else if (onPlaneCount == 2 && positiveCount == 1) {
+				// Two vertices are on the plane, one on either side; may choose to split or not
+				vLeft.push_back(v[i]);
 			}
-			else if ( result >= -3 && result < 0 ) {  //TODO : CHECK FOR TRIANGLE SPLIT
-				vRight.push_back( v[i] );
+			else if (onPlaneCount == 2 && negativeCount == 1) {
+				// Two vertices are on the plane, one on either side; may choose to split or not
+				vRight.push_back(v[i]);
 			}
-			else {
-				cout << "Error buildBSPTree" << endl ;
-				return NULL;
+			else if (onPlaneCount == 1 && positiveCount == 2) {
+				// One vertex on the plane, two on the positive side
+				vLeft.push_back(v[i]);
 			}
+			else if (onPlaneCount == 1 && negativeCount == 2) {
+				// One vertex on the plane, two on the negative side
+				vRight.push_back(v[i]);
+			}
+			else if (onPlaneCount == 1 && positiveCount == 1 && negativeCount == 1) {
+				// One vertex on the plane, one on the left, one on the right
+				// split triangle in half
+				// determine which vertex lies on the hyperplane
+				EdgeList edgeSplit;
+				Vec3 intersection;
+				if (sign1 == 0) edgeSplit = EdgeList(v[i]->triVert2, v[i]->triVert3);
+				if (sign2 == 0) edgeSplit = EdgeList(v[i]->triVert1, v[i]->triVert3);
+				if (sign3 == 0) edgeSplit = EdgeList(v[i]->triVert1, v[i]->triVert2);
+				IntersectEdgeWithPlane(hyperPlane->triVert2, hyperPlane->triNormal, edgeSplit, intersection);
+				//create two new triangles
+				BSP_Node* newTri1;  BSP_Node* newTri2;
+				if (sign1 == 0) { 
+					newTri1 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert3, v[i]->triNormal);
+					newTri2 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert2, v[i]->triNormal);
+				}
+				if (sign2 == 0) {
+					newTri1 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert3, v[i]->triNormal);
+					newTri2 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert1, v[i]->triNormal);
+				}
+				if (sign3 == 0) {
+					newTri1 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert1, v[i]->triNormal);
+					newTri2 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert2, v[i]->triNormal);
+				}
+				newTriangle.push_back(newTri1); newTriangle.push_back(newTri2);
+				v.push_back(newTri1); v.push_back(newTri2);
+			}
+			else if ((positiveCount == 1 && negativeCount == 2) || (negativeCount == 1 && positiveCount == 2)) {
+				// Triangle crosses the plane: one vertex on the positive side, two on the negative
+				// Splitting 
+				// Determine intersection points
+				Vec3 intersections[2];
+				int intersectionCount = 0;
+				vector<EdgeList> edges;
+				edges.push_back(EdgeList(v[i]->triVert1, v[i]->triVert2));
+				edges.push_back(EdgeList(v[i]->triVert2, v[i]->triVert3));
+				edges.push_back(EdgeList(v[i]->triVert3, v[i]->triVert1));
+				
+				for (int edgeIndx = 0; edgeIndx < edges.size(); edgeIndx++) {
+					Vec3 intersection;
+					if (IntersectEdgeWithPlane(hyperPlane->triVert2, hyperPlane->triNormal, edges[edgeIndx], intersection))
+						intersections[intersectionCount++] = intersection;
+				}
+				if (intersectionCount != 2) {
+					throw "Unexpected number of intersections";
+					// might have problems with numerical discrepencies in your vertices.
+					// try adjusting the epsilon value
+				}
+				//find out which vertex is alone on one side of the plane
+				Vec3 loneVertex, vertex1, vertex2;
+				if ( (sign1 > 0 && sign2 < 0 && sign3 < 0) || (sign1 < 0 && sign2 > 0 && sign3 > 0)) {
+					loneVertex = v[i]->triVert1;
+					vertex1 = v[i]->triVert2;
+					vertex2 = v[i]->triVert3;
+				}
+				else if ((sign2 > 0 && sign1 < 0 && sign3 < 0) || (sign2 < 0 && sign1 > 0 && sign3 > 0 )) {
+					loneVertex = v[i]->triVert2;
+					vertex1 = v[i]->triVert1;
+					vertex2 = v[i]->triVert3;
+				}
+				else if ((sign3 > 0 && sign1 < 0 && sign2 < 0) || (sign3 < 0 && sign1 > 0 && sign2 > 0 )) {
+					loneVertex = v[i]->triVert3;
+					vertex1 = v[i]->triVert1;
+					vertex2 = v[i]->triVert2;
+				}
+				// one side will be a quad, must also break the quad
+				BSP_Node* newTri1 = new BSP_Node(loneVertex, intersections[0], intersections[1], v[i]->triNormal);
+				BSP_Node* newTri2 = new BSP_Node(vertex1, vertex2, intersections[0], v[i]->triNormal);
+				BSP_Node* newTri3 = new BSP_Node(vertex2, intersections[0], intersections[1], v[i]->triNormal);
+				newTriangle.push_back(newTri1); newTriangle.push_back(newTri2); newTriangle.push_back(newTri3);
+				v.push_back(newTri1); v.push_back(newTri2); v.push_back(newTri3);
+			}
+			else 
+				throw ("Unexpecting case creating the BSP.");
 		}
 
-		v[0]->left = buildBSPTree ( vLeft );
-		v[0]->right = buildBSPTree ( vRight );
+		if (hyperPlane != NULL) {
+			int retriangles = TestbuildBSPTree(hyperPlane, newTriangle);
 
-		return v[0];
+			if (retriangles > 0) throw "Erorr in new triangle splitting";
+
+			hyperPlane->left = buildBSPTree(vLeft);
+			hyperPlane->right = buildBSPTree(vRight);
+		}
+		else throw "Error - Hyperplane value is NULL";
+
+		return hyperPlane;
 	}
 }

@@ -412,7 +412,8 @@ Color Shader::Shade( const Scene &scene, const HitInfo &hit ) const {
 	Vec3   O = hit.ray.origin; //ray origin
 	Vec3   P = hit.point; //point where ray hit object
 	Vec3   SurfaceNonInterpolatedN = hit.normal; //normal of the surface
-	Vec3   N = Unit (getInterpolatedNormal ( hit )) ; // Interpolated normal of the surface
+	//Vec3   N = Unit (getInterpolatedNormal ( hit )) ; // Interpolated normal of the surface
+	Vec3   N = Unit(SurfaceNonInterpolatedN); // normal of the surface
 	Vec3   E = Unit( O - P );  // direction of the ray
 	Vec3   R = Unit( ( 2.0 * ( E * N ) ) * N - E );
 	

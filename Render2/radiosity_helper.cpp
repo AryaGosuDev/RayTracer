@@ -1,6 +1,5 @@
 // Class and implementation file used to assist in radioisty calculations
 // especially with triangle - trianlge intersection and re-triangulation.
-// Also rasterization of 
 
 #include "ray_tracer.h"
 #include "radiosity_helper.h"

@@ -48,43 +48,13 @@ double triangle_intersection(const Vec3& orig,
 	double inv_det = 1 / det;
 	Vec3 tvec = orig - v0;
 	u = (tvec * pvec ) * inv_det;
-	if (u < 0 || u > 1) 
+	if (u < 0.0f || u > 1.0f) 
 		return 0;
 	
 	Vec3 qvec = tvec ^ e1;
 	v = (dir * qvec ) * inv_det;
-	if (v < 0 || u + v > 1)
+	if (v < 0.0 || u + v > 1.0f)
 		return 0;
-
-	//determing U and V alt method
-
-	/*
-
-	float denom = planeNormal * planeNormal;
-
-	 Vec3 P = orig + (dir * ((v0 - orig ) * planeNormal )/(planeNormal * dir)) ;
-
-	 // edge 0
-	Vec3 edge0 = v1 - v0; 
-	Vec3 vp0 = P - v0; 
-	Vec3 C = edge0^ vp0; 
-
-	 // edge 1
-	Vec3 edge1 = v2 - v1; 
-	Vec3 vp1 = P - v1; 
-	C = edge1 ^ vp1; 
-	if ((u = planeNormal*C) < 0)  return 0; // P is on the right side 
- 
-	// edge 2
-	Vec3 edge2 = v0 - v2; 
-	Vec3 vp2 = P - v2; 
-	C = edge2^vp2; 
-	if ((v = planeNormal*C) < 0) return 0; // P is on the right side; 
- 
-	u /= denom; 
-	v /= denom; 
-
-	*/
 	
 	return (e2 * qvec) * inv_det;
 }
@@ -159,21 +129,20 @@ bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){
 
 bool Object::Intersect (const Ray & ray, HitInfo & hitinfo ) const {
 
-	InterceptInfo _info ;
-	_info.found = false;
-	Scene _thisScene;
-	_info.root = this->root;
-	_info.tempScene = _thisScene;
-	//_info.ray = &( const_cast < Ray & > (ray) ) ;
-	_info.ray = &ray ;
-	_info.hitinfo = &hitinfo ;
+	InterceptInfo info ;
+	info.found = false;
+	Scene thisScene;
+	info.root = this->root;
+	info.tempScene = thisScene;
+	info.ray = &ray ;
+	info.hitinfo = &hitinfo ;
 
-	intersectTreeTraversal ( _info , _info.root ) ;
+	intersectTreeTraversal (info, info.root ) ;
 
-	if ( _info.found == true ) {
+	if (info.found == true ) {
 		//cout << Sample::debug_line << endl;
 	}
 
-	return _info.found;
+	return info.found;
 }
 

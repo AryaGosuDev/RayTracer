@@ -1,86 +1,74 @@
-﻿  rasterizer.cpp
-C:\Users\karratdev\Projects\RayTracer\Render2\base.h(96,43): warning C4211: nonstandard extension used: redefined extern to static
-C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(75,64): warning C4100: '_Point': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(75,49): warning C4100: '_VLine': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(75,34): warning C4100: '_QLine': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(97,58): warning C4100: 'eta1_over_eta2': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(269,87): warning C4100: 'n': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(269,69): warning C4100: 'samples': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(269,58): warning C4100: 'N': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(269,43): warning C4100: 'P': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ppm_image.h(29,39): warning C4244: 'argument': conversion from 'float' to 'channel', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\ppm_image.h(29,30): warning C4244: 'argument': conversion from 'float' to 'channel', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\ppm_image.h(29,21): warning C4244: 'argument': conversion from 'float' to 'channel', possible loss of data
+﻿  object.cpp
+C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(98,58): warning C4100: 'eta1_over_eta2': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,87): warning C4100: 'n': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,69): warning C4100: 'samples': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,58): warning C4100: 'N': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,43): warning C4100: 'P': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\object.cpp(50,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\object.cpp(55,20): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\object.cpp(31,22): warning C4100: 'planeNormal': unreferenced formal parameter
+  rasterizer.cpp
+C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(98,58): warning C4100: 'eta1_over_eta2': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,87): warning C4100: 'n': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,69): warning C4100: 'samples': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,58): warning C4100: 'N': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,43): warning C4100: 'P': unreferenced formal parameter
 C:\Users\karratdev\Projects\RayTracer\Render2\util.h(42,39): warning C4100: 'obj': unreferenced formal parameter
 C:\Users\karratdev\Projects\RayTracer\Render2\util.h(47,40): warning C4100: 'obj': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(50,13): warning C4189: 'edgeListTail': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(192,7): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(192,7): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(193,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(193,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(194,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(194,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(214,8): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(214,8): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(215,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(215,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(216,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(216,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(235,5): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(235,5): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(236,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(236,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(237,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(237,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(180,6): warning C4189: 'numberOfPolygonPoints': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(208,20): warning C4189: 'v': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(227,11): warning C4189: 'fdgfdg': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(259,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(260,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(264,22): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(264,54): warning C4018: '<': signed/unsigned mismatch
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(273,23): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(273,55): warning C4018: '<': signed/unsigned mismatch
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(313,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(314,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(318,22): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(318,54): warning C4018: '<': signed/unsigned mismatch
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(324,23): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(324,55): warning C4018: '<': signed/unsigned mismatch
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(332,12): warning C4189: 'coef': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(369,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(370,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(373,22): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(373,54): warning C4018: '<': signed/unsigned mismatch
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(377,24): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(377,56): warning C4018: '<': signed/unsigned mismatch
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(446,11): warning C4189: 'fdgfdg': local variable is initialized but not referenced
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\type_traits(1595,1): warning C4239: nonstandard extension used: 'argument': conversion from 'RasterDetails' to 'RasterDetails &'
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\type_traits(1595,1): message : A non-const reference may only be bound to an lvalue
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\thread(55): message : see reference to function template instantiation 'void std::invoke<void(__cdecl *)(const Rasterizer *,void (__cdecl Rasterizer::* )(RasterDetails &,int,int),RasterDetails &,int,int),const Rasterizer*,void(__cdecl Rasterizer::* )(RasterDetails &,int,int),RasterDetails,int,int>(_Callable &&,_Ty1 &&,void (__cdecl Rasterizer::* &&)(RasterDetails &,int,int),RasterDetails &&,int &&,int &&) noexcept(false)' being compiled
-          with
-          [
-              _Callable=void (__cdecl *)(const Rasterizer *,void (__cdecl Rasterizer::* )(RasterDetails &,int,int),RasterDetails &,int,int),
-              _Ty1=const Rasterizer *
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\thread(62): message : see reference to function template instantiation 'unsigned int std::thread::_Invoke<_Tuple,0,1,2,3,4,5>(void *) noexcept' being compiled
-          with
-          [
-              _Tuple=_Tuple
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\thread(69): message : see reference to function template instantiation 'unsigned int (__cdecl *std::thread::_Get_invoke<_Tuple,0,1,2,3,4,5>(std::integer_sequence<size_t,0,1,2,3,4,5>) noexcept)(void *)' being compiled
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\thread(90): message : see reference to function template instantiation 'void std::thread::_Start<void(__cdecl &)(const Rasterizer *,void (__cdecl Rasterizer::* )(RasterDetails &,int,int),RasterDetails &,int,int),_Ty,void(__cdecl Rasterizer::* )(RasterDetails &,int,int),RasterDetails&,int&,int&>(_Fn,_Ty &&,void (__cdecl Rasterizer::* &&)(RasterDetails &,int,int),RasterDetails &,int &,int &)' being compiled
-          with
-          [
-              _Ty=const Rasterizer *,
-              _Fn=void (__cdecl &)(const Rasterizer *,void (__cdecl Rasterizer::* )(RasterDetails &,int,int),RasterDetails &,int,int)
-          ]
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(167): message : see reference to function template instantiation 'std::thread::thread<void(__cdecl &)(const Rasterizer *,void (__cdecl Rasterizer::* )(RasterDetails &,int,int),RasterDetails &,int,int),const Rasterizer*,void(__cdecl Rasterizer::* )(RasterDetails &,int,int),RasterDetails&,int&,int&,0>(_Fn,const Rasterizer *&&,void (__cdecl Rasterizer::* &&)(RasterDetails &,int,int),RasterDetails &,int &,int &)' being compiled
-          with
-          [
-              _Fn=void (__cdecl &)(const Rasterizer *,void (__cdecl Rasterizer::* )(RasterDetails &,int,int),RasterDetails &,int,int)
-          ]
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(115): warning C4702: unreachable code
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(129): warning C4702: unreachable code
-C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(131): warning C4702: unreachable code
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(34,13): warning C4189: 'edgeListTail': local variable is initialized but not referenced
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(176,7): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(176,7): message : A non-const reference may only be bound to an lvalue
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(177,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(177,1): message : A non-const reference may only be bound to an lvalue
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(178,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(178,1): message : A non-const reference may only be bound to an lvalue
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(198,8): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(198,8): message : A non-const reference may only be bound to an lvalue
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(199,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(199,1): message : A non-const reference may only be bound to an lvalue
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(200,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(200,1): message : A non-const reference may only be bound to an lvalue
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(219,5): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(219,5): message : A non-const reference may only be bound to an lvalue
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(220,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(220,1): message : A non-const reference may only be bound to an lvalue
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(221,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(221,1): message : A non-const reference may only be bound to an lvalue
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(164,6): warning C4189: 'numberOfPolygonPoints': local variable is initialized but not referenced
+C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(192,20): warning C4189: 'v': local variable is initialized but not referenced
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(252,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(253,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(257,22): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(257,54): warning C4018: '<': signed/unsigned mismatch
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(266,23): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(266,55): warning C4018: '<': signed/unsigned mismatch
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(306,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(307,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(311,22): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(311,54): warning C4018: '<': signed/unsigned mismatch
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(317,23): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(317,55): warning C4018: '<': signed/unsigned mismatch
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(325,12): warning C4189: 'coef': local variable is initialized but not referenced
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(362,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(363,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(366,22): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(366,54): warning C4018: '<': signed/unsigned mismatch
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(370,24): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(370,56): warning C4018: '<': signed/unsigned mismatch
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(439,11): warning C4189: 'fdgfdg': local variable is initialized but not referenced
+  scene.cpp
+C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(98,58): warning C4100: 'eta1_over_eta2': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,87): warning C4100: 'n': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,69): warning C4100: 'samples': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,58): warning C4100: 'N': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(299,43): warning C4100: 'P': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\util.h(42,39): warning C4100: 'obj': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\util.h(47,40): warning C4100: 'obj': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\scene.cpp(486,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
+C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(63): warning C4702: unreachable code
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(116): warning C4702: unreachable code
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(130): warning C4702: unreachable code
+C:\Users\karratdev\Projects\RayTracer\Render2\rasterizer.cpp(132): warning C4702: unreachable code
+C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(63): warning C4702: unreachable code
   Render2.vcxproj -> C:\Users\karratdev\Projects\RayTracer\x64\Debug\RayTracerProject.exe

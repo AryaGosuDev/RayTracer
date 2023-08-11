@@ -26,7 +26,7 @@ struct PPM_Image {
 };
 
 inline Pixel operator*( const float x, Pixel a ){
-    return Pixel( x * a.r, x * a.g, x * a.b );
+    return Pixel( static_cast<channel> (x * a.r), static_cast<channel> (x * a.g), static_cast<channel> (x * a.b) );
 }
 
 inline Pixel operator+( Pixel a, Pixel b ){

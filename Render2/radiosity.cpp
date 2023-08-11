@@ -237,6 +237,9 @@ void Radiosity::buildInitialQuadTree () {
 		for ( int i = 0 ; i < tempQuadVector.size() ; ++ i ) 
 			currentQuadObject->children.emplace_back (tempQuadVector[i] ) ;
 
+
+		/*
+
 		currentQuadObject = quadTreeRoot->children.back();
 		// make the quad tree nodes and check for adjacency with other triangles, checking the similarity of vertices within the same polygon
 		for ( int i = 0 ; i < currentQuadObject->children.size() ; ++ i ) {
@@ -246,6 +249,7 @@ void Radiosity::buildInitialQuadTree () {
 				}
 			}
 		}
+		*/
 	}
 
 	// intersection detection and re-triangulation of overlapping/colliding triangles
@@ -374,7 +378,7 @@ double Radiosity::findFormFactorTermWithLight ( QuadTreeNode * i ) {
 double Radiosity::findFormFactorTerm ( QuadTreeNode * i , QuadTreeNode * j ) {
 	
 	double formFactorij = 0 ;
-	int formFactorLoopIterations = 500 ;
+	int formFactorLoopIterations = 3 ;
 
 	//shoot formFactorLoopIterations # of rays from element i to element j
 	for ( int k = 0 ; k < formFactorLoopIterations ; ++k ) {
@@ -544,10 +548,9 @@ void Radiosity::progressiveRefinement() {
 	vector<QuadTreeNode * > tempQuadVector ;
 
 	//for every object
-	for ( auto &v : quadTreeRoot->children ) {
+	for ( auto &v : quadTreeRoot->children ) 
 		returnFilledElementsOfObject ( v, tempQuadVector ) ;
-	}
-
+	
 	// emissitivity
 	double * E = ( double * ) malloc ( n * sizeof ( double ) ) ;
 

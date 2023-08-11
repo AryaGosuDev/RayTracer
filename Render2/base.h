@@ -54,6 +54,9 @@ static const double
 	DegToRad    = Pi / 180.0,  // Convert degrees to radians.
 	Infinity    = 1.0E20,      // Should suffice for "infinity"
 	Epsilon     = 1.0E-5,      // A reasonable value for the "machine epsilon".
+	Epsilon1    = 1.0E-4,
+	Epsilon2	= 1.0E-3,
+	Epsilon3	= 1.0E-2,
 	OnePlusEps  = 1.0 + Epsilon,
 	OneMinusEps = 1.0 - Epsilon;
 
@@ -91,10 +94,6 @@ static inline const char *spaceout( int lines )
 		
 	for ( int i = 0 ; i < lines ; ++ i ) 
 		return "\n";	
-}
-
-static inline double round (double value) { 
-	return ((value < 0.0) ? -std::floor(0.5 - value) : std::floor(0.5 + value)); 
 }
 
 #endif

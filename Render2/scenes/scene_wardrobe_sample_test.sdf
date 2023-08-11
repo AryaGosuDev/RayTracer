@@ -1,0 +1,28 @@
+
+eye     (10.0, -2.0, 4.0)
+lookat  (0.0, 0.0, 0.25)
+up      (0.0, 0.0, 1.0)
+vpdist  2.75
+x_win   ( -1.25, 1.25 )
+y_win   ( -1, 1 )
+
+# Set the image resolution.
+
+x_res 500
+y_res 400
+
+# Set constants that will apply to all objects, until reset.
+
+emission     	[1, 1, 1]
+spherelight     (6.0, 4.0, 10.0) 1
+
+emission 		[0, 0, 0]
+diffuse  		[0.84, 0.37, 0.38]
+ambient  		[.1,   .1,   .1]
+specular		[0.0, 0.0,  0.0]
+Phong_exp		2.0
+translate		(1.0, 15.0, -1.0)
+reflectivity	[0.1, 0.1, 0.1 ]
+object 			sample_wardrobe_test
+
+end

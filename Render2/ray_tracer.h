@@ -33,6 +33,26 @@ struct Material {         // Surface material for shading.
 	long   type;          // Reserved for future use.
 };
 
+struct EdgeList {
+
+	EdgeList() = default;
+	EdgeList(Vec3 v1, Vec3 v2) { LineQ = v1;  LineV = v2 - v1; }
+
+	bool isEdge;
+	bool isVertex;
+
+	Vec3 vTx;
+	Vec3 LineQ;
+	Vec3 LineV;
+
+	EdgeList* next;
+	EdgeList* prev;
+
+	double pointRadiosity;
+	int nodeNumber;
+	int t;
+};
+
 struct Transformation {
 	Vec3 translation;
 	Vec3 rotation;
@@ -101,13 +121,36 @@ struct Camera {           // Defines the position of the eye/camera.
 };
 
 struct PrimitiveObject ;
+struct Scene;
+
+struct Shader {
+	Shader() {}
+	virtual ~Shader() {}
+	virtual Color Shade(const Scene& scene, const HitInfo& hitinfo) const;
+	virtual Color generateNormalShadows(const Scene&, const HitInfo&, Color& color) const;
+	virtual Color generateSoftShadows(const Scene&, const HitInfo&, Color& color) const;
+	virtual double findOcclusion(const Scene&, const HitInfo&, Color& color) const;
+	virtual double findOcclusionNew(const Scene&, const HitInfo&, Color& color, double radiusOfHemisphere, int) const;
+
+	virtual string MyName() const { return "shader"; }
+	virtual bool Default() const { return true; }
+
+	int ambientOcclusionSamples;
+	int ambientOcclusionHemisphereRadius;
+
+};
 
 struct Scene {
-	Scene();
+	Scene() {
+			rasterize = NULL;
+			radiosity = NULL;
+			max_tree_depth = default_max_tree_depth;
+			shader = new Shader();		
+	}
 	virtual ~Scene() { lights.clear(); }
 	Color Trace( const Ray &ray ) const;
 	bool  Cast ( const Ray &ray, HitInfo &hitinfo ) const;
-	bool  IsAlreadyInside ( const Vec3 &p, HitInfo &hitinfo ) const ;
+	//bool  IsAlreadyInside ( const Vec3 &p, HitInfo &hitinfo ) const ;
 	bool  BuildScene ( string file, string fileObj, Camera &camera );
 	bool  BuildBSP () ;
 	void  randomizeTriangles ( vector <BSP_Node> & );
@@ -123,23 +166,6 @@ struct Scene {
 	Shader * shader ;
 
 	unsigned max_tree_depth; // Limit on depth of the ray tree.
-};
-
-struct Shader {  
-	Shader() {}
-	virtual ~Shader() {}
-	virtual Color Shade( const Scene &scene, const HitInfo &hitinfo ) const ;
-	virtual Color generateNormalShadows (const Scene &, const HitInfo &, Color &color ) const ; 
-	virtual Color generateSoftShadows (const Scene &, const HitInfo &, Color &color ) const ; 
-	virtual double findOcclusion (const Scene &, const HitInfo &, Color &color ) const ; 
-	virtual double findOcclusionNew (const Scene &, const HitInfo &, Color &color, double radiusOfHemisphere, int  ) const ; 
-
-	virtual string MyName() const { return "shader"; }
-	virtual bool Default() const { return true; }
-
-	int ambientOcclusionSamples ;
-	int ambientOcclusionHemisphereRadius ;
-
 };
 
 struct Envmap { // Each object can have its own environment map.
@@ -189,13 +215,17 @@ struct BSP_Node{
 		left = 0;
 		node = _node;
 	}
+	BSP_Node(Vec3 _triVert1, Vec3 _triVert2, Vec3 _triVert3, Vec3 _triNormal ) {
+		triVert1 = _triVert1; triVert2 = _triVert2; triVert3 = _triVert3; triNormal = _triNormal;
+	}
+
 	virtual ~BSP_Node () {}
 	Vec3 triVert1;
 	Vec3 triVert2;
 	Vec3 triVert3;
-	int triIndx1;
-	int triIndx2;
-	int triIndx3;
+	int triVertIndx1;
+	int triVertIndx2;
+	int triVertIndx3;
 	Vec3 vertNormal1;
 	Vec3 vertNormal2;
 	Vec3 vertNormal3;
@@ -231,9 +261,9 @@ struct QuadTreeNode : public BSP_Node {
 		triVert1 = _BSP_Node->triVert1;
 		triVert2 = _BSP_Node->triVert2;
 		triVert3 = _BSP_Node->triVert3;
-		triIndx1 = _BSP_Node->triIndx1;
-		triIndx2 = _BSP_Node->triIndx2;
-		triIndx3 = _BSP_Node->triIndx3;
+		triVertIndx1 = _BSP_Node->triVertIndx1;
+		triVertIndx2 = _BSP_Node->triVertIndx2;
+		triVertIndx3 = _BSP_Node->triVertIndx3;
 		vertNormal1 = _BSP_Node->vertNormal1;
 		vertNormal2 = _BSP_Node->vertNormal2;
 		vertNormal3 = _BSP_Node->vertNormal3;

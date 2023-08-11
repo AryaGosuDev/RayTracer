@@ -101,6 +101,7 @@ static Pixel ToneMapRadiosity( const Color &color ) {
     if ( color == Green ) return Pixel ( 0, 255, 0 );
 
 	// or we can evade the bottom code and do a more simpler tone mapping sampling
+	// with this active code, the bottom code is unreachable
 	Color mappedColor;
 	channel finalRGBAlt = 255;
 	//if (finalRGBAlt == 255) return Pixel(finalRGBAlt, finalRGBAlt, finalRGBAlt);
@@ -157,8 +158,8 @@ bool Rasterizer::Rasterize( string file_name_out, const Camera &cam, const Scene
 		// Initiate struct of raster ray increments and axes
 		RasterDetails rasterD(tempScene, tempCamera, file_name_out, I );
 		
+		/*
 		std::thread * tt = new std::thread[threadDivisionsInX * threadDivisionsInY];
-
 		int totalThreads = 0;
 
 		for (int i = 0; i < threadDivisionsInX ; ++i) {
@@ -176,9 +177,9 @@ bool Rasterizer::Rasterize( string file_name_out, const Camera &cam, const Scene
 		}
 		delete [] tt ;
 		cout << "Total threads started : " << totalThreads << endl ;
+		*/
 		
-			 
-		//Serial_Normal_Raster( rasterD ) ;
+		Serial_Normal_Raster( rasterD ) ;
 	}
 	catch ( std::exception ex ) {
 		cout << ex.what() << endl;
@@ -219,15 +220,7 @@ void Rasterizer::Serial_Normal_Raster ( RasterDetails & rasterD ) const {
 				    // Overwrite the line number written to the console.
 					cout << rubout( i ) << (i+1);
 					cout.flush();
-
 				for ( unsigned int j = 0 ; j < rasterD.cam->x_res ; ++ j ) {
-					
-					// on irfanview, j = X and i = Y
-					if ( i == 90 && j == 391 ) {
-						int fdgfdg = 4 ;
-						//ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
-						//I(i,j) = ToneMapRadiosity( _rad_helper->trace_ray( ray, tempQuadVector ) );
-					}
 					ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
 					I(i,j) = ToneMap( rasterD.scene->Trace ( ray ) );
 				}

@@ -183,25 +183,34 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 	object.triangles.back().triVert1 = object.points[faceData[0][0]]; //first point
 	object.triangles.back().triVert2 = object.points[faceData[1][0]]; //second point
 	object.triangles.back().triVert3 = object.points[faceData[2][0]]; //third point
-	object.triangles.back().triIndx1 = faceData[0][0];
-	object.triangles.back().triIndx2 = faceData[1][0];
-	object.triangles.back().triIndx3 = faceData[2][0];
+	object.triangles.back().triVertIndx1 = faceData[0][0];
+	object.triangles.back().triVertIndx2 = faceData[1][0];
+	object.triangles.back().triVertIndx3 = faceData[2][0];
+
+	if (hasVertexNormal) {
+		object.triangles.back().vertNormal1 = object.vertexNormals[faceData[0][numOfFieldsPerFace - 1]];
+		object.triangles.back().vertNormal2 = object.vertexNormals[faceData[1][numOfFieldsPerFace - 1]];
+		object.triangles.back().vertNormal3 = object.vertexNormals[faceData[2][numOfFieldsPerFace - 1]];
+		object.triangles.back().triNormal = (object.triangles.back().vertNormal1 + object.triangles.back().vertNormal2 + object.triangles.back().vertNormal3) / 3;
+		object.triangles.back().triNormal = Unit(object.triangles.back().triNormal);
+	}
 
 	//CALC NORMAL OF TRIANGLE, MAKE SURE IT IS IN THE SAME DIR AS THE NORMAL OF THE MIDDLE POINT, (B - A) x (C - A)
 	Vec3 calcNormal = Unit((object.triangles.back().triVert2 - object.triangles.back().triVert1) ^
 					  (object.triangles.back().triVert3 - object.triangles.back().triVert2));
 
-	if ( hasVertexNormal ) {
-		object.triangles.back().triNormal = object.vertexNormals[faceData[2][numOfFieldsPerFace - 1] ]; //get vertex normal of second point
-		if ( (calcNormal * (object.triangles.back().triNormal)) < 0.0 )
-			calcNormal = -1.0 * calcNormal ;
+	
+	if (hasVertexNormal) {
+		if ((calcNormal * (object.triangles.back().triNormal)) < 0.0)
+			calcNormal = -1.0 * calcNormal;
+		//object.triangles.back().triNormal = calcNormal;
+		
 	}
-
-	object.triangles.back().triNormal = calcNormal;
-
-	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx1, calcNormal );
-	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx2, calcNormal );
-	addUniqueNormals ( adjMatrix, object.triangles.back().triIndx3, calcNormal );
+	else object.triangles.back().triNormal = calcNormal;
+	
+	addUniqueNormals ( adjMatrix, object.triangles.back().triVertIndx1, calcNormal );
+	addUniqueNormals ( adjMatrix, object.triangles.back().triVertIndx2, calcNormal );
+	addUniqueNormals ( adjMatrix, object.triangles.back().triVertIndx3, calcNormal );
 
 	if ( vecOut.size() == 4 ) { //the face is a quad, or of order n. Triangulate
 	
@@ -209,9 +218,9 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 		object.triangles.back().triVert1 = object.points[faceData[2][0]] ; //vert 3 of prior triangle
 		object.triangles.back().triVert2 = object.points[faceData[3][0]];  //vert 4 
 		object.triangles.back().triVert3 = object.points[faceData[0][0]] ; //vert 1 of prior triangle
-		object.triangles.back().triIndx1 = faceData[2][0];
-		object.triangles.back().triIndx2 = faceData[3][0];
-		object.triangles.back().triIndx3 = faceData[0][0];
+		object.triangles.back().triVertIndx1 = faceData[2][0];
+		object.triangles.back().triVertIndx2 = faceData[3][0];
+		object.triangles.back().triVertIndx3 = faceData[0][0];
 		object.triangles.back().triNormal = object.vertexNormals[faceData[3][numOfFieldsPerFace-1]]; //get vertex normal of fourth point
 
 		//CALC NORMAL OF TRIANGLE, MAKE SURE IT IS IN THE SAME DIR AS THE NORMAL OF THE MIDDLE POINT, (B - A) x (C - A)
@@ -226,9 +235,9 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 		
 		object.triangles.back().triNormal = calcNormal;
 
-		addUniqueNormals ( adjMatrix, object.triangles.back().triIndx1, calcNormal );
-		addUniqueNormals ( adjMatrix, object.triangles.back().triIndx2, calcNormal );
-		addUniqueNormals ( adjMatrix, object.triangles.back().triIndx3, calcNormal );
+		addUniqueNormals ( adjMatrix, object.triangles.back().triVertIndx1, calcNormal );
+		addUniqueNormals ( adjMatrix, object.triangles.back().triVertIndx2, calcNormal );
+		addUniqueNormals ( adjMatrix, object.triangles.back().triVertIndx3, calcNormal );
 	}
 
 	delete[] writable;

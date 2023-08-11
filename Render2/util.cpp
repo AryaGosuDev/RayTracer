@@ -24,9 +24,9 @@ AABB GetBox( const PrimitiveObject &obj ){
 AABB GetBoxPolygon ( const Object * _object ) {
 
 	vector<Vec3>::const_iterator pointsIter = _object->points.cbegin();
-	double HiX , LowX = 0.0;
-	double HiY , LowY = 0.0;
-	double HiZ , LowZ = 0.0;
+	double HiX = 0.0 , LowX = 0.0;
+	double HiY = 0.0 , LowY = 0.0;
+	double HiZ = 0.0 , LowZ = 0.0;
 	bool isFirst = true  ;
 
 	for ( ; pointsIter != _object->points.cend(); ++pointsIter ) {
