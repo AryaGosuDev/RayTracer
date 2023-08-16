@@ -1,9 +1,6 @@
 
 
-#eye     (7.0,-2.0, 2.8)
 eye     (10.0, -2.0, 2.8)
-#eye     (5.0,-3.0, 2.8)
-#eye		 (-7.0,-2.0, 2.8)
 lookat  (0.0, 1.1, 0.25)
 up      (0.0, 0.0, 1.0)
 vpdist  2.75
@@ -27,7 +24,6 @@ specular		[0.0, 0.0,  0.0]
 Phong_exp		2.0
 translate		(0.0, 5.0, 1.0)
 reflectivity	[0.1, 0.1, 0.1 ]
-#flipYZ			1
 object 			cube
 
 emission 		[0, 0, 0]

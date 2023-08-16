@@ -11,6 +11,7 @@
 #include "ray.h"          // Defines rays in 3-space: origin, direction, etc.
 #include "interval.h"     // Defines a (min,max) interval of the real line.
 #include "params.h"       // Parsing an object file.
+#include "aabb.h"
 
 const struct RasterDetails;
 
@@ -38,19 +39,19 @@ struct EdgeList {
 	EdgeList() = default;
 	EdgeList(Vec3 v1, Vec3 v2) { LineQ = v1;  LineV = v2 - v1; }
 
-	bool isEdge;
-	bool isVertex;
+	bool isEdge = false;
+	bool isVertex = false;
 
 	Vec3 vTx;
 	Vec3 LineQ;
 	Vec3 LineV;
 
-	EdgeList* next;
-	EdgeList* prev;
+	EdgeList* next = NULL;
+	EdgeList* prev = NULL;
 
-	double pointRadiosity;
-	int nodeNumber;
-	int t;
+	double pointRadiosity = 0.0;
+	int nodeNumber = 0;
+	int t = 0;
 };
 
 struct Transformation {
@@ -83,13 +84,13 @@ struct HitInfo {          // Records all info at ray-object intersection.
 	const Object *ignore; // One object in scene to ignore (used by Cast).
 	const Object *object; // The object that was hit (set by Intersect).
 	BSP_Node * tri;		  // The triangle that has been hit by the ray
-	double  distance;     // Distance to hit (used & reset by Intersect).
+	double  distance = 0.0;     // Distance to hit (used & reset by Intersect).
 	Vec3    point;        // ray-object intersection point (set by Intersect).
 	Vec3    normal;       // Surface normal (set by Intersect).
 	Vec2    uv;           // Texture coordinates (set by intersect).
 	Ray     ray;          // The ray that hit the surface (set by Cast).
-	float   BayCentricU;  // Baycentric parameters of the triangle
-	float	BayCentricV;  
+	float   BayCentricU = 0.0f;  // Baycentric parameters of the triangle
+	float	BayCentricV = 0.0f;  
 
 	HitInfo() : ignore(0) , object(0), tri(0) {}
 
@@ -124,7 +125,7 @@ struct PrimitiveObject ;
 struct Scene;
 
 struct Shader {
-	Shader() {}
+	Shader() = default;
 	virtual ~Shader() {}
 	virtual Color Shade(const Scene& scene, const HitInfo& hitinfo) const;
 	virtual Color generateNormalShadows(const Scene&, const HitInfo&, Color& color) const;
@@ -135,8 +136,8 @@ struct Shader {
 	virtual string MyName() const { return "shader"; }
 	virtual bool Default() const { return true; }
 
-	int ambientOcclusionSamples;
-	int ambientOcclusionHemisphereRadius;
+	int ambientOcclusionSamples = 0;
+	int ambientOcclusionHemisphereRadius = 0;
 
 };
 
@@ -156,6 +157,7 @@ struct Scene {
 	void  randomizeTriangles ( vector <BSP_Node> & );
 	bool calculateVertexNormals ( Object & obj, vector<vector<Vec3>> &  adjMatrix ) ;
 	BSP_Node * buildBSPTree (vector<BSP_Node *>  &v);
+	BSP_Node * buildBSPTreeNoSplit(vector<BSP_Node*>& v);
 	virtual const PrimitiveObject *GetLight( unsigned i ) const { return lights[i]; } 
 	virtual unsigned NumLights() const { return (unsigned ) lights.size(); }
 	Rasterizer *rasterize;   // This casts all primary rays & makes the image.
@@ -199,59 +201,50 @@ struct Object{
 	vector <Vec3> points;
 	vector <Vec3> vertexNormals;
 	vector <Vec2> vertexTexture;
-	bool flipYZ ;
-	BSP_Node * root ;
-	Material * material;
+	std::unordered_set<BSP_Node*> triHash;
+	bool flipYZ = false ;
+	BSP_Node * root = NULL;
+	Material * material = NULL;
 	Transformation trnsf ;
 };
 
 struct BSP_Node{
-	BSP_Node () {
-		right = 0;
-		left = 0;
-	};
+	BSP_Node() = default;
 	BSP_Node (int _node) {
-		right = 0;
-		left = 0;
 		node = _node;
 	}
-	BSP_Node(Vec3 _triVert1, Vec3 _triVert2, Vec3 _triVert3, Vec3 _triNormal ) {
-		triVert1 = _triVert1; triVert2 = _triVert2; triVert3 = _triVert3; triNormal = _triNormal;
+	BSP_Node(Vec3 _triVert1, Vec3 _triVert2, Vec3 _triVert3, Vec3 _triNormal, int _num ) {
+		triVert1 = _triVert1; triVert2 = _triVert2; triVert3 = _triVert3; triNormal = _triNormal; node = _num;
 	}
 
 	virtual ~BSP_Node () {}
 	Vec3 triVert1;
 	Vec3 triVert2;
 	Vec3 triVert3;
-	int triVertIndx1;
-	int triVertIndx2;
-	int triVertIndx3;
+	int triVertIndx1 = 0;
+	int triVertIndx2 = 0;
+	int triVertIndx3 = 0;
 	Vec3 vertNormal1;
 	Vec3 vertNormal2;
 	Vec3 vertNormal3;
 	Vec3 triNormal;
 	Vec2 textVert;
-	int node;
-	BSP_Node * right ;
-	BSP_Node * left  ;
+	int node = 0;
+	BSP_Node * right = NULL ;
+	BSP_Node * left = NULL ;
+	bool isLeaf = false;
 
-	Object * parentObject ;
+	Object * parentObject = NULL ;
+	static int numOfTriangle;
 };
 
 // create initial quadtree
 // must sustain the adjacency list of all triangles with other triangles
 struct QuadTreeNode : public BSP_Node {
 	
-	QuadTreeNode () {
-		object = NULL;
-		parentObject = NULL ;
-		visited = false;
-		delVisited = false;
-	}
-
+	QuadTreeNode() = default;
 	~QuadTreeNode() {}
-
-	QuadTreeNode ( BSP_Node * _BSP_Node ) {
+	QuadTreeNode ( const BSP_Node * const _BSP_Node ) {
 
 		object = _BSP_Node->parentObject;
 		parentObject = _BSP_Node->parentObject;
@@ -279,16 +272,16 @@ struct QuadTreeNode : public BSP_Node {
 	//std::map<QuadTreeNode *, std::set<Vec3>> nextAdj;
 	std::map<QuadTreeNode *, std::unordered_set<Vec3>> nextAdj;
 	
-	Object * object;
-	Object * parentObject;
+	Object * object = NULL;
+	Object * parentObject = NULL;
 
-	double radiosityValue;
-	double reflectivityIndex;
-	double emissitivity;
-	double formFactor ;
+	double radiosityValue = 0.0;
+	double reflectivityIndex = 0.0;
+	double emissitivity = 0.0;
+	double formFactor = 0.0 ;
 
-	bool visited;
-	bool delVisited;
+	bool visited = false;;
+	bool delVisited = false;
 };
 
 struct PrimitiveObject{
@@ -306,7 +299,7 @@ struct PrimitiveObject{
 };
 
 struct Sphere : public PrimitiveObject {
-	Sphere() {}
+	Sphere() = default;
 	Sphere( const Vec3 &center, double radius );
 	virtual ~Sphere () {} 
 	virtual PrimitiveObject *ReadString( const string &params ) override ;
@@ -314,12 +307,12 @@ struct Sphere : public PrimitiveObject {
 	virtual bool Intersect( const Ray &ray, HitInfo & ) const override;
 	virtual Interval GetSlab( const Vec3 & ) const override;
 	Vec3   center;
-	double radius;
-	double radius2;
+	double radius = 0.0;
+	double radius2 = 0.0;
 };
 
 struct Quad : public PrimitiveObject {
-	Quad() {}
+	Quad() = default;
 	Quad( const Vec3 &A, const Vec3 &B, const Vec3 &C, const Vec3 &D );
 	virtual ~Quad() {}
 	virtual bool Intersect( const Ray &ray, HitInfo & ) const;
@@ -328,7 +321,7 @@ struct Quad : public PrimitiveObject {
 	virtual PrimitiveObject *ReadString( const string &params );
 	Vec3   N;    // Normal to plane of quad;
 	double d;    // Distance from origin to plane of quad.
-	double area; // Area of the quad.
+	double area = 0.0; // Area of the quad.
 	Vec3   Eab, Ebc, Ecd, Eda;
 	Vec3   A, B, C, D;  
 };
@@ -339,7 +332,7 @@ struct Light : public PrimitiveObject {
 };
 
 struct SphereLight : public Light {
-	SphereLight() {}
+	SphereLight() = default;
 	SphereLight( const Vec3 &center, double radius );
 	virtual bool Intersect( const Ray &ray, HitInfo & ) const;
 	virtual bool Inside( const Vec3 &P ) const { return dist( P, center ) <= radius; } 
@@ -353,7 +346,7 @@ struct SphereLight : public Light {
 };
 
 struct QuadLight : public Light {
-	QuadLight() {}
+	QuadLight() = default;
 	QuadLight( const Vec3 &A, const Vec3 &B, const Vec3 &C, const Vec3 &D );
 	virtual ~QuadLight() {}
 	virtual bool Intersect( const Ray &ray, HitInfo & ) const;
@@ -370,7 +363,7 @@ struct QuadLight : public Light {
 };
 
 struct Radiosity {
-	Radiosity() {}
+	Radiosity() = default;
 	Radiosity(  Scene * _scene, Camera * ) ;
 	virtual ~Radiosity() ;
 
@@ -382,15 +375,74 @@ struct Radiosity {
 	bool castFromElementToElement ( const Ray &, HitInfo &, QuadTreeNode *, QuadTreeNode *, const Vec3 &, const Vec3 & ) ;
 	void progressiveRefinement();
 	bool checkIfConverged ( double *  ) ;
+	void findIntersections();
+	void returnFilledElementsOfObject(QuadTreeNode* _v, vector<QuadTreeNode* >& _a);
+	void setRadiosityForAllElements(QuadTreeNode*);
 	//bool adapdtiveMeshSubDivision() ;
 
-	Scene * scene ;
-	Camera * cam;
+	Scene * scene = NULL ;
+	Camera * cam = NULL;
 	int numOfElements;
-	QuadTreeNode * quadTreeRoot ;
-	Radiosity_Helper * radiosityHelper ;
+	QuadTreeNode * quadTreeRoot = NULL ;
+	Radiosity_Helper * radiosityHelper = NULL ;
 	vector<QuadTreeNode * > * tempQuadVector ;
 };
+
+
+struct ObjectNode {
+
+	struct LinkListAdjNode;
+
+	ObjectNode() = default;
+
+	void addAdj(ObjectNode* _adj) {
+		if (AdjLL == NULL) {
+			AdjLL = new LinkListAdjNode();
+			AdjLL->oN = _adj;
+			AdjLL->next = NULL;
+			tailAdjLL = AdjLL;
+		}
+		else {
+			tailAdjLL->next = new LinkListAdjNode();
+			tailAdjLL = tailAdjLL->next;
+			tailAdjLL->oN = _adj;
+			tailAdjLL->next = NULL;
+		}
+	}
+
+	Object* object = NULL;
+	AABB aabbInfo;
+	bool aabbDoesIntersect = false; ;
+	bool finishedWithIntersections = false;
+
+	LinkListAdjNode* AdjLL = NULL;
+	LinkListAdjNode* tailAdjLL = NULL;
+
+	QuadTreeNode* qNode = NULL;
+
+	struct LinkListAdjNode {
+		LinkListAdjNode() = default;
+		void add(ObjectNode* _oN) { LinkListAdjNode* temp = this; }
+		ObjectNode* oN = NULL;
+		LinkListAdjNode* next = NULL;
+	};
+};
+
+struct FormFactorStackNode {
+
+	FormFactorStackNode(QuadTreeNode* _quadTreeNode) {
+		quadTreeNode = _quadTreeNode;
+		if (quadTreeNode->children.size() > 0) internal = true;
+		else internal = false;
+
+		visited = false;
+	}
+
+	QuadTreeNode* quadTreeNode;
+	bool visited;
+	bool internal;
+};
+
 
 // include template specialization for std::set<Vec3> in the Radiosity class
 namespace std {

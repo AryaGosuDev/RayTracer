@@ -26,7 +26,6 @@ struct Radiosity_Helper : public Radiosity {
 
 };
 
-
 inline EdgeList * createEdgeList ( const BSP_Node & _bsp_N ) {
 
 	EdgeList * newEdgeListHead = new EdgeList () ;
@@ -47,7 +46,7 @@ inline EdgeList * createEdgeList ( const BSP_Node & _bsp_N ) {
 
 		edgeListCurrent->next->isEdge = true ;
 		edgeListCurrent->next->LineQ = edgeListCurrent->vTx ;
-		edgeListCurrent->next->LineV = triPoints[i+1] - triPoints[i] ;
+		edgeListCurrent->next->LineV = triPoints[static_cast<int64_t>(i) +1] - triPoints[i] ;
 		edgeListCurrent->next->prev = edgeListCurrent ;
 		edgeListCurrent = edgeListCurrent->next ;
 

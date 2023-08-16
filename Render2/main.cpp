@@ -1,6 +1,8 @@
 #include "ray_tracer.h"
 #include <chrono>
 
+int BSP_Node::numOfTriangle = 1;
+
 int main( int argc, char *argv[] ) {
 	Scene  scene;
 	Camera camera;
@@ -27,7 +29,7 @@ int main( int argc, char *argv[] ) {
 	
 	//auto start = std::chrono::steady_clock::now();
 
-	//scene.radiosity = new Radiosity(&scene, &camera);
+	scene.radiosity = new Radiosity(&scene, &camera);
 
 	if( !scene.rasterize->Rasterize( fnameOutput, camera, scene)){
 		cerr << "Error encountered while rasterizing." << endl;

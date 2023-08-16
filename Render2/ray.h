@@ -54,9 +54,9 @@ inline int sideTest3d (  Vec3 a,  Vec3 b ,  Vec3 c,  Vec3 x )
 		((c-a).x * ((b-a).y * (x-a).z - (b-a).z * (x-a).y)) +
 		((x-a).x * ((b-a).y * (c-a).z - (b-a).z * (c-a).y));
 		
-		if ( result < -Epsilon3)
+		if ( result < -Epsilon4)
 			return -1;
-		else if (result >= -Epsilon3 && result <= Epsilon3)
+		else if (result >= -Epsilon4 && result <= Epsilon4)
 			return 0;
 		else return 1;
 		

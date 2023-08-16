@@ -197,8 +197,7 @@ bool ParamReader::returnCoordOfFace ( Object & object, int & numOfTriangle, vect
 
 	//CALC NORMAL OF TRIANGLE, MAKE SURE IT IS IN THE SAME DIR AS THE NORMAL OF THE MIDDLE POINT, (B - A) x (C - A)
 	Vec3 calcNormal = Unit((object.triangles.back().triVert2 - object.triangles.back().triVert1) ^
-					  (object.triangles.back().triVert3 - object.triangles.back().triVert2));
-
+		(object.triangles.back().triVert3 - object.triangles.back().triVert2));
 	
 	if (hasVertexNormal) {
 		if ((calcNormal * (object.triangles.back().triNormal)) < 0.0)

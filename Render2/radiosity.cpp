@@ -4,71 +4,6 @@
 #include <stack>
 #include "radiosity_helper.h"
 
-struct ObjectNode {
-
-	struct LinkListAdjNode ;
-
-	ObjectNode() {
-		object = NULL ;
-		aabbDoesIntersect = false ;
-		finishedWithIntersections = false;
-		AdjLL = NULL  ;
-	}
-
-	void addAdj ( ObjectNode * _adj ) {
-		if ( AdjLL == NULL ) {
-			AdjLL = new LinkListAdjNode () ;
-			AdjLL->oN = _adj ;
-			AdjLL->next = NULL ;
-			tailAdjLL = AdjLL;
-		}
-		else {
-			tailAdjLL->next = new LinkListAdjNode() ;
-			tailAdjLL = tailAdjLL->next ;
-			tailAdjLL->oN = _adj ;
-			tailAdjLL->next = NULL ;
-		}
-	}
-
-	Object * object;
-	AABB aabbInfo ;
-	bool aabbDoesIntersect ;
-	bool finishedWithIntersections;
-
-	LinkListAdjNode * AdjLL ;
-	LinkListAdjNode * tailAdjLL ;
-
-	QuadTreeNode * qNode ;
-
-	struct LinkListAdjNode {
-
-		LinkListAdjNode () {
-		}
-
-		void add (ObjectNode * _oN) {
-			LinkListAdjNode * temp = this;
-		}
-
-		ObjectNode * oN ;
-		LinkListAdjNode * next ;
-	};
-};
-
-struct FormFactorStackNode {
-
-	FormFactorStackNode ( QuadTreeNode * _quadTreeNode  ) {
-		quadTreeNode = _quadTreeNode;
-		if ( quadTreeNode->children.size() > 0 ) internal = true ; 
-		else internal = false;
-
-		visited = false;
-	}
-
-	QuadTreeNode * quadTreeNode;
-	bool visited ;
-	bool internal; 
-};
-
 // objects in the scene excluding light
 vector<ObjectNode *> radObjectNodes ;
 // form factor matrix
@@ -78,65 +13,11 @@ double ** K ;
 // radiosities
 double * B ;
 
-// find all the AABB intersections of every object with each other
-inline void findIntersections () {
-
-	for ( auto &v : radObjectNodes ) {
-		for ( auto &o : radObjectNodes ) {
-			if (v != o ) {
-				if  ( AABBIntersect ( v->aabbInfo, o->aabbInfo ) ) {
-					v->aabbDoesIntersect = true;
-					v->addAdj ( o ) ;
-				}
-			}
-		}
-	}
-}
-
 inline bool findTriangleAdj ( BSP_Node * _a, BSP_Node * _b ) {
 	if ( relativeClose(_a->triVert1, _b->triVert1 ) || relativeClose(_a->triVert1, _b->triVert2 ) || relativeClose(_a->triVert1, _b->triVert3 ) ) return true ; 
 	if ( relativeClose(_a->triVert2, _b->triVert1 ) || relativeClose(_a->triVert2, _b->triVert2 ) || relativeClose(_a->triVert2, _b->triVert3 ) ) return true ;
 	if ( relativeClose(_a->triVert3, _b->triVert1 ) || relativeClose(_a->triVert3, _b->triVert2 ) || relativeClose(_a->triVert3, _b->triVert3 ) ) return true ;
 	return false;
-}
-
-inline void returnFilledElementsOfObject ( QuadTreeNode * _v , vector<QuadTreeNode * > & _a ) {
-
-	std::stack<FormFactorStackNode> stackFormFactor ;
-
-	//for all the initial elements of the object node
-	for ( vector<QuadTreeNode *>::const_reverse_iterator iterQuads = _v->children.crbegin() ; iterQuads != _v->children.crend() ; ++iterQuads )
-		stackFormFactor.push ( FormFactorStackNode(*iterQuads));
-
-	while ( !stackFormFactor.empty() ) {
-		FormFactorStackNode temp = stackFormFactor.top();
-		stackFormFactor.pop();
-		if (temp.quadTreeNode->children.size() > 0) {
-			for (vector<QuadTreeNode*>::const_reverse_iterator iterQuads = temp.quadTreeNode->children.crbegin();
-				iterQuads != temp.quadTreeNode->children.crend();
-				++iterQuads)
-					stackFormFactor.push(FormFactorStackNode(*iterQuads));
-		}
-		else {
-			_a.emplace_back ( temp.quadTreeNode ) ;
-			//_a.emplace_back ( stackFormFactor.top().quadTreeNode ) ;
-			//stackFormFactor.pop() ;
-		}
-	}
-}
-
-inline void setRadiosityForAllElements ( QuadTreeNode * _qR ) {
-
-	vector<QuadTreeNode * > tempQuadVector ;
-
-	//for every object
-	for ( auto &v : _qR->children ) 
-		returnFilledElementsOfObject ( v, tempQuadVector ) ;
-
-	int i = 0 ;
-
-	for ( auto &v : tempQuadVector ) 
-		v->radiosityValue = B[i++];
 }
 
 Radiosity::Radiosity( Scene * _scene, Camera * _cam ) :
@@ -161,6 +42,7 @@ Radiosity::Radiosity( Scene * _scene, Camera * _cam ) :
 			tempObjNode->object = *sceneObjIter;
 			tempObjNode->aabbInfo = GetBoxPolygon ( *sceneObjIter );
 		}
+		// find all the AABB intersections of every object with each other
 		findIntersections () ;
 
 		//Now we shall build the initial quadtree
@@ -188,20 +70,67 @@ Radiosity::Radiosity( Scene * _scene, Camera * _cam ) :
 Radiosity::~Radiosity () {
 
 	int n = numOfElements + scene->NumLights() ;
-
 	for ( auto &v : radObjectNodes ) delete v ;
-
 	for ( int i = 0 ; i < n ; ++ i )
 		free ( FF[i] ) ;
 	free ( FF ) ;
-
 	for ( int i = 0 ; i < n ; ++ i )
 		free ( K[i] ) ;
 	free ( K ) ;
-
 	free ( B );
-
 	// TODO : post order deletion of quadtree recursively
+}
+
+// find all the AABB intersections of every object with each other
+void Radiosity::findIntersections() {
+
+	for (auto& v : radObjectNodes) {
+		for (auto& o : radObjectNodes) {
+			if (v != o) {
+				if (AABBIntersect(v->aabbInfo, o->aabbInfo)) {
+					v->aabbDoesIntersect = true;
+					v->addAdj(o);
+				}
+			}
+		}
+	}
+}
+
+void Radiosity::returnFilledElementsOfObject(QuadTreeNode* _v, vector<QuadTreeNode* >& _a) {
+
+	std::stack<FormFactorStackNode> stackFormFactor;
+
+	//for all the initial elements of the object node
+	for (auto iterQuads = _v->children.crbegin(); iterQuads != _v->children.crend(); ++iterQuads)
+		stackFormFactor.push(FormFactorStackNode(*iterQuads));
+
+	while (!stackFormFactor.empty()) {
+		FormFactorStackNode top = stackFormFactor.top();
+		if (top.quadTreeNode->children.size() > 0) {
+			for (auto iterQuads = top.quadTreeNode->children.crbegin(); iterQuads != top.quadTreeNode->children.crend(); ++iterQuads)
+				stackFormFactor.push(FormFactorStackNode(*iterQuads));
+		}
+		else {
+			_a.emplace_back(top.quadTreeNode);
+			//_a.emplace_back ( stackFormFactor.top().quadTreeNode ) ;
+			//stackFormFactor.pop() ;
+		}
+		stackFormFactor.pop();
+	}
+}
+
+void Radiosity::setRadiosityForAllElements(QuadTreeNode* _qR) {
+
+	vector<QuadTreeNode* > tempQuadVector;
+
+	//for every object
+	for (auto& v : _qR->children)
+		returnFilledElementsOfObject(v, tempQuadVector);
+
+	int i = 0;
+	
+	for (auto& v : tempQuadVector)
+		v->radiosityValue =  B[i++];
 }
 
 // build the initial structure of the quadtree
@@ -210,33 +139,30 @@ void Radiosity::buildInitialQuadTree () {
 	if ( quadTreeRoot == NULL ) quadTreeRoot = new QuadTreeNode () ;
 
 	// for all the objects in the scene
-	for ( auto &v : radObjectNodes ) {
+	for ( auto & v : radObjectNodes ) {
 		quadTreeRoot->children.push_back(new QuadTreeNode() );
 		quadTreeRoot->children.back()->object = v->object ;
 		v->qNode = quadTreeRoot->children.back();
 
-		// add all the triangles in the BSP of an object to a vector to check for adjacent triangles
-		vector<QuadTreeNode * > tempQuadVector ;
+		QuadTreeNode* currentQuadObject = quadTreeRoot->children.back();
 
-		BSP_Node * tempBSPNode = v->object->root ;
-			
-		//tempQuadVector.emplace_back( dynamic_cast<QuadTreeNode *>(tempBSPNode) ) ;
-		tempQuadVector.emplace_back( new QuadTreeNode ( tempBSPNode)  ) ;
+		int tempNumOfTriangles = 0;
+		std::queue< BSP_Node* > q;
+		q.push(v->object->root);
 
-		numOfElements += v->object->triangles.size() ;
-
-		// add all the triangles into a vector 
-		for ( int i = 0 ; i < v->object->triangles.size() ; ++ i ) {
-			if ( tempQuadVector[i]->left != NULL )tempQuadVector.emplace_back ( new QuadTreeNode ( tempQuadVector[i]->left )  ) ;
-			if ( tempQuadVector[i]->right != NULL ) tempQuadVector.emplace_back ( new QuadTreeNode ( tempQuadVector[i]->right ) ) ; 
+		while (!q.empty()) {
+			auto top = q.front();
+			if (top->left == NULL && top->right == NULL) { //leaf - triangle
+				tempNumOfTriangles++;  currentQuadObject->children.emplace_back(new QuadTreeNode(top)); currentQuadObject->children.back()->object = v->object;
+			}
+			else {
+				if (top->left != NULL) q.push(top->left);
+				if (top->right != NULL) q.push(top->right);
+			}
+			q.pop();
 		}
-
-		QuadTreeNode * currentQuadObject = quadTreeRoot->children.back();
-
-		// add triangles as new children of object
-		for ( int i = 0 ; i < tempQuadVector.size() ; ++ i ) 
-			currentQuadObject->children.emplace_back (tempQuadVector[i] ) ;
-
+		//TODO : will need to change to take into account newly split triangles
+		numOfElements += tempNumOfTriangles;
 
 		/*
 
@@ -251,7 +177,7 @@ void Radiosity::buildInitialQuadTree () {
 		}
 		*/
 	}
-
+	/*
 	// intersection detection and re-triangulation of overlapping/colliding triangles
 	for ( int i = 0 ; i < quadTreeRoot->children.size() ; i++ ) {
 		if ( radObjectNodes[i]->aabbDoesIntersect ) {
@@ -270,6 +196,7 @@ void Radiosity::buildInitialQuadTree () {
 			radObjectNodes[i]->finishedWithIntersections = true ;
 		}
 	} 
+	*/
 }
 
 bool Radiosity::castFromElementToElement ( const Ray &ray, HitInfo &hitinfo, QuadTreeNode * i, QuadTreeNode * j, const Vec3 &xi, const Vec3 &yi  ) {
@@ -378,7 +305,7 @@ double Radiosity::findFormFactorTermWithLight ( QuadTreeNode * i ) {
 double Radiosity::findFormFactorTerm ( QuadTreeNode * i , QuadTreeNode * j ) {
 	
 	double formFactorij = 0 ;
-	int formFactorLoopIterations = 3 ;
+	int formFactorLoopIterations = 10 ;
 
 	//shoot formFactorLoopIterations # of rays from element i to element j
 	for ( int k = 0 ; k < formFactorLoopIterations ; ++k ) {
@@ -408,25 +335,37 @@ double Radiosity::findFormFactorTerm ( QuadTreeNode * i , QuadTreeNode * j ) {
 void Radiosity::findFormFactor() {
 
 	// Size of K matrix.
-	int n = numOfElements + scene->NumLights() ;
+	int n = numOfElements + scene->NumLights();
+	assert(n > 1);
 
 	// K matrix = M - P * FF
-	K = ( double ** ) malloc ( n * sizeof ( double * )) ;
+	K = (double**)malloc(n * sizeof(double*));
+	assert(K != NULL);
 
-	for ( int i = 0 ; i < n ; ++ i )
-		K[i] = ( double * ) malloc ( n * sizeof ( double ));
+	for (int i = 0; i < n; ++i) {
+		K[i] = (double*)malloc(n * sizeof(double));
+		assert(K[i] != NULL);
+	}
 
 	// form factor matrix
-	FF = ( double ** ) malloc ( n * sizeof ( double * )) ;
+	FF = (double**)malloc(n * sizeof(double*));
+	assert(FF != NULL);
 
-	for ( int i = 0 ; i < n ; ++ i )
-		FF[i] = ( double * ) malloc ( n * sizeof ( double ));
+	for (int i = 0; i < n; ++i) {
+		FF[i] = (double*)malloc(n * sizeof(double));
+		assert(FF[i] != NULL);
+	}
 
 	// identity matrix
 	double ** I = ( double ** ) malloc ( n * sizeof ( double * )) ;
+	assert(I != NULL);
 
-	for ( int i = 0 ; i < n ; ++ i )
-		I[i] = ( double * ) malloc ( n * sizeof ( double )); 
+	 
+	
+	for (int i = 0; i < n; ++i) {
+		I[i] = (double*)malloc(n * sizeof(double));
+		assert(I[i] != NULL);
+	}
 
 	// Find the form factor matrix.
 	// Iterate through all the triangles and find the FF with all other triangles in the scene.
@@ -434,10 +373,9 @@ void Radiosity::findFormFactor() {
 	vector<QuadTreeNode * > tempQuadVector ;
 
 	//for every object
-	for ( auto &v : quadTreeRoot->children ) {
+	for ( auto &v : quadTreeRoot->children ) 
 		returnFilledElementsOfObject ( v, tempQuadVector ) ;
-	}
-
+	
 	for ( int i = 0 ; i < numOfElements ; ++i ) {
 		for (  int j = 0 ; j < numOfElements  ; ++j ) {
 			//cout << "j : " << j << endl ;
@@ -460,7 +398,7 @@ void Radiosity::findFormFactor() {
 		//for ( int j = 0 ; j < numOfElements ; ++ j ) {
 			//FF[i][n-1] = findFormFactorTermWithLight ( tempQuadVector[i], tempQuadVector[j] ) ;
 			FF[i][n-1] = findFormFactorTermWithLight ( tempQuadVector[i] ) ;
-			cout << "FF light value : " << FF[i][n-1] << endl;
+			//cout << "FF light value : " << FF[i][n-1] << endl;
 		//}	
 	}
 
@@ -488,7 +426,7 @@ void Radiosity::findFormFactor() {
 	for ( int i = 0 ; i < n ; ++ i ) {
 		K[n-1][i] = I[n-1][i] - FF[n-1][i] ;
 	}
-
+	/*
 	string outFileString = "FF.txt" ;
 	std::ofstream myfile;
 	myfile.open (outFileString.c_str());
@@ -517,7 +455,7 @@ void Radiosity::findFormFactor() {
 		myfile << _1 ;
 	}
 	myfile.close();
-
+	*/
     // delete I
 	for (int i = 0 ; i < n ; ++ i ) 
 		//delete[] I[i] ;
@@ -602,7 +540,7 @@ void Radiosity::progressiveRefinement() {
 		}
 		dB[indx] = 0.0 ;
 	}
-
+	/*
 	// make an output B solutions file
 	string outFileString = "B.txt" ;
 	std::ofstream myfile;
@@ -618,10 +556,7 @@ void Radiosity::progressiveRefinement() {
 	}
 		
 	myfile.close();
-
-	//delete [] E ;
-	//delete [] dB ;
-	//delete [] tempdBArea ;
+	*/
 	free ( E );
 	free ( dB);
 	free (tempdBArea ) ;

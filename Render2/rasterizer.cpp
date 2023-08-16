@@ -221,6 +221,16 @@ void Rasterizer::Serial_Normal_Raster ( RasterDetails & rasterD ) const {
 					cout << rubout( i ) << (i+1);
 					cout.flush();
 				for ( unsigned int j = 0 ; j < rasterD.cam->x_res ; ++ j ) {
+					// on irfanview, j = X and i = Y
+					if (i == 118 && j == 272) {
+						int fdgfdg = 4;
+						
+					}
+					if (i == 120 && j == 242) {
+						int fdgfdg = 4;
+
+					}
+
 					ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );
 					I(i,j) = ToneMap( rasterD.scene->Trace ( ray ) );
 				}
@@ -389,7 +399,7 @@ void Rasterizer::Depth_Of_Field_Effect(RasterDetails & rasterD , const int idx, 
 				 }
 			 }
 			 //cout << "here" << endl;
-			 contributedDOF /= ( rasterD.DistLensDim * rasterD.DistLensDim );
+			 contributedDOF /= (static_cast<int64_t>(rasterD.DistLensDim) * rasterD.DistLensDim );
 			 I(i,j) = ToneMap( contributedDOF );
 			 contributedDOF.red = contributedDOF.green = contributedDOF.blue = 0.0;
 		 }

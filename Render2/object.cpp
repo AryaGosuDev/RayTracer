@@ -3,9 +3,9 @@
 struct InterceptInfo { // Intermediate data structure for the intersect function
 
 	bool found ;
-	const Ray * ray ;
-	HitInfo * hitinfo ;
-	BSP_Node * root ;
+	const Ray * ray = NULL ;
+	HitInfo * hitinfo = NULL ;
+	BSP_Node * root = NULL ;
 	Scene tempScene;
 	float u,v;
 };
@@ -41,20 +41,20 @@ double triangle_intersection(const Vec3& orig,
 
 	// Ray is parallel to plane
 	if (det < 1e-8 && det > -1e-8) {
-		return 0;
+		return 0.0;
 	}
 
 	// Check if the triange is behind the ray
-	double inv_det = 1 / det;
+	double inv_det = 1.0 / det;
 	Vec3 tvec = orig - v0;
 	u = (tvec * pvec ) * inv_det;
 	if (u < 0.0f || u > 1.0f) 
-		return 0;
+		return 0.0;
 	
 	Vec3 qvec = tvec ^ e1;
 	v = (dir * qvec ) * inv_det;
-	if (v < 0.0 || u + v > 1.0f)
-		return 0;
+	if (v < 0.0f || u + v > 1.0f)
+		return 0.0;
 	
 	return (e2 * qvec) * inv_det;
 }
@@ -62,67 +62,108 @@ double triangle_intersection(const Vec3& orig,
 // Recursive depth first search intersect test ray with triangle
 bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){ 
 
-	double distanceToIntersection = 0;
-	
+	double distanceToIntersection = 0.0;
+	BSP_Node* hyperPlane = current;
 	//leaf node, recursion base case
-	if ( !info.found && current != NULL && current->left == NULL && current->right == NULL ) { 
-		distanceToIntersection = triangle_intersection( info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v );
+	if ( !info.found && hyperPlane != NULL && hyperPlane->left == NULL && hyperPlane->right == NULL ) {
+		distanceToIntersection = triangle_intersection( info.ray->origin, info.ray->direction, hyperPlane->triNormal, hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.u, info.v );
 		if ( distanceToIntersection > 0.0 ){
-			updateHitInfo ( distanceToIntersection, info, current );
+			updateHitInfo ( distanceToIntersection, info, hyperPlane);
 			return true;
 		}
 	}
-	else if ( !info.found && current != NULL ) {
+	else if ( !info.found && hyperPlane != NULL ) {
+		
 		
 		//inner node, find the side of the hyperplane that the ray origin resides
-		int side = sideTest3d( current->triVert1, current->triVert2, current->triVert3, info.ray->origin );
+		int side = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.ray->origin );
 
 		if ( side == 0 ) {
-			side = sideTest3d( current->triVert1, current->triVert2, current->triVert3, info.ray->origin + (info.ray->direction * 1.1 ) );
+			side = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.ray->origin + (info.ray->direction * 1.1));
 			if ( side == -1 ){
-				intersectTreeTraversal ( info , current->right );
-				intersectTreeTraversal ( info , current->left );
-			}
-			else if ( side == 1 ){
-				intersectTreeTraversal ( info , current->left );
-				intersectTreeTraversal ( info , current->right );
+				intersectTreeTraversal ( info , hyperPlane->right );
+				intersectTreeTraversal ( info , hyperPlane->left );
 			}
 			else {
-				//cout << "error in intersectTreeTraversal, side test result error : the ray being shot it co-planar with the plane shooting the ray " << endl << endl ;
-				//exit(0);
+				intersectTreeTraversal(info, hyperPlane->left);
+				intersectTreeTraversal(info, hyperPlane->right);
+			}
+			/*
+			else if ( side == 1 ){
+				intersectTreeTraversal ( info , hyperPlane->left );
+				intersectTreeTraversal ( info , hyperPlane->right );
+			}
+			else {
+				//cout << "error in intersectTreeTraversal, side test result error : the ray being shot is co-planar with the plane shooting the ray " << endl << endl ;
 				return false;
 			}
+			*/
 		}
 		else if ( side == -1 ){
-			
-			intersectTreeTraversal ( info , current->right );
-			intersectTreeTraversal ( info , current->left );
-
-			distanceToIntersection = triangle_intersection( info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v );
-			
-			if ( distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection  ) {
-				updateHitInfo ( distanceToIntersection, info, current );
-				return true;
+			if (intersectTreeTraversal(info, hyperPlane->right)) {
+				distanceToIntersection = triangle_intersection(info.ray->origin, info.ray->direction, hyperPlane->triNormal, hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.u, info.v);
+				if (distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection) {
+					updateHitInfo(distanceToIntersection, info, hyperPlane);
+					return true;
+				}
+			}
+			if (intersectTreeTraversal(info, hyperPlane->left)) {
+				distanceToIntersection = triangle_intersection(info.ray->origin, info.ray->direction, hyperPlane->triNormal, hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.u, info.v);
+				if (distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection) {
+					updateHitInfo(distanceToIntersection, info, hyperPlane);
+					return true;
+				}
 			}
 		}
 		else if ( side == 1 ){
 			
-			intersectTreeTraversal ( info , current->left );
-			intersectTreeTraversal ( info , current->right );
+			if (intersectTreeTraversal(info, hyperPlane->left)) {
+				distanceToIntersection = triangle_intersection(info.ray->origin, info.ray->direction, hyperPlane->triNormal, hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.u, info.v);
+				if (distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection) {
+					updateHitInfo(distanceToIntersection, info, hyperPlane);
+					return true;
+				}
+			}
+			if (intersectTreeTraversal(info, hyperPlane->right)) {
+				distanceToIntersection = triangle_intersection(info.ray->origin, info.ray->direction, hyperPlane->triNormal, hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.u, info.v);
 
-			distanceToIntersection = triangle_intersection( info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v );
-			
-			if ( distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection ) {
-				updateHitInfo ( distanceToIntersection, info, current );
-				return true;
+				if (distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection) {
+					updateHitInfo(distanceToIntersection, info, hyperPlane);
+					return true;
+				}
 			}
 		}
 		else {
-			
 			throw std::logic_error ( "error in intersectTreeTraversal, side test result error");
-			//exit(0); 
-			
 		}
+	}
+	return false;
+}
+
+// Recursive depth first search intersect test ray with triangle
+bool intersectTreeTraversalNoAccel(InterceptInfo& info, BSP_Node* current) {
+	double distanceToIntersection = 0;
+
+	//leaf node, recursion base case
+	if ( current != NULL && current->left == NULL && current->right == NULL) {
+		distanceToIntersection = triangle_intersection(info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v);
+		if (distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection) {
+			updateHitInfo(distanceToIntersection, info, current);
+			return true;
+		}
+	}
+	else if ( current != NULL) {
+
+		intersectTreeTraversalNoAccel(info, current->left);
+		intersectTreeTraversalNoAccel(info, current->right);
+		/*
+		distanceToIntersection = triangle_intersection(info.ray->origin, info.ray->direction, current->triNormal, current->triVert1, current->triVert2, current->triVert3, info.u, info.v);
+
+		if (distanceToIntersection > 0.0 && info.hitinfo->distance > distanceToIntersection) {
+			updateHitInfo(distanceToIntersection, info, current);
+			return true;
+		}
+		*/
 	}
 	return false;
 }
@@ -130,18 +171,15 @@ bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){
 bool Object::Intersect (const Ray & ray, HitInfo & hitinfo ) const {
 
 	InterceptInfo info ;
-	info.found = false;
 	Scene thisScene;
+	info.found = false;
 	info.root = this->root;
 	info.tempScene = thisScene;
 	info.ray = &ray ;
 	info.hitinfo = &hitinfo ;
 
-	intersectTreeTraversal (info, info.root ) ;
-
-	if (info.found == true ) {
-		//cout << Sample::debug_line << endl;
-	}
+	//intersectTreeTraversal (info, info.root ) ;
+	intersectTreeTraversalNoAccel(info, info.root);
 
 	return info.found;
 }

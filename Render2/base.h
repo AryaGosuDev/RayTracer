@@ -13,6 +13,7 @@
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
+#include <queue>
 
 #include <math.h>
 
@@ -57,6 +58,7 @@ static const double
 	Epsilon1    = 1.0E-4,
 	Epsilon2	= 1.0E-3,
 	Epsilon3	= 1.0E-2,
+	Epsilon4    = 1.0E-1,
 	OnePlusEps  = 1.0 + Epsilon,
 	OneMinusEps = 1.0 - Epsilon;
 

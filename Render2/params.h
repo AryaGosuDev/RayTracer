@@ -30,7 +30,7 @@ class ParamReader {
 
 inline void addUniqueNormals ( vector<vector<Vec3>> & adjMatrix, int & index, Vec3 & _normal ){
 
-	for ( auto normal : adjMatrix[index] ) {
+	for ( auto &  normal : adjMatrix[index] ) {
 		if ( Length(normal - _normal ) < Epsilon ) return ;
 	}
 

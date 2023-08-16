@@ -19,7 +19,7 @@ struct PPM_Image {
    ~PPM_Image() { delete[] pixels; }
     bool Read ( std::string file_name );
     bool Write( std::string file_name );
-    inline  Pixel &operator()( int i, int j ) { return *( pixels + ( i * width + j ) ); }  
+    inline  Pixel &operator()( int i, int j ) { return *( pixels +  (static_cast<int64_t>(i) * width + j ) ); }
     Pixel  *pixels;
     int     width;
     int     height;

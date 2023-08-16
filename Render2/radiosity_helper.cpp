@@ -5,23 +5,6 @@
 #include "radiosity_helper.h"
 #include <stack>
 
-
-struct FormFactorStackNode {
-
-	FormFactorStackNode ( QuadTreeNode * _quadTreeNode  ) {
-		quadTreeNode = _quadTreeNode;
-		if ( quadTreeNode->children.size() > 0 ) internal = true ; 
-		else internal = false;
-
-		visited = false;
-	}
-
-	QuadTreeNode * quadTreeNode;
-	bool visited ;
-	bool internal; 
-};
-
-
 // find the intersections of 2 adj triangles. Adds them to the triangle adj list along with intersections.
 inline void findTriangleAdjPoints ( QuadTreeNode * _1 , QuadTreeNode * _2, EdgeList * _EL1, EdgeList * _EL2  ) {
 

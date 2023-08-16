@@ -35,49 +35,41 @@ static bool Skip( char *line )
 	return true;
 }
 
-// Make the DoT file to visualize the tree
-void makeDotFile ( BSP_Node * v, string &nodeString, string &connectionString ) {
+void generateDotFile(BSP_Node* root, std::ofstream& out) {
+	if (root == nullptr) return;
 
-	// Only called once at the beginning of the function. Output the normal of the face.
-	if ( nodeString == "" ) {
-		//std::ofstream myfile;
-		//myfile.open ("outGraph.dot");
-		nodeString = "digraph g { graph []; node [ fontsize=\"16\" shape = \"ellipse\"]; edge [];" ;
-		nodeString += "\"node" + std::to_string(v->node) + "\" [ label = \"" + std::to_string(v->node) + " | " + 
-								 std::to_string(v->triNormal.x) + " " + 
-								 std::to_string(v->triNormal.y) + " " +
-								 std::to_string(v->triNormal.z) + " " + "\" shape = \"record\" ];";
-		if ( v->left != NULL ){
-			connectionString += "\"node" + std::to_string(v->node) + "\"-> \"node" + std::to_string(v->left->node) + "\" [ label = \"left\"];";
-			makeDotFile ( v->left, nodeString, connectionString );
-		}
-		if ( v->right != NULL ){
-			connectionString += "\"node" + std::to_string(v->node) + "\"-> \"node" + std::to_string(v->right->node) + "\" [ label = \"right\"];";
-			makeDotFile ( v->right, nodeString, connectionString);
-		}
-
-		connectionString += "}";
-	
-		//myfile << nodeString;
-		//myfile << connectionString;
-		//myfile.close();
+	// Write the node itself, using a label that includes all the values
+	out << "    node" << root->node << " [label=\"";
+	out << root->node << "\n" << root->triNormal << "," << root->triVert1 << "," << root->triVert2 << "," << root->triVert3;
+	out << "\"];\n";
+	/*
+	for (int i = 0; i < node->values.size(); ++i) {
+		if (i > 0) out << ",";
+		out << node->values[i];
 	}
-	else{
-
-		nodeString += "\"node" + std::to_string(v->node) + "\" [ label = \"" + std::to_string(v->node) + " | " +
-								 std::to_string(v->triNormal.x) + " " + 
-								 std::to_string(v->triNormal.y) + " " +
-								 std::to_string(v->triNormal.z) + " " + "\" shape = \"record\" ];";
-
-		if ( v->left != NULL ) {
-			connectionString += "\"node" + std::to_string(v->node) + "\"-> \"node" + std::to_string(v->left->node) + "\" [ label = \"left\"];";
-			makeDotFile ( v->left, nodeString, connectionString );
-		}
-		if ( v->right != NULL ) {
-			connectionString += "\"node" + std::to_string(v->node) + "\"-> \"node" + std::to_string(v->right->node) + "\" [ label = \"right\"];";
-			makeDotFile ( v->right, nodeString, connectionString);
-		}
+	out << "\"];\n";
+	*/
+	// Write edges to the left and right children
+	if (root->left != nullptr) {
+		generateDotFile(root->left, out);
+		out << "    node" << root->node << " -> node" << root->left->node << ";\n";
 	}
+	if (root->right != nullptr) {
+		generateDotFile(root->right, out);
+		out << "    node" << root->node << " -> node" << root->right->node << ";\n";
+	}
+}
+
+void createDotFile(BSP_Node* root, const std::string& filename) {
+	std::ofstream file(filename);
+	if (!file.is_open()) {
+		std::cerr << "Unable to open file " << filename << std::endl;
+		return;
+	}
+	file << "digraph G {\n";
+	generateDotFile(root, file);
+	file << "}\n";
+	file.close();
 }
 
 bool IntersectEdgeWithPlane( const Vec3 & triVert2, const Vec3 & N, EdgeList & e, Vec3 & intersection) {
@@ -144,8 +136,10 @@ Color Scene::Trace( const Ray &ray ) const {
 	}
 	else if( Cast( ray, hitinfo ) ) {
 		if( hitinfo.object == NULL ) return Green;
-		if( this->shader != NULL )
-			 color = this->shader->Shade( *this, hitinfo ); // Shade the scene with the scene's shader and parameters. TODO : add shading params
+		if (this->shader != NULL) {
+			color = this->shader->Shade(*this, hitinfo); // Shade the scene with the scene's shader and parameters. TODO : add shading params
+			//color = Red;
+		}
 		else 
 			cout << "Scene::Trace : there is no shader defined" << endl ; 
 	}
@@ -162,6 +156,7 @@ Color Scene::Trace( const Ray &ray ) const {
 // Finds the closest point of intersection among all the objects.
 // The information about the collision is stored in hitinfo.
 bool Scene::Cast( const Ray &ray, HitInfo &hitinfo ) const {
+	/*
 	double cmprDistance = 0 ;
 	HitInfo tempInfo ;
 
@@ -189,6 +184,25 @@ bool Scene::Cast( const Ray &ray, HitInfo &hitinfo ) const {
 	hitinfo = tempInfo ;
 
 	return ((hitinfo.object != 0) ?  true :  false);
+	*/
+
+	double closestDistance = Infinity;
+	Object* closestObject = nullptr;
+
+	for (const Object* obj : sceneObjects) {
+		if (obj == hitinfo.ignore) continue;
+		HitInfo currentHitInfo; currentHitInfo.ignore = NULL; currentHitInfo.distance = Infinity; // Follow the full ray.
+		if (obj->Intersect(ray, currentHitInfo)) {
+			if (currentHitInfo.distance < closestDistance) {
+				closestDistance = currentHitInfo.distance;
+				hitinfo = currentHitInfo;
+				hitinfo.object = obj;
+				hitinfo.ray = ray; // Save the ray in world coordinates.
+				closestObject = const_cast<Object *> ( obj);
+			}
+		}
+	}
+	return (closestObject != NULL);
 }
 
 bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
@@ -369,7 +383,6 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 
 		line_num = 0 ;
 		int numOfObj = 0 ;
-		int numOfTriangle = 0;
 
 		Vec3 tempVec ;
 		Vec2 tempVec2;
@@ -421,9 +434,9 @@ bool Scene::BuildScene ( string fileName, string fileObj, Camera &camera ) {
 				}
 				else if ( get["f"] ){
 					adjMatrix.resize((*currentIteratorObject)->points.size());
-					if ( !get.returnCoordOfFace ( *(*currentIteratorObject), numOfTriangle,adjMatrix  )) //TODO assign each node to it's parent object
+					if ( !get.returnCoordOfFace ( *(*currentIteratorObject), BSP_Node::numOfTriangle,adjMatrix  )) //TODO assign each node to it's parent object
 						cout << "Error retrieving face at line " << line_num << endl;
-					numOfTriangle++;
+					BSP_Node::numOfTriangle++;
 				}
 				else
 					cout << "Unidentified ID in obj file @ line : " << line_num << " : " << get.returnString() <<  endl;	
@@ -451,26 +464,15 @@ bool Scene::BuildBSP () {
 	for ( auto sceneObjectIterator = sceneObjects.begin() ; sceneObjectIterator != sceneObjects.end() ; ++sceneObjectIterator ) {
 		
 		//TODO : Turned off random triangles for Radiosity debugging
-		randomizeTriangles ( (*sceneObjectIterator)->triangles);
+		//randomizeTriangles ( (*sceneObjectIterator)->triangles);
 		vector < BSP_Node * > tris ;
 
 		for ( unsigned int i = 0 ; i < (*sceneObjectIterator)->triangles.size(); i++ )
 			tris.push_back( &(*sceneObjectIterator)->triangles[i] ) ;
 
-		(*sceneObjectIterator)->root = buildBSPTree ( tris );
-		/*
-		string _1 = "", _2 = "" ;
-
-		string outFileString = (*sceneObjectIterator)->nameOfObject + "outGraph.dot" ;
-		std::ofstream myfile;
-		myfile.open (outFileString.c_str());
-
-		//makeDotFile ( (*sceneObjectIterator)->root , _1, _2 );
-
-		myfile << _1;
-		myfile << _2;
-		myfile.close();
-		*/
+		//(*sceneObjectIterator)->root = buildBSPTree ( tris );
+		(*sceneObjectIterator)->root = buildBSPTreeNoSplit(tris);
+		createDotFile((*sceneObjectIterator)->root, (*sceneObjectIterator)->nameOfObject + "_objectTree.dot");
 	}	
 	return true;
 }
@@ -529,16 +531,24 @@ int TestbuildBSPTree(BSP_Node * hyperPlane , vector<BSP_Node*>& v) {
 BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
 	BSP_Node* hyperPlane = NULL;
 	if (v.size() > 0) hyperPlane = v[0];
-	cout << "iter " << endl;
 	if ( v.size() == 0 )		
 		return NULL;
 	if ( v.size() <= 1){ //leaf node
-		return hyperPlane; //return the node that is by itself.
+		return new BSP_Node(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, 
+			                hyperPlane->triNormal, BSP_Node::numOfTriangle++); //return the node that is by itself.
 	}
 	else{
 		vector<BSP_Node *> vRight ;
 		vector<BSP_Node *> vLeft;
-		vector<BSP_Node*> newTriangle;
+		vector<BSP_Node* > newTriangle;
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dis(0, 1);
+		BSP_Node * hyperPlaneLeaf = new BSP_Node(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, 
+			                                     hyperPlane->triNormal, BSP_Node::numOfTriangle++);
+		if (dis(gen) == 0) vLeft.push_back(hyperPlaneLeaf);
+		else vRight.push_back(hyperPlaneLeaf);
 		
 		for ( unsigned int i = 1  ; i < v.size() ; i ++ ){
 			
@@ -597,16 +607,16 @@ BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
 				//create two new triangles
 				BSP_Node* newTri1;  BSP_Node* newTri2;
 				if (sign1 == 0) { 
-					newTri1 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert3, v[i]->triNormal);
-					newTri2 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert2, v[i]->triNormal);
+					newTri1 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert3, v[i]->triNormal, BSP_Node::numOfTriangle++);
+					newTri2 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert2, v[i]->triNormal, BSP_Node::numOfTriangle++);
 				}
 				if (sign2 == 0) {
-					newTri1 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert3, v[i]->triNormal);
-					newTri2 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert1, v[i]->triNormal);
+					newTri1 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert3, v[i]->triNormal, BSP_Node::numOfTriangle++);
+					newTri2 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert1, v[i]->triNormal, BSP_Node::numOfTriangle++);
 				}
 				if (sign3 == 0) {
-					newTri1 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert1, v[i]->triNormal);
-					newTri2 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert2, v[i]->triNormal);
+					newTri1 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert1, v[i]->triNormal, BSP_Node::numOfTriangle++);
+					newTri2 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert2, v[i]->triNormal, BSP_Node::numOfTriangle++);
 				}
 				newTriangle.push_back(newTri1); newTriangle.push_back(newTri2);
 				v.push_back(newTri1); v.push_back(newTri2);
@@ -650,9 +660,9 @@ BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
 					vertex2 = v[i]->triVert2;
 				}
 				// one side will be a quad, must also break the quad
-				BSP_Node* newTri1 = new BSP_Node(loneVertex, intersections[0], intersections[1], v[i]->triNormal);
-				BSP_Node* newTri2 = new BSP_Node(vertex1, vertex2, intersections[0], v[i]->triNormal);
-				BSP_Node* newTri3 = new BSP_Node(vertex2, intersections[0], intersections[1], v[i]->triNormal);
+				BSP_Node* newTri1 = new BSP_Node(loneVertex, intersections[0], intersections[1], v[i]->triNormal, BSP_Node::numOfTriangle++);
+				BSP_Node* newTri2 = new BSP_Node(vertex1, vertex2, intersections[0], v[i]->triNormal, BSP_Node::numOfTriangle++);
+				BSP_Node* newTri3 = new BSP_Node(vertex2, intersections[0], intersections[1], v[i]->triNormal, BSP_Node::numOfTriangle++);
 				newTriangle.push_back(newTri1); newTriangle.push_back(newTri2); newTriangle.push_back(newTri3);
 				v.push_back(newTri1); v.push_back(newTri2); v.push_back(newTri3);
 			}
@@ -673,3 +683,51 @@ BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
 		return hyperPlane;
 	}
 }
+
+// Build the Binary space partition tree recursivly using auto partitioning.
+// If a triangle's vertice are between 0 and 3 then it is on the left side of the Hyperplane.
+// If a triangle's vertices are between 0 and -3 then it is on the right side of the Hyperplane.
+// Otherwise the triangle is coplaner with the Hyperplane. In which case, randomly add to the right or left side.
+// Base case : the left or right items in the list is either 0 or 1
+BSP_Node* Scene::buildBSPTreeNoSplit(vector<BSP_Node*>& v) {
+	if (v.size() == 0)
+		return NULL;
+	if (v.size() <= 1) { //leaf node	
+		return v[0]; //return the node that is by itself.
+	}
+	else {
+		vector<BSP_Node*> vRight;
+		vector<BSP_Node*> vLeft;
+		BSP_Node* hyperPlaneLeaf = new BSP_Node(v[0]->triVert1, v[0]->triVert2, v[0]->triVert3,
+			v[0]->triNormal, BSP_Node::numOfTriangle++);
+		if (rand() % 2 == 0) vLeft.push_back(hyperPlaneLeaf);
+		else vRight.push_back(hyperPlaneLeaf);
+		for (unsigned int i = 1; i < v.size(); i++) {
+
+			int result = sideTest3d(v[0]->triVert1, v[0]->triVert2, v[0]->triVert3, v[i]->triVert1);
+			result += sideTest3d(v[0]->triVert1, v[0]->triVert2, v[0]->triVert3, v[i]->triVert2);
+			result += sideTest3d(v[0]->triVert1, v[0]->triVert2, v[0]->triVert3, v[i]->triVert3);
+
+			if (result == 0) {
+				if (rand() % 2 == 0) vLeft.push_back(v[i]); //the point is on the plane, randomly choose a side to place the triangle. It will eventually be visited in the painters algorithm.
+				else vRight.push_back(v[i]);
+			}
+			else if (result <= 3 && result > 0) { 
+				vLeft.push_back(v[i]);
+			}
+			else if (result >= -3 && result < 0) { 
+				vRight.push_back(v[i]);
+			}
+			else {
+				cout << "Error buildBSPTree" << endl;
+				return NULL;
+			}
+		}
+
+		v[0]->left = buildBSPTreeNoSplit(vLeft);
+		v[0]->right = buildBSPTreeNoSplit(vRight);
+
+		return v[0];
+	}
+}
+
