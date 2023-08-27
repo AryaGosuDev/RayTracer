@@ -36,7 +36,7 @@ const struct RasterDetails {
 	Camera * cam ;
 	PPM_Image * I ;
 	
-	RasterDetails() ;
+	RasterDetails() = default;
 	RasterDetails(Scene & _scene, Camera & _cam, string & _in_file_name, PPM_Image & _I  ) {
 
 			xmin = _cam.x_win.min ;
@@ -222,13 +222,9 @@ void Rasterizer::Serial_Normal_Raster ( RasterDetails & rasterD ) const {
 					cout.flush();
 				for ( unsigned int j = 0 ; j < rasterD.cam->x_res ; ++ j ) {
 					// on irfanview, j = X and i = Y
-					if (i == 118 && j == 272) {
+					if (i == 117 && j == 272) {
 						int fdgfdg = 4;
 						
-					}
-					if (i == 120 && j == 242) {
-						int fdgfdg = 4;
-
 					}
 
 					ray.direction = Unit( rasterD.O + (j + 0.5) * rasterD.dR - (i + 0.5) * rasterD.dU  );

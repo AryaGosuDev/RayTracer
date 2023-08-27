@@ -40,15 +40,15 @@ void generateDotFile(BSP_Node* root, std::ofstream& out) {
 
 	// Write the node itself, using a label that includes all the values
 	out << "    node" << root->node << " [label=\"";
-	out << root->node << "\n" << root->triNormal << "," << root->triVert1 << "," << root->triVert2 << "," << root->triVert3;
-	out << "\"];\n";
-	/*
-	for (int i = 0; i < node->values.size(); ++i) {
-		if (i > 0) out << ",";
-		out << node->values[i];
+	out << root->node << "\n" << root->triNormal << "\n" << root->triVert1 << "\n" << root->triVert2 << "\n" << root->triVert3 << "\n";
+	out << Area(root->triVert1, root->triVert2, root->triVert3) << "\n";
+	if (root->isSplit) out << "Split" << "\n";
+	out << "\"";
+	// Check if it's a leaf node (has no children)
+	if (root->left == nullptr && root->right == nullptr) {
+		out << ", color=lightblue, style=filled";  // Apply blue fill color to leaf nodes
 	}
-	out << "\"];\n";
-	*/
+	out << "];\n";
 	// Write edges to the left and right children
 	if (root->left != nullptr) {
 		generateDotFile(root->left, out);
@@ -77,8 +77,9 @@ bool IntersectEdgeWithPlane( const Vec3 & triVert2, const Vec3 & N, EdgeList & e
 	const double denom = e.LineV * N;
 	if (fabs(denom) < Epsilon) return false;
 	const double d = N * triVert2;
-	const double t = (d - (e.LineQ * N) )/ denom;
-	if (t < Epsilon || t > OneMinusEps) return false;
+	//const double t = (d - (e.LineQ * N) )/ denom;
+	const double t = ((triVert2 - e.LineQ ) * N) / denom;
+	if (t < 0.0 || t > 1.0) return false;
 	intersection = e.LineQ + (t * e.LineV);
 	return true;
 }
@@ -470,8 +471,8 @@ bool Scene::BuildBSP () {
 		for ( unsigned int i = 0 ; i < (*sceneObjectIterator)->triangles.size(); i++ )
 			tris.push_back( &(*sceneObjectIterator)->triangles[i] ) ;
 
-		//(*sceneObjectIterator)->root = buildBSPTree ( tris );
-		(*sceneObjectIterator)->root = buildBSPTreeNoSplit(tris);
+		(*sceneObjectIterator)->root = buildBSPTree ( tris );
+		//(*sceneObjectIterator)->root = buildBSPTreeNoSplit(tris);
 		createDotFile((*sceneObjectIterator)->root, (*sceneObjectIterator)->nameOfObject + "_objectTree.dot");
 	}	
 	return true;
@@ -499,9 +500,7 @@ int TestbuildBSPTree(BSP_Node * hyperPlane , vector<BSP_Node*>& v) {
 	if (v.size() == 0)
 		return result;
 	else {
-		
 		for (unsigned int i = 0; i < v.size(); i++) {
-
 			// Get the signs for all vertices of the triangle with respect to the plane
 			int sign1 = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, v[i]->triVert1);
 			int sign2 = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, v[i]->triVert2);
@@ -512,12 +511,10 @@ int TestbuildBSPTree(BSP_Node * hyperPlane , vector<BSP_Node*>& v) {
 			int negativeCount = (sign1 < 0) + (sign2 < 0) + (sign3 < 0);
 			int onPlaneCount = (sign1 == 0) + (sign2 == 0) + (sign3 == 0);
 
-			if (onPlaneCount == 1 && positiveCount == 1 && negativeCount == 1) {
+			if (onPlaneCount == 1 && positiveCount == 1 && negativeCount == 1) 
 				result++;
-			}
-			else if ((positiveCount == 1 && negativeCount == 2) || (negativeCount == 1 && positiveCount == 2)) {
+			else if ((positiveCount == 1 && negativeCount == 2) || (negativeCount == 1 && positiveCount == 2)) 
 				result++;
-			}
 		}
 		return result;
 	}
@@ -533,11 +530,13 @@ BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
 	if (v.size() > 0) hyperPlane = v[0];
 	if ( v.size() == 0 )		
 		return NULL;
-	if ( v.size() <= 1){ //leaf node
+	if ( v.size() <= 1 && hyperPlane != NULL ){ //leaf node
+		return v[0];
 		return new BSP_Node(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, 
 			                hyperPlane->triNormal, BSP_Node::numOfTriangle++); //return the node that is by itself.
 	}
 	else{
+		if (hyperPlane == NULL) return NULL;
 		vector<BSP_Node *> vRight ;
 		vector<BSP_Node *> vLeft;
 		vector<BSP_Node* > newTriangle;
@@ -607,16 +606,16 @@ BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
 				//create two new triangles
 				BSP_Node* newTri1;  BSP_Node* newTri2;
 				if (sign1 == 0) { 
-					newTri1 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert3, v[i]->triNormal, BSP_Node::numOfTriangle++);
-					newTri2 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert2, v[i]->triNormal, BSP_Node::numOfTriangle++);
+					newTri1 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert3, v[i]->triNormal, BSP_Node::numOfTriangle++, true);
+					newTri2 = new BSP_Node(v[i]->triVert1, intersection, v[i]->triVert2, v[i]->triNormal, BSP_Node::numOfTriangle++, true);
 				}
 				if (sign2 == 0) {
-					newTri1 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert3, v[i]->triNormal, BSP_Node::numOfTriangle++);
-					newTri2 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert1, v[i]->triNormal, BSP_Node::numOfTriangle++);
+					newTri1 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert3, v[i]->triNormal, BSP_Node::numOfTriangle++, true);
+					newTri2 = new BSP_Node(v[i]->triVert2, intersection, v[i]->triVert1, v[i]->triNormal, BSP_Node::numOfTriangle++, true);
 				}
 				if (sign3 == 0) {
-					newTri1 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert1, v[i]->triNormal, BSP_Node::numOfTriangle++);
-					newTri2 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert2, v[i]->triNormal, BSP_Node::numOfTriangle++);
+					newTri1 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert1, v[i]->triNormal, BSP_Node::numOfTriangle++, true);
+					newTri2 = new BSP_Node(v[i]->triVert3, intersection, v[i]->triVert2, v[i]->triNormal, BSP_Node::numOfTriangle++, true);
 				}
 				newTriangle.push_back(newTri1); newTriangle.push_back(newTri2);
 				v.push_back(newTri1); v.push_back(newTri2);
@@ -660,9 +659,18 @@ BSP_Node * Scene::buildBSPTree ( vector<BSP_Node *>  & v ) {
 					vertex2 = v[i]->triVert2;
 				}
 				// one side will be a quad, must also break the quad
-				BSP_Node* newTri1 = new BSP_Node(loneVertex, intersections[0], intersections[1], v[i]->triNormal, BSP_Node::numOfTriangle++);
-				BSP_Node* newTri2 = new BSP_Node(vertex1, vertex2, intersections[0], v[i]->triNormal, BSP_Node::numOfTriangle++);
-				BSP_Node* newTri3 = new BSP_Node(vertex2, intersections[0], intersections[1], v[i]->triNormal, BSP_Node::numOfTriangle++);
+				BSP_Node* newTri1 = new BSP_Node(loneVertex, intersections[0], intersections[1], v[i]->triNormal, BSP_Node::numOfTriangle++, true);
+				BSP_Node* newTri2; BSP_Node* newTri3;
+				Vec3 side1 = (loneVertex - vertex2); Vec3 side2 = (intersections[0] - vertex2); 
+				side1 = Unit(side1); side2 = Unit(side2);
+				if ( side1 == side2 ) {
+					newTri2 = new BSP_Node(vertex1, vertex2, intersections[1], v[i]->triNormal, BSP_Node::numOfTriangle++, true);
+					newTri3 = new BSP_Node(vertex2, intersections[0], intersections[1], v[i]->triNormal, BSP_Node::numOfTriangle++, true);
+				}
+				else {
+					newTri2 = new BSP_Node(vertex1, vertex2, intersections[0], v[i]->triNormal, BSP_Node::numOfTriangle++, true);
+					newTri3 = new BSP_Node(vertex2, intersections[0], intersections[1], v[i]->triNormal, BSP_Node::numOfTriangle++, true);
+				}
 				newTriangle.push_back(newTri1); newTriangle.push_back(newTri2); newTriangle.push_back(newTri3);
 				v.push_back(newTri1); v.push_back(newTri2); v.push_back(newTri3);
 			}

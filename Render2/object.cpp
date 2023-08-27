@@ -7,7 +7,7 @@ struct InterceptInfo { // Intermediate data structure for the intersect function
 	HitInfo * hitinfo = NULL ;
 	BSP_Node * root = NULL ;
 	Scene tempScene;
-	float u,v;
+	double u,v;
 };
 
 inline void updateHitInfo ( double & distanceToIntersection, InterceptInfo & info, BSP_Node * current ) {
@@ -32,7 +32,7 @@ double triangle_intersection(const Vec3& orig,
 							 const Vec3& v0, 
 							 const Vec3& v1, 
 							 const Vec3& v2, 
-							 float &u, float & v ) {
+							 double &u, double & v ) {
 	Vec3 e1 = v1 - v0;
 	Vec3 e2 = v2 - v0;
 	// Calculate planes normal vector
@@ -79,22 +79,21 @@ bool intersectTreeTraversal (InterceptInfo & info, BSP_Node * current ){
 		int side = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.ray->origin );
 
 		if ( side == 0 ) {
-			side = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.ray->origin + (info.ray->direction * 1.1));
+			//side = sideTest3d(hyperPlane->triVert1, hyperPlane->triVert2, hyperPlane->triVert3, info.ray->origin + (info.ray->direction * 1.1));
+			intersectTreeTraversal(info, hyperPlane->left);
+			intersectTreeTraversal(info, hyperPlane->right);
+			/*
 			if ( side == -1 ){
 				intersectTreeTraversal ( info , hyperPlane->right );
 				intersectTreeTraversal ( info , hyperPlane->left );
 			}
-			else {
+			else if ( side == 1) {
 				intersectTreeTraversal(info, hyperPlane->left);
 				intersectTreeTraversal(info, hyperPlane->right);
 			}
-			/*
-			else if ( side == 1 ){
-				intersectTreeTraversal ( info , hyperPlane->left );
-				intersectTreeTraversal ( info , hyperPlane->right );
-			}
+			
 			else {
-				//cout << "error in intersectTreeTraversal, side test result error : the ray being shot is co-planar with the plane shooting the ray " << endl << endl ;
+				cout << "error in intersectTreeTraversal, side test result error : the ray being shot is co-planar with the plane shooting the ray " << endl << endl ;
 				return false;
 			}
 			*/
@@ -178,8 +177,8 @@ bool Object::Intersect (const Ray & ray, HitInfo & hitinfo ) const {
 	info.ray = &ray ;
 	info.hitinfo = &hitinfo ;
 
-	//intersectTreeTraversal (info, info.root ) ;
-	intersectTreeTraversalNoAccel(info, info.root);
+	intersectTreeTraversal (info, info.root ) ;
+	//intersectTreeTraversalNoAccel(info, info.root);
 
 	return info.found;
 }

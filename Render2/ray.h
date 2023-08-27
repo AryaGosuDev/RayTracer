@@ -54,9 +54,9 @@ inline int sideTest3d (  Vec3 a,  Vec3 b ,  Vec3 c,  Vec3 x )
 		((c-a).x * ((b-a).y * (x-a).z - (b-a).z * (x-a).y)) +
 		((x-a).x * ((b-a).y * (c-a).z - (b-a).z * (c-a).y));
 		
-		if ( result < -Epsilon4)
+		if ( result < -Epsilon1)
 			return -1;
-		else if (result >= -Epsilon4 && result <= Epsilon4)
+		else if (result >= -Epsilon1 && result <= Epsilon1)
 			return 0;
 		else return 1;
 		
@@ -72,12 +72,6 @@ inline int sideOfLine3D (Vec3 & _Point, Vec3 & _LineNormal ) {
 	else return -1;
 }
 
-/*
- //TODO
-inline int sideOfLine3D ( Vec3 & _QLine, Vec3 & _VLine, Vec3 & _Point ) {
-	return 0;
-}
-*/
 
 // Compute the reflected ray given the incident ray (i.e. directed
 // toward the surface), and the normal to the surface.  The normal

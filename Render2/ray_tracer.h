@@ -213,8 +213,8 @@ struct BSP_Node{
 	BSP_Node (int _node) {
 		node = _node;
 	}
-	BSP_Node(Vec3 _triVert1, Vec3 _triVert2, Vec3 _triVert3, Vec3 _triNormal, int _num ) {
-		triVert1 = _triVert1; triVert2 = _triVert2; triVert3 = _triVert3; triNormal = _triNormal; node = _num;
+	BSP_Node(Vec3 _triVert1, Vec3 _triVert2, Vec3 _triVert3, Vec3 _triNormal, int _num, bool _isSplit = false ) {
+		triVert1 = _triVert1; triVert2 = _triVert2; triVert3 = _triVert3; triNormal = _triNormal; node = _num, isSplit = _isSplit ;
 	}
 
 	virtual ~BSP_Node () {}
@@ -233,6 +233,7 @@ struct BSP_Node{
 	BSP_Node * right = NULL ;
 	BSP_Node * left = NULL ;
 	bool isLeaf = false;
+	bool isSplit = false;
 
 	Object * parentObject = NULL ;
 	static int numOfTriangle;

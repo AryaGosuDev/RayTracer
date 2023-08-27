@@ -1,53 +1,20 @@
-﻿  main.cpp
-C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(98,58): warning C4100: 'eta1_over_eta2': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(292,87): warning C4100: 'n': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(292,69): warning C4100: 'samples': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(292,58): warning C4100: 'N': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(292,43): warning C4100: 'P': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(425,24): warning C4100: '_oN': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(425,48): warning C4189: 'temp': local variable is initialized but not referenced
-  radiosity.cpp
-C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(98,58): warning C4100: 'eta1_over_eta2': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(292,87): warning C4100: 'n': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(292,69): warning C4100: 'samples': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(292,58): warning C4100: 'N': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(292,43): warning C4100: 'P': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(425,24): warning C4100: '_oN': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(425,48): warning C4189: 'temp': local variable is initialized but not referenced
+﻿  scene.cpp
+C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(92,58): warning C4100: 'eta1_over_eta2': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(293,87): warning C4100: 'n': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(293,69): warning C4100: 'samples': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(293,58): warning C4100: 'N': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(293,43): warning C4100: 'P': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(426,24): warning C4100: '_oN': unreferenced formal parameter
+C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(426,48): warning C4189: 'temp': local variable is initialized but not referenced
 C:\Users\karratdev\Projects\RayTracer\Render2\util.h(42,39): warning C4100: 'obj': unreferenced formal parameter
 C:\Users\karratdev\Projects\RayTracer\Render2\util.h(47,40): warning C4100: 'obj': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(33,13): warning C4189: 'edgeListTail': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(175,7): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(175,7): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(176,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(176,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(177,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(177,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(197,8): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(197,8): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(198,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(198,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(199,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(199,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(218,5): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(218,5): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(219,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(219,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(220,1): warning C4239: nonstandard extension used: 'argument': conversion from 'Vec3' to 'Vec3 &'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(220,1): message : A non-const reference may only be bound to an lvalue
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(163,6): warning C4189: 'numberOfPolygonPoints': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity_helper.h(191,20): warning C4189: 'v': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity.cpp(124,39): warning C4458: declaration of 'tempQuadVector' hides class member
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(388,28): message : see declaration of 'Radiosity::tempQuadVector'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity.cpp(202,142): warning C4100: 'yi': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity.cpp(202,126): warning C4100: 'xi': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity.cpp(202,111): warning C4100: 'j': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity.cpp(202,93): warning C4100: 'i': unreferenced formal parameter
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity.cpp(318,11): warning C4189: 'cosF1': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity.cpp(320,11): warning C4189: 'cosF2': local variable is initialized but not referenced
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity.cpp(373,41): warning C4458: declaration of 'tempQuadVector' hides class member
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(388,28): message : see declaration of 'Radiosity::tempQuadVector'
-C:\Users\karratdev\Projects\RayTracer\Render2\radiosity.cpp(486,41): warning C4458: declaration of 'tempQuadVector' hides class member
-C:\Users\karratdev\Projects\RayTracer\Render2\ray_tracer.h(388,28): message : see declaration of 'Radiosity::tempQuadVector'
-  Generating Code...
+C:\Users\karratdev\Projects\RayTracer\Render2\scene.cpp(489,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\karratdev\Projects\RayTracer\Render2\scene.cpp(572,26): warning C4456: declaration of 'rd' hides previous local declaration
+C:\Users\karratdev\Projects\RayTracer\Render2\scene.cpp(544,22): message : see declaration of 'rd'
+C:\Users\karratdev\Projects\RayTracer\Render2\scene.cpp(573,26): warning C4456: declaration of 'gen' hides previous local declaration
+C:\Users\karratdev\Projects\RayTracer\Render2\scene.cpp(545,16): message : see declaration of 'gen'
+C:\Users\karratdev\Projects\RayTracer\Render2\scene.cpp(574,45): warning C4456: declaration of 'dis' hides previous local declaration
+C:\Users\karratdev\Projects\RayTracer\Render2\scene.cpp(546,35): message : see declaration of 'dis'
+C:\Users\karratdev\Projects\RayTracer\Render2\scene.cpp(535): warning C4702: unreachable code
+C:\Users\karratdev\Projects\RayTracer\Render2\ray.h(63): warning C4702: unreachable code
   Render2.vcxproj -> C:\Users\karratdev\Projects\RayTracer\x64\Debug\RayTracerProject.exe
